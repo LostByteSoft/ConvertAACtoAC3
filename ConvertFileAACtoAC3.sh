@@ -4,6 +4,7 @@
 # ffmpeg -i input.6ch.aac.mkv -c:s copy -c:v copy -c:a ac3 output.6ch.ac3.mkv
 # ffmpeg -i input.6ch.aac.mkv -c:s copy -c:v copy -strict experimental -c:a dts output.6ch.dts.mkv # DTS not working
 # /usr/bin/ffmpeg
+# Version 2019-09-29-0921
 # -------------------------------------------------
 # purpose - convert file
 #  $1 - filename 
