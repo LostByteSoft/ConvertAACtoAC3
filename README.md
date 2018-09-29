@@ -23,6 +23,7 @@ how to
 
 -Select a file with the space bar and press enter.
 
+![Screenshot](ConvertFileAACtoAC3.png)
 
 
 I consider myself as a new in linux and if you're not happy make it yourself. :)
