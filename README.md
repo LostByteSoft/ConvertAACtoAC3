@@ -6,20 +6,22 @@ An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels.
 Features
 --------
 
--Use ffmpeg
+-Use ffmpeg.
 
--Use command line
+-Use command line.
+
+-The video was copied the audio was converted.
 
 how to
 -------
 
--Save ConvertFileAACtoAC3.sh where you want
+-Save ConvertFileAACtoAC3.sh where you want.
 
--Make it executable
+-Make it executable.
 
--Double click on it
+-Double click on it.
 
--Select a file with the space bar and press enter
+-Select a file with the space bar and press enter.
 
 
 
