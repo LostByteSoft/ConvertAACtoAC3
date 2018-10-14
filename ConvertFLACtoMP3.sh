@@ -9,11 +9,6 @@
 # -------------------------------------------------
 # purpose - convert file
 #  $1 - filename 
-
-echo "EXPERIMENTAL AND NOT REALLY WORKING"
-echo "Wait 10 seconds" 
-sleep 10
-
 function convert_file(){
 	local f="$1"
 	local m="$0: file $f failed to convert."
@@ -24,21 +19,20 @@ function convert_file(){
 		m="$0: $f is not a file."
 	fi 
 	dialog --title "convert file" --clear --msgbox "$m" 10 50
-}
+    }
 
 # select filename using dialog
 # store it to $FILE
 FILE=$(dialog --title "convert a file" --stdout --title "Please choose a file to convert(Select spacebar)" --fselect "$HOME"/Desktop/ 14 48)
 
-# convert file aac to ac3
-# The video was copied the audio was converted.
-ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts "$HOME"/Desktop/output.6ch.dts
+# convert file aac to mp3
+# The ----- was copied the audio was converted.
+ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a mp3 "$HOME"/Desktop/output.mp3
 
-sleep 2
 echo "Input file name is "$FILE""
-echo "Output file name is output.6ch.dts"
-echo "Wait 5 seconds and exit."
-sleep 5
+echo "Output file name is output.mp3"
+echo "Wait 10 seconds and exit."
+sleep 10
 exit
 
 ;;--- End of bash ---

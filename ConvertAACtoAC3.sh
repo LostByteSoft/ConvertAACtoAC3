@@ -5,10 +5,15 @@
 # DTS not working
 # ffmpeg -i input.6ch.aac.mkv -c:s copy -c:v copy -strict experimental -c:a dts output.6ch.dts.mkv
 # /usr/bin/ffmpeg
-# Version 2019-10-04-1954
+# Version 2019-10-14
 # -------------------------------------------------
 # purpose - convert file
 #  $1 - filename 
+
+echo "CONVERT TO AC3"
+echo "Wait 3 seconds" 
+sleep 3
+
 function convert_file(){
 	local f="$1"
 	local m="$0: file $f failed to convert."
@@ -27,10 +32,11 @@ FILE=$(dialog --title "convert a file" --stdout --title "Please choose a file to
 
 # convert file aac to ac3
 # The video was copied the audio was converted.
-ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a ac3 "$HOME"/Desktop/output.ac3
+ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a ac3 "$HOME"/Desktop/output.6ch.ac3
 
 sleep 2
-echo "Input file name is "$FILE", output file name is output.ac3.mkv"
+echo "Input file name is "$FILE""
+echo "Output file name is output.6ch.ac3"
 echo "Wait 5 seconds and exit."
 sleep 5
 exit
