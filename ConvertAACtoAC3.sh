@@ -1,28 +1,21 @@
 #!/bin/bash
-# convertfile.sh - convert the file using dialog box
-# Exemples of converting:
-# ffmpeg -i input.6ch.aac.mkv -c:s copy -c:v copy -c:a ac3 output.6ch.ac3.mkv
-# DTS not working
-# ffmpeg -i input.6ch.aac.mkv -c:s copy -c:v copy -strict experimental -c:a dts output.6ch.dts.mkv
 # /usr/bin/ffmpeg
-# -------------------------------------------------------------------------------------------------------
-# purpose - convert file
-#  $1 - filename 
+# -----------------------------------------------------------------------------
 
 echo "Convert audio/video to audio ac3"
 echo "By LostByteSoft"
-echo "Version 2019-05-16"
+echo "Version 2019-05-19-10-08"
 echo "Use ffmpeg only"
 #sleep 1
 
-# -------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 echo "Select filename using dialog"
 FILE="$(zenity --file-selection --title="Select a File")"
 echo "Your file is $FILE"
 sleep 1
 
-# -------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 if test -z "$FILE"
 then
@@ -33,9 +26,9 @@ then
 else
       echo "\$FILE is NOT empty it contain $FILE"
 fi
-sleep 2
+sleep 1
 
-# -------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 VAR="$FILE"
 echo "${VAR}"
@@ -43,8 +36,8 @@ sleep 1
 ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a ac3 "${VAR}".ac3
 
 echo "Input file name was "$FILE""
-echo "Output file name is "$HOME"/Desktop/output.6ch.ac3"
-read -n 1 -s -r -p "Press any key to continue"
+echo "Output file name is "$HOME"/Desktop/"${VAR}".ac3"
+sleep 1
 exit
 
 ;;--- End of bash ---
