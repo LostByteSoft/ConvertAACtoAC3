@@ -1,44 +1,47 @@
 #!/bin/bash
-# convertfile.sh - convert the file using dialog box
-# Exemples of converting:
-# ffmpeg -i input.6ch.aac.mkv -c:s copy -c:v copy -c:a ac3 output.6ch.ac3.mkv
-# DTS not working
-# ffmpeg -i input.6ch.aac.mkv -c:s copy -c:v copy -strict experimental -c:a dts output.6ch.dts.mkv
 # /usr/bin/ffmpeg
-# Version 2019-10-14
-# -------------------------------------------------
-# purpose - convert file
-#  $1 - filename 
+# -----------------------------------------------------------------------------
 
-echo "EXPERIMENTAL AND NOT REALLY WORKING"
-echo "Wait 10 seconds" 
-sleep 10
+echo "Convert audio/video to audio ac3"
+echo "By LostByteSoft"
+echo "Version 2019-05-19-10-08"
+echo "Use ffmpeg only"
+#sleep 1
 
-function convert_file(){
-	local f="$1"
-	local m="$0: file $f failed to convert."
-	if [ -f $f ] 
-	then
-		/usr/bin/ffmpeg $FILE && m="$0: $f file convertd."
-	else
-		m="$0: $f is not a file."
-	fi 
-	dialog --title "convert file" --clear --msgbox "$m" 10 50
-}
+# -----------------------------------------------------------------------------
 
-# select filename using dialog
-# store it to $FILE
-FILE=$(dialog --title "convert a file" --stdout --title "Please choose a file to convert(Select spacebar)" --fselect "$HOME"/Desktop/ 14 48)
+echo "Select filename using dialog"
+FILE="$(zenity --file-selection --title="Select a File")"
+echo "Your file is $FILE"
+sleep 1
 
-# convert file aac to ac3
-# The video was copied the audio was converted.
-ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts "$HOME"/Desktop/output.6ch.dts
+# -----------------------------------------------------------------------------
 
-sleep 2
-echo "Input file name is "$FILE""
-echo "Output file name is output.6ch.dts"
-echo "Wait 5 seconds and exit."
+if test -z "$FILE"
+then
+      echo "\$FILE is empty and now exit"
+      sleep 1
+      read -n 1 -s -r -p "Press any key to continue"
+      exit
+else
+      echo "\$FILE is NOT empty it contain $FILE"
+fi
+sleep 1
+
+# -----------------------------------------------------------------------------
+
+VAR="$FILE"
+echo "${VAR}"
+sleep 1
+
+echo "# DTS not working, is experimental"
 sleep 5
+
+ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts "${VAR}".dts
+
+echo "Input file name was "$FILE""
+echo "Output file name is "$HOME"/Desktop/"${VAR}".ac3"
+sleep 1
 exit
 
 ;;--- End of bash ---
