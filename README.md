@@ -1,18 +1,22 @@
 # ConvertAACtoAC3.sh
 Convert AAC 6 ch to AC3 6 ch with ffmpeg (linux)
 
+Convert AAC or aothe audio files.
+
 An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels. It's just a bash script to use ffmpeg.
 
 Features
 --------
 
--Use ffmpeg. (Installed by default in most Linux distros)
+-Use ffmpeg. (Installed by default in some Linux distros)
 
 -Use command line.
 
 -The video was copied the audio was converted. (No change to video)
 
 -Convert audio files (6 channels) to AC3 6 channels. (Wav, Aac, Dts)
+
+    -DTS conversion is EXPERIMENTAL , just don't use.
 
 How to ?
 --------
@@ -27,6 +31,7 @@ How to ?
 
 I consider myself as a new in linux bash and if you're not happy make it yourself. :)
 
+How to name a video file name ? THis is a simple way.
 
     Movie.Title.year.{Source.VideoCompression.AudioCompression}.ext
     Movie.Title.year.{Source.VideoCompression.AudioCompression}.language.srt
@@ -55,8 +60,8 @@ VideoRes:
 
 AudioRes:   (Dts and Ac3 is supported in linux/windows)
     AtTr    Atmos TrueHd (5.1 or more)
-    Dts51   Dts 5.1 or Dts-hd 5.1 (5.1 or more)
-    Ac351   Ac3 5.1 (5.1 or more)
+    Dts51   Dts 5.1 or Dts-hd 5.1 (5.1 less or more)
+    Ac351   Ac3 5.1 (5.1 less or more)
     Ac320   Ac3 is provide as 1.0 to ?.?
     St      Stereo (always 2.0)
     Mo      Mono (1.0)
