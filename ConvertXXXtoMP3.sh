@@ -2,7 +2,7 @@
 # /usr/bin/ffmpeg
 # -----------------------------------------------------------------------------
 
-echo "Convert audio/video to audio dts"
+echo "Convert audio/video to audio mp3"
 echo "By LostByteSoft"
 echo "Version 2019-05-19-10-08"
 echo "Use ffmpeg only"
@@ -33,14 +33,10 @@ sleep 1
 VAR="$FILE"
 echo "${VAR}"
 sleep 1
-
-echo "# DTS not working, is experimental"
-sleep 5
-
-ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts "${VAR}".dts
+ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a mp3 "${VAR}".mp3
 
 echo "Input file name was "$FILE""
-echo "Output file name is "$HOME"/Desktop/"${VAR}".dts"
+echo "Output file name is "$HOME"/Desktop/"${VAR}".mp3"
 sleep 1
 exit
 
