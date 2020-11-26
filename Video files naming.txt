@@ -1,4 +1,6 @@
 
+How to correctly name a multimedia video file.
+
     Movie.Title.year.{Source.VideoCompression.AudioCompression}.ext
     Movie.Title.year.{Source.VideoCompression.AudioCompression}.language.srt
 
@@ -18,15 +20,16 @@ Source:
     Tv      Tv or other low resolutions sources
 
 VideoRes:
-    2160p   4k , uhd , 3840 x 2160 , 2160p
-    1080p   1080, p or i
-    720p    720, p or i
+    2160p   4k , uhd , 3840 x 2160 , 2160p (4k bluray)
+    1080p   1080, p or i (bluray)
+    720p    720, p or i (dvd)
     480i    480, p or i
-    Sd      lower than 480 p or i
+    Sd      tv, lower than 480 p/i or other low resolutions sources
 
 AudioRes:   (Dts and Ac3 is supported in linux/windows)
     AtTr    Atmos TrueHd (5.1 or more)
-    Dts51   Dts 5.1 or Dts-hd 5.1 (5.1 or more)
+    Dts71   Dts 7.1 / Dts-hd 7.1
+    Dts51   Dts 5.1 or Dts-hd 5.1 (2.0 or more)
     Ac351   Ac3 5.1 (5.1 or more)
     Ac320   Ac3 is provide as 1.0 to 26.8.8
     St      Stereo (always 2.0)
@@ -39,7 +42,7 @@ Extension:
 Exemples:
     Die.Hard.1988.{Br.4kX26510bit.Dts51}.mkv
     Die.Hard.1988.{Br.4kX26510bit.Dts51}.eng.srt
-    Jurassic.Park.1993.{Br1080pX264Ac351}.avi
-    Jurassic.Park.1993.{Br1080pX264Ac351}.eng.srt
+    Jurassic.Park.1993.{Br1080pX264.Ac351}.avi
+    Jurassic.Park.1993.{Br1080pX264.Ac351}.eng.srt
 
-    VLC will auto load srt files
+    VLC will auto load srt files if they have the same name of the video file.
