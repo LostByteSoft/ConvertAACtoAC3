@@ -48,11 +48,13 @@ How to correctly name a multimedia video file.
     {Tv.SdX264.St}
 
 Source:
+
     Br      Blu-Ray source
     Dvd     Dvd source
     Tv      Tv or other low resolutions sources
 
 VideoRes:
+
     2160p   4k , uhd , 3840 x 2160 , 2160p (4k bluray)
     1080p   1080, p or i (bluray)
     720p    720, p or i (dvd)
@@ -60,6 +62,7 @@ VideoRes:
     Sd      tv, lower than 480 p/i or other low resolutions sources
 
 AudioRes:   (Dts and Ac3 is supported in linux/windows)
+
     AtTr    Atmos TrueHd (5.1 or more)
     Dts71   Dts 7.1 / Dts-hd 7.1
     Dts6.1  Dts 6.1
@@ -70,10 +73,12 @@ AudioRes:   (Dts and Ac3 is supported in linux/windows)
     Mo      Mono (always 1.0)
 
 Extension:
+
     eng     Language, only original language (Used for subtitles)
     srt     subtitles
 
 Exemples:
+
     Die.Hard.1988.{Br.4kX26510bit.Dts51}.mkv
     Die.Hard.1988.{Br.4kX26510bit.Dts51}.eng.srt
     Die.Hard.1988.{Br.4kX26510bit.Dts51}.fra.srt
@@ -81,5 +86,5 @@ Exemples:
     Jurassic.Park.1993.{Br1080pX264.Ac351}.eng.srt
     Jurassic.Park.1993.{Br1080pX264.Ac351}.chn.srt
 
-    VLC will auto load srt files if they have the same name of the video file.
+    -VLC will auto load srt files if they have the same name of the video file.
 
