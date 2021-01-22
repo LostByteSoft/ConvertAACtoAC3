@@ -4,40 +4,35 @@
 
 echo "Convert audio/video to audio aac"
 echo "By LostByteSoft"
-echo "Version 2019-05-19-10-08"
+echo "Version 2021-01-22"
 echo "Use ffmpeg only"
-#sleep 1
 
 # -----------------------------------------------------------------------------
 
 echo "Select filename using dialog"
 FILE="$(zenity --file-selection --title="Select a File")"
-echo "Your file is $FILE"
-sleep 1
+;echo "Your file is $FILE"
 
 # -----------------------------------------------------------------------------
 
 if test -z "$FILE"
 then
       echo "\$FILE is empty and now exit"
-      sleep 1
       read -n 1 -s -r -p "Press any key to continue"
       exit
 else
       echo "\$FILE is NOT empty it contain $FILE"
 fi
-sleep 1
 
 # -----------------------------------------------------------------------------
 
 VAR="$FILE"
 echo "${VAR}"
-sleep 1
+
 ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a aac "${VAR}".aac
 
-echo "Input file name was "$FILE""
-echo "Output file name is "$HOME"/Desktop/"${VAR}".aac"
-sleep 1
+;echo "Input file name was "$FILE""
+;echo "Output file name is "$HOME"/Desktop/"${VAR}".aac"
 exit
 
 ;;--- End of bash ---

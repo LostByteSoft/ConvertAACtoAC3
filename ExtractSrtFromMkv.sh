@@ -3,6 +3,14 @@
 # https://askubuntu.com/questions/452268/extract-subtitle-from-mkv-files
 # Author: https://askubuntu.com/users/230052/nux
 
+# -----------------------------------------------------------------------------
+
+echo "FORK by LostByteSoft"
+echo "Version 2021-01-22"
+echo "Use ffmpeg only"
+
+# -----------------------------------------------------------------------------
+
 # If no directory is given, work in local dir
 if [ "$1" = "" ]; then
   DIR="."
