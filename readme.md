@@ -47,13 +47,13 @@ How to correctly name a multimedia video file.
     {Dvd.480X264.St}
     {Tv.SdX264.St}
 
-Source:
+	Source:
 
     Br      Blu-Ray source
     Dvd     Dvd source
     Tv      Tv or other low resolutions sources
 
-VideoRes:
+	VideoRes:
 
     2160p   4k , uhd , 3840 x 2160 , 2160p (4k bluray)
     1080p   1080, p or i (bluray)
@@ -61,7 +61,7 @@ VideoRes:
     480i    480, p or i
     Sd      tv, lower than 480 p/i or other low resolutions sources
 
-AudioRes:   (Dts and Ac3 is supported in linux/windows)
+	AudioRes:   (Dts and Ac3 is supported in linux/windows)
 
     AtTr    Atmos TrueHd (5.1 or more)
     Dts71   Dts 7.1 / Dts-hd 7.1
@@ -72,12 +72,12 @@ AudioRes:   (Dts and Ac3 is supported in linux/windows)
     St      Stereo (always 2.0)
     Mo      Mono (always 1.0)
 
-Extension:
+	Extension:
 
     eng     Language, only original language (Used for subtitles)
     srt     subtitles
 
-Exemples:
+	Exemples:
 
     Die.Hard.1988.{Br.4kX26510bit.Dts51}.mkv
     Die.Hard.1988.{Br.4kX26510bit.Dts51}.eng.srt
