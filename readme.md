@@ -9,12 +9,19 @@ An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels. It's
 Easy bash files:
 
 -Convert ALL folder MP3
+
 -Convert FLAC folder MP3
+
 -Convert XXX to AAC
+
 -Convert XXX to AC3
+
 -Convert XXX to DTS
+
 -Convert XXX to MP3
+
 -Extract Srt From Mkv
+
 -turn-video-90
 
 
@@ -34,15 +41,11 @@ Features
 How to ?
 --------
 
--Save ConvertFileAACtoAC3.sh where you want.
-
 -Make it executable.
 
--Double click on it. (Use file from Desktop)
+-Double click on it.
 
--Select a file with the space bar and press enter.
-
-I consider myself as a new in linux bash and if you're not happy make it yourself. :)
+-Select a file and press enter.
 
 --------
 
@@ -100,5 +103,5 @@ I consider myself as a new in linux bash and if you're not happy make it yoursel
     Jurassic.Park.1993.{Br1080pX264.Ac351}.eng.srt
     Jurassic.Park.1993.{Br1080pX264.Ac351}.chn.srt
 
-    -VLC will auto load srt files if they have the same name of the video file.
+-VLC will auto load srt files if they have the same name of the video file.
 
