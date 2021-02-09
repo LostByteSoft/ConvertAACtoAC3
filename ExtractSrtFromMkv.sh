@@ -1,11 +1,13 @@
 #!/bin/bash
+# /usr/bin/ffmpeg
+# -----------------------------------------------------------------------------
+
 # Extract subtitles from each MKV file in the given directory
 # https://askubuntu.com/questions/452268/extract-subtitle-from-mkv-files
 # Author: https://askubuntu.com/users/230052/nux
 
-# -----------------------------------------------------------------------------
-
-echo "FORK by LostByteSoft"
+echo "Extract subtitles from MKV to SRT"
+echo "By LostByteSoft"
 echo "Version 2021-01-22"
 echo "Use ffmpeg only"
 
@@ -57,3 +59,5 @@ do
     fi
   done
 done
+
+# --- end of file --------------------------------------------------------------------------
