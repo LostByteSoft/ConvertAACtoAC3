@@ -49,6 +49,17 @@ How to ?
 
 --------
 
+extractSRTfromMKV_choosefile.sh AND extractSRTfromMKV_samefolder.sh
+
+-Extract subtitles SRT from each MKV file in the given file.
+
+-Extract subtitles SRT from each MKV file in the given directory.
+	-WILL DO ALL MKV FILES IN THE DIRECTORY
+
+-Could extract not the language you want if many is present.
+
+--------
+
 	*How to correctly name a multimedia video file.
 
     Movie.Title.year.{Source.VideoCompression.AudioCompression}.ext
