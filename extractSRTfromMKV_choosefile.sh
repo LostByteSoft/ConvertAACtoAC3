@@ -10,6 +10,21 @@ echo ---------------------------------------------------------------------------
 
 DIR="$(zenity --file-selection --filename=$HOME/$USER --file-filter=*.mkv --title="Select a file (*.mkv)")"
 
+# -----------------------------------------------------------------------------
+
+if test -z "$FILE"
+	then
+		echo "\$FILE is empty and now exit. You don't have selected a file."
+		echo Press ENTER to continue.
+		read name
+		exit
+	else
+		echo "\$FILE is NOT empty."
+		echo "You have selected "$FILE""
+fi
+
+# -----------------------------------------------------------------------------
+
 	echo "Please wait..."
 	#echo DIR = "$DIR"
 	#echo Press ENTER to continue.
