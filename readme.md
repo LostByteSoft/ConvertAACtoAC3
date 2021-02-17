@@ -1,135 +1,130 @@
+Features
+--------
 
-Check/compare bash sha 256 
---------------------------------------------------------------------
+-Use ffmpeg. (Installed by default in some Linux distros)
 
-FREE Linux Bash software by LostByteSoft
+-Use command line.
 
-No CopyRIGHT or CopyLEFT, i am juste in the CopyCENTER. That not perfect but me neither.
+-The video was copied the audio was converted. (No change to video)
 
-Bash sha 256 verification help tool.
+-Convert audio files (6 channels) to AC3 6 channels. (Wav, Aac, Dts)
 
-BETA VESION !!! If you want to help you're welcome !!
+-DTS conversion is now considered stable (in most cases) , just try it before use.
 
-I'M WORKING ON A VERSION THAT TAKE THE GOOD LINE TO CHECK THE SHA FILE.
+-Convert AAC 6 ch to AC3 6 ch with ffmpeg (linux).
 
-ONLY ONE LINE IS SUPPORTED IN *.sha256 FILE.
+-Convert AAC or aothe audio files.
 
-Easy way or not in bash to verify create and hash a file in sha 256.
+-An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels. It's just a bash script to use ffmpeg.
 
-In each file you can replace sha256sum by any check sum you want : crc32, sha-1, ... etc
+-Use Zenity to find your files.
 
-Version 2021-02-14
+Easy bash files:
+--------
 
-![Screenshot](Picture_7.jpg)
+#Convert ALL folder MP3 -> ConvertALLfolderMP3.sh
 
-Things to do !
---------------------------------------------------------------------
+#Convert FLAC folder MP3 -> ConvertFLACfolderMP3.sh
 
-* WORK (Check_sha256_V2.sh) auto load *.sha256 file if exist.
-* Other check : sha512, crc32 , ...
-* select the good hash in file if many is present.
-* Offer to create sha file if not provided and not existent (Check_sha256_V3.sh)
-* i'm sure there are more to do....
+#Convert XXX to AAC -> ConvertXXXtoAAC.sh
 
-* Files and use
---------------------------------------------------------------------
+#Convert XXX to AC3 -> ConvertXXXtoAC3.sh
 
--Check_sha256_V1.sh, consider V2 as a best option.
+#Convert XXX to DTS -> ConvertXXXtoDTS.sh
 
-	The main software. Will ask for 2 files, one after another, and compare the hash include in the second specified file.
-	
-	-ask for 2 files to compare.
-	-You must fournish 2 files.
-
--Check_sha256_V2.sh
-
-	The main software. Will ask for 1 files (and check if hash file exist then autoload OR ask for a second file and compare the hash include in the second specified/automatic file.
-	
-	-ask for 1 file
-	-watch if *.sha256 exist and load (of the same name)
-	
--Check_sha256_V3.sh, consider V2 as a best option.
-
-	The main software. Will ask for 1 files (and check if hash file exist then autoload OR ask for a second file and compare the hash include in the second specified/automatic file OR offer to create new sha256 file.
-	
-	-ask for 1 file
-	-watch if *.sha256 exist and load (of the same name)	
-	-if not exist, ask for a file.
-	-If you don't provide a file will create a new *.sha256 file.
+#Convert XXX to MP3 -> ConvertXXXtoMP3.sh
 
 
-Specials & extras
---------------------------------------------------------------------
+How to ?
+--------
 
--create_sha256.sh
+-Make it executable.
 
--create_sha512.sh
+-Double click on it.
 
-	Ask for one file to hash and create *.sha256 or *.sha512 file. With correct name and formatting.
+-Select a file and press enter.
 
--testfile.txt
+Specials & Extras
+--------
 
-	This is the test file to hash.
+#Extract Srt From Mkv -> extractSRTfromMKV_choosefile.sh
 
--testfile.txt.sha256
+#Extract Srt From Mkv -> extractSRTfromMKV_samefolder.sh
 
-	In this file there are the pre-calculated hash and the file name. You (if you create this file) must follow the corect format, or correct the file to respect the format. HOW: Is the hash code plus two (2) spaceS and the name of the file. Only the first line is revelant for now. Exemple of the first line : 0ca160e99aa0e719a4926797292654f9a26bc9591beee21a8ec6f2808616acee  testfile.txt Only the first line is revelant for now.
+-Extract subtitles SRT from each MKV file in the given file.
 
+-Extract subtitles SRT from each MKV file in the given directory.
+	-WILL DO ALL MKV FILES IN THE DIRECTORY
 
--create_sha256_folder_V1.sh
-
-	NEED to put in the folder you want create for a specified folder all *.sha256 file.
-
--create_sha256_folder_V2.sh
-
-	Create for a specified folder you selected all *.sha256 file.
+-Could extract not the language you want if many is present.
 
 
-FREE Linux Bash software by LostByteSoft
+-turn-video-90 -> turn-video-90.sh
 
-Old versions
---------------------------------------------------------------------
+--------
 
-Version 2021-01-29
+Version 2021-02-16
 
-![Screenshot](Picture_5.jpg)
+![Screenshot](picture_1.jpg)
 
-Version 2021-02-10
+--------
 
-![Screenshot](Picture_6.jpg)
+	*How to correctly name a multimedia video file.
 
---------------------------------------------------------------------
+    Movie.Title.year.{Source.VideoCompression.AudioCompression}.ext
+    Movie.Title.year.{Source.VideoCompression.AudioCompression}.language.srt
 
---- End of readme ---
+    {Br.2160px265.audio}
+    {Br.1080pX264.Dts51}
+    {Br.1080pX264.Ac351}
+    {Br.1080pX264.St}
+    {Br.720pX264.Ac351}
+    {Br.720pX264.Ac320}
+    {Dvd.480X264.Ac351}
+    {Dvd.480X264.St}
+    {Tv.SdX264.St}
 
-            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-   Version 3.14159265358979323846264338327950288419716939937510582
-                          March 2017
+	*Source:
 
- Everyone is permitted to copy and distribute verbatim or modified
- copies of this license document, and changing it is allowed as long
- as the name is changed.
+    Br      Blu-Ray source
+    Dvd     Dvd source
+    Tv      Tv or other low resolutions sources
 
-            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+	*VideoRes:
 
-              You just DO WHAT THE FUCK YOU WANT TO.
+    2160p   4k , uhd , 3840 x 2160 , 2160p (4k bluray)
+    1080p   1080, p or i (bluray)
+    720p    720, p or i (dvd)
+    480i    480, p or i
+    Sd      tv, lower than 480 p/i or other low resolutions sources
 
-		     NO FUCKING WARRANTY AT ALL
+	*AudioRes:   (Dts and Ac3 is supported in linux/windows)
 
-	As is customary and in compliance with current global and
-	interplanetary regulations, the author of these pages disclaims
-	all liability for the consequences of the advice given here,
-	in particular in the event of partial or total destruction of
-	the material, Loss of rights to the manufacturer's warranty,
-	electrocution, drowning, divorce, civil war, the effects of
-	radiation due to atomic fission, unexpected tax recalls or
-	    encounters with extraterrestrial beings 'elsewhere.
+    AtTr    Atmos TrueHd (5.1 or more)
+    Dts71   Dts 7.1 / Dts-hd 7.1
+    Dts6.1  Dts 6.1
+    Dts51   Dts 5.1 or Dts-hd 5.1 (2.0 or more)
+    Ac351   Ac3 5.1 (5.1 or more)
+    Ac320   Ac3 is provide as 1.0 to 5.1
+    St      Stereo (always 2.0)
+    Mo      Mono (always 1.0)
 
-              LostByteSoft no copyright or copyleft.
+	*Extension:
 
-	If you are unhappy with this software i do not care.
-	
---- End of licence ---
+    eng     Language, only original language (Used for subtitles)
+    srt     subtitles
 
---------------------------------------------------------------------
+	*Exemples:
+
+    Die.Hard.1988.{Br.4kx26510b.Dts51}.mkv
+    Die.Hard.1988.{Br.4kx26510b.Dts51}.eng.srt
+    Die.Hard.1988.{Br.4kx26510b.Dts51}.fra.srt
+    Jurassic.Park.1993.{Br1080px264.Ac351}.avi
+    Jurassic.Park.1993.{Br1080px264.Ac351}.eng.srt
+    Jurassic.Park.1993.{Br1080px264.Ac351}.chn.srt
+    
+    VLC will auto load theses srt files; same name of the video file.
+
+
+--------
+
