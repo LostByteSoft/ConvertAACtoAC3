@@ -20,6 +20,7 @@ Features
 -Use Zenity to find your files.
 
 Easy bash files:
+--------
 
 #Convert ALL folder MP3 -> ConvertALLfolderMP3.sh
 
@@ -47,6 +48,7 @@ Specials & Extras
 --------
 
 #Extract Srt From Mkv -> extractSRTfromMKV_choosefile.sh
+
 #Extract Srt From Mkv -> extractSRTfromMKV_samefolder.sh
 
 -Extract subtitles SRT from each MKV file in the given file.
@@ -120,8 +122,9 @@ Version 2021-02-16
     Jurassic.Park.1993.{Br1080px264.Ac351}.avi
     Jurassic.Park.1993.{Br1080px264.Ac351}.eng.srt
     Jurassic.Park.1993.{Br1080px264.Ac351}.chn.srt
+    
+    VLC will auto load theses srt files; same name of the video file.
 
--VLC will auto load srt files if they have the same name of the video file.
 
 --------
 
