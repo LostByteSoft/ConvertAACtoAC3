@@ -1,30 +1,3 @@
-# ConvertAACtoAC3.sh
-
-Convert AAC 6 ch to AC3 6 ch with ffmpeg (linux).
-
-Convert AAC or aothe audio files.
-
-An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels. It's just a bash script to use ffmpeg.
-
-Easy bash files:
-
--Convert ALL folder MP3
-
--Convert FLAC folder MP3
-
--Convert XXX to AAC
-
--Convert XXX to AC3
-
--Convert XXX to DTS
-
--Convert XXX to MP3
-
--Extract Srt From Mkv
-
--turn-video-90
-
-
 Features
 --------
 
@@ -38,6 +11,29 @@ Features
 
 -DTS conversion is now considered stable (in most cases) , just try it before use.
 
+-Convert AAC 6 ch to AC3 6 ch with ffmpeg (linux).
+
+-Convert AAC or aothe audio files.
+
+-An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels. It's just a bash script to use ffmpeg.
+
+-Use Zenity to find your files.
+
+Easy bash files:
+
+#Convert ALL folder MP3 -> ConvertALLfolderMP3.sh
+
+#Convert FLAC folder MP3 -> ConvertFLACfolderMP3.sh
+
+#Convert XXX to AAC -> ConvertXXXtoAAC.sh
+
+#Convert XXX to AC3 -> ConvertXXXtoAC3.sh
+
+#Convert XXX to DTS -> ConvertXXXtoDTS.sh
+
+#Convert XXX to MP3 -> ConvertXXXtoMP3.sh
+
+
 How to ?
 --------
 
@@ -47,9 +43,11 @@ How to ?
 
 -Select a file and press enter.
 
+Specials & Extras
 --------
 
-extractSRTfromMKV_choosefile.sh AND extractSRTfromMKV_samefolder.sh
+#Extract Srt From Mkv -> extractSRTfromMKV_choosefile.sh
+#Extract Srt From Mkv -> extractSRTfromMKV_samefolder.sh
 
 -Extract subtitles SRT from each MKV file in the given file.
 
@@ -57,6 +55,15 @@ extractSRTfromMKV_choosefile.sh AND extractSRTfromMKV_samefolder.sh
 	-WILL DO ALL MKV FILES IN THE DIRECTORY
 
 -Could extract not the language you want if many is present.
+
+
+-turn-video-90 -> turn-video-90.sh
+
+--------
+
+Version 2021-02-16
+
+![Screenshot](picture_1.jpg)
 
 --------
 
@@ -107,12 +114,14 @@ extractSRTfromMKV_choosefile.sh AND extractSRTfromMKV_samefolder.sh
 
 	*Exemples:
 
-    Die.Hard.1988.{Br.4kX26510bit.Dts51}.mkv
-    Die.Hard.1988.{Br.4kX26510bit.Dts51}.eng.srt
-    Die.Hard.1988.{Br.4kX26510bit.Dts51}.fra.srt
-    Jurassic.Park.1993.{Br1080pX264.Ac351}.avi
-    Jurassic.Park.1993.{Br1080pX264.Ac351}.eng.srt
-    Jurassic.Park.1993.{Br1080pX264.Ac351}.chn.srt
+    Die.Hard.1988.{Br.4kx26510b.Dts51}.mkv
+    Die.Hard.1988.{Br.4kx26510b.Dts51}.eng.srt
+    Die.Hard.1988.{Br.4kx26510b.Dts51}.fra.srt
+    Jurassic.Park.1993.{Br1080px264.Ac351}.avi
+    Jurassic.Park.1993.{Br1080px264.Ac351}.eng.srt
+    Jurassic.Park.1993.{Br1080px264.Ac351}.chn.srt
 
 -VLC will auto load srt files if they have the same name of the video file.
+
+--------
 

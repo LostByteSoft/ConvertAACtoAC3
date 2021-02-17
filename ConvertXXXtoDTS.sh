@@ -1,37 +1,36 @@
 #!/bin/bash
-# /usr/bin/ffmpeg
+#!/usr/bin/ffmpeg
 # -----------------------------------------------------------------------------
 
 echo "Convert ONE FILE to audio DTS"
 echo "By LostByteSoft"
-echo "Version 2021-01-22"
+echo "Version 2021-02-16"
 echo "Use ffmpeg only"
 
 # -----------------------------------------------------------------------------
 
 echo "Select filename using dialog"
-FILE="$(zenity --file-selection --title="Select a File")"
+FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
+
 #echo "Your file is $FILE"
 
 # -----------------------------------------------------------------------------
 
 if test -z "$FILE"
-then
-      echo "\$FILE is empty and now exit"
-      read -n 1 -s -r -p "Press any key to continue"
-      exit
-else
-      echo "\$FILE is NOT empty it contain $FILE"
+	then
+		echo "\$FILE is empty and now exit. You don't have selected a file."
+		echo Press ENTER to continue.
+		read name
+		exit
+	else
+		echo "\$FILE is NOT empty."
+		echo "You have selected "$FILE""
 fi
 
 # -----------------------------------------------------------------------------
 
-VAR="$FILE"
-echo "${VAR}"
-ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts "${VAR}".dts
+ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts "$FILE".dts
 
-#echo "Input file name was "$FILE""
-#echo "Output file name is "$HOME"/Desktop/"${VAR}".dts"
+# -----------------------------------------------------------------------------
 exit
-
-# --- end of file --------------------------------------------------------------------------
+# --- End of file ---

@@ -1,9 +1,9 @@
 echo --- Start of file ---
 #!/bin/bash
 echo -----------------------------------------------------------------------------
-echo "Extract subtitles from each MKV file in the given directory"
+echo "Extract subtitles from MKV file MKV IDX SUB for a specified file"
 echo "By LostByteSoft"
-echo "Version 2021-02-14"
+echo "Version 2021-02-16"
 echo "https://askubuntu.com/questions/452268/extract-subtitle-from-mkv-files"
 echo "Author: https://askubuntu.com/users/230052/nux"
 echo -----------------------------------------------------------------------------
@@ -32,7 +32,6 @@ do
     # Extract the track to a .tmp file
     `mkvextract tracks "$filename" $tracknumber:"$subtitlename.srt" > /dev/null 2>&1`
     `chmod g+rw "$subtitlename.srt"`
-
   done
 done
 

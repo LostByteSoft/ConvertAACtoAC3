@@ -1,11 +1,18 @@
 #!/bin/bash
-# /usr/bin/ffmpeg
+#!/usr/bin/ffmpeg
 # -----------------------------------------------------------------------------
 
 echo "Convert ALL FLAC in folder to audio mp3"
 echo "By LostByteSoft"
-echo "Version 2021-01-22"
+echo "Version 2021-02-16"
 echo "Use ffmpeg only"
+
+# -----------------------------------------------------------------------------
+
+echo You must put this file in the same directory of the file you want to extract !
+echo Be careful it will extract ALL video MKV file in the directory.
+echo Press ENTER to continue.
+read name
 
 # -----------------------------------------------------------------------------
 
@@ -15,4 +22,6 @@ for i in *.flac;
   ffmpeg -i "$i" "${name}.mp3"
 done
 
-# --- end of file --------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+exit
+# --- End of file ---
