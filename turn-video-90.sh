@@ -25,10 +25,14 @@ if test -z "$FILE"
 		echo "You have selected "$FILE""
 fi
 
+echo sleep 3
+sleep 3
+
 # -----------------------------------------------------------------------------
 
-ffmpeg -i "$FILE".mp4 -vf "transpose=2" "$FILE"-OUT.mp4
+ffmpeg -i "$FILE".mp4 -vf "transpose=2" ""$FILE"-OUT.mp4"
 
 # -----------------------------------------------------------------------------
+sleep 3
 exit
 # --- End of file ---

@@ -13,7 +13,7 @@ Features
 
 -Convert AAC 6 ch to AC3 6 ch with ffmpeg (linux).
 
--Convert AAC or aothe audio files.
+-Convert AAC or anothe audio files.
 
 -An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels. It's just a bash script to use ffmpeg.
 
@@ -22,17 +22,19 @@ Features
 Easy bash files:
 --------
 
-#Convert ALL folder MP3 -> ConvertALLfolderMP3.sh
+#Convert all file in folder into MP3 -> ConvertALLfolderMP3.sh
 
-#Convert FLAC folder MP3 -> ConvertFLACfolderMP3.sh
+#Convert all files in FLAC folder into MP3 -> ConvertFLACfolderMP3.sh
 
-#Convert XXX to AAC -> ConvertXXXtoAAC.sh
+#Convert XXX selected to AAC -> ConvertXXXtoAAC.sh
 
-#Convert XXX to AC3 -> ConvertXXXtoAC3.sh
+#Convert XXX selected to AC3 -> ConvertXXXtoAC3.sh
 
-#Convert XXX to DTS -> ConvertXXXtoDTS.sh
+#Convert XXX selected to DTS -> ConvertXXXtoDTS.sh
 
-#Convert XXX to MP3 -> ConvertXXXtoMP3.sh
+#Convert XXX selected to MP3 128kb -> ConvertXXXtoMP3 128.sh
+
+#Convert XXX selected to MP3 320kb -> ConvertXXXtoMP3 320.sh
 
 
 How to ?
@@ -40,7 +42,7 @@ How to ?
 
 -Make it executable.
 
--Double click on it.
+-Double click on it, select your file.
 
 -Select a file and press enter.
 
@@ -59,7 +61,7 @@ Specials & Extras
 -Could extract not the language you want if many is present.
 
 
--turn-video-90 -> turn-video-90.sh
+-turn video into 90 degree -> turn-video-90.sh
 
 --------
 

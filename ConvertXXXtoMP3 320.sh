@@ -2,7 +2,7 @@
 #!/usr/bin/ffmpeg
 # -----------------------------------------------------------------------------
 
-echo "Convert ONE FILE to audio DTS"
+echo "Convert ONE FILE to audio MP3"
 echo "By LostByteSoft"
 echo "Version 2021-02-16"
 echo "Use ffmpeg only"
@@ -31,7 +31,7 @@ sleep 1
 
 # -----------------------------------------------------------------------------
 
-ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts "$FILE".dts
+ffmpeg -i "$FILE" -codec:a libmp3lame -b:a 320k "$FILE"-320.mp3
 
 # -----------------------------------------------------------------------------
 sleep 3

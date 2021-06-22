@@ -27,10 +27,13 @@ if test -z "$FILE"
 		echo "You have selected "$FILE""
 fi
 
+sleep 1
+
 # -----------------------------------------------------------------------------
 
 ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a ac3 "$FILE".ac3
 
 # -----------------------------------------------------------------------------
+sleep 3
 exit
 # --- End of file ---
