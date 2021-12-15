@@ -1,6 +1,8 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
-echo -----------------------------------------------------------------------------
+printf '\033[8;50;125t'		# will resize the window
+start=$SECONDS
+# -----------------------------------------------------------------------------
 
 echo "Convert ALL audio/video file in folder to audio mp3"
 echo "By LostByteSoft"
@@ -22,6 +24,9 @@ for i in *.*;
 done
 
 echo -----------------------------------------------------------------------------
-sleep 3
-exit
-# --- End of file ---
+
+	echo Finish... This script take $(( SECONDS - start )) seconds to complete
+	echo Press ENTER key to exit !
+	read name
+
+echo --- End of bash ---

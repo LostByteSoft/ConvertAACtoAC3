@@ -1,18 +1,20 @@
 #!/bin/bash
-# /usr/bin/ffmpeg
+#!/usr/bin/ffmpeg
+printf '\033[8;50;125t'		# will resize the window
+start=$SECONDS
 # -----------------------------------------------------------------------------
 
 echo "Turn a video 90 deg"
 echo "By LostByteSoft"
-echo "Version 2021-02-16"
+echo "Version 2021-07-17"
 echo "Use ffmpeg only"
 
-# -----------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------
 
 echo "Select filename using dialog"
 FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
 
-# -----------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------
 
 if test -z "$FILE"
 	then
@@ -25,14 +27,22 @@ if test -z "$FILE"
 		echo "You have selected "$FILE""
 fi
 
-echo sleep 3
-sleep 3
+echo "GO !"
 
-# -----------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------
 
-ffmpeg -i "$FILE".mp4 -vf "transpose=2" ""$FILE"-OUT.mp4"
+ffmpeg -i "$FILE" -vf "transpose=2" ""$FILE"-OUT.mp4"
 
-# -----------------------------------------------------------------------------
-sleep 3
-exit
-# --- End of file ---
+echo -----------------------------------------------------------------------------
+
+	echo Finish... exing
+	echo Press ENTER to continue.
+	read name
+
+echo -----------------------------------------------------------------------------
+
+	echo Finish... This script take $(( SECONDS - start )) seconds to complete
+	echo Press ENTER key to exit !
+	read name
+
+echo --- End of bash ---

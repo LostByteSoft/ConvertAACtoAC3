@@ -1,6 +1,10 @@
 Features
 --------
 
+-Alot more than just an converter now.
+
+Convert multimedia files, audio and video to standart format.
+
 -Use ffmpeg. (Installed by default in some Linux distros)
 
 -Use command line.
@@ -19,6 +23,12 @@ Features
 
 -Use Zenity to find your files.
 
+-Take an image file (movie poster) and convert it to:
+	Cover.jpg an 500x500 px
+	Folder.jpg an 1000x1000 px
+	{Name of folder reside in}.jpg 1000x1000px
+	For music and movie folder.
+
 Easy bash files:
 --------
 
@@ -36,6 +46,7 @@ Easy bash files:
 
 #Convert XXX selected to MP3 320kb -> ConvertXXXtoMP3 320.sh
 
+#Reseize image to correct folder.jpg and cover.jpg -> Resize CoverFolder.sh (Added in version 2021-12-15)
 
 How to ?
 --------
@@ -68,6 +79,10 @@ Specials & Extras
 Version 2021-02-16
 
 ![Screenshot](picture_1.jpg)
+
+Version 2021-12-15
+
+![Screenshot](picture_2.jpg)
 
 --------
 

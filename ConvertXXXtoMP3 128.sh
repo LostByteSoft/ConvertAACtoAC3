@@ -1,5 +1,7 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
+printf '\033[8;50;125t'		# will resize the window
+start=$SECONDS
 # -----------------------------------------------------------------------------
 
 echo "Convert ONE FILE to audio MP3"
@@ -33,7 +35,10 @@ sleep 1
 
 ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a mp3 "$FILE"-128.mp3
 
-# -----------------------------------------------------------------------------
-sleep 3
-exit
-# --- End of file ---
+echo -----------------------------------------------------------------------------
+
+	echo Finish... This script take $(( SECONDS - start )) seconds to complete
+	echo Press ENTER key to exit !
+	read name
+
+echo --- End of bash ---

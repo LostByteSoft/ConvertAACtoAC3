@@ -15,11 +15,12 @@ echo You must put this file in the same directory of the file you want to extrac
 echo Be careful it will extract ALL video MKV file in the directory.
 echo Press ENTER to continue.
 echo -----------------------------------------------------------------------------
+read name
 
 for i in *.*;
- do name=`echo "$i" | rev | cut -f 2- -d '.' | rev`
+  do name=`echo "$i" | cut -d'.' -f1`
   echo "$name"
-  ffmpeg -i "$i" -codec:a libmp3lame -b:a 320k "${name}.mp3"
+  ffmpeg -i "$i" -c:s copy -c:v copy -c:a ac3 "${name}".ac3
 done
 
 echo -----------------------------------------------------------------------------
