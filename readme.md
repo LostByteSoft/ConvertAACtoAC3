@@ -1,55 +1,30 @@
-Features
---------
+LostByteSoft ; ConvertFFMPEG
 
--Alot more than just an converter now.
+Convert or modify multimedia files with FFMPEG.
 
-Convert multimedia files, audio and video to standart format.
+
+Features:
+---------------------------------------------
+
+-Convert multimedia files, audio and video to standart format.
 
 -Use ffmpeg. (Installed by default in some Linux distros)
-
--Use command line.
-
--The video was copied the audio was converted. (No change to video)
-
--Convert audio files (6 channels) to AC3 6 channels. (Wav, Aac, Dts)
-
--DTS conversion is now considered stable (in most cases) , just try it before use.
-
--Convert AAC 6 ch to AC3 6 ch with ffmpeg (linux).
-
--Convert AAC or anothe audio files.
-
--An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels. It's just a bash script to use ffmpeg.
+	If not sudo apt-get install ffmpeg
 
 -Use Zenity to find your files.
 
--Take an image file (movie poster) and convert it to:
-	Cover.jpg an 500x500 px
-	Folder.jpg an 1000x1000 px
-	{Name of folder reside in}.jpg 1000x1000px
-	For music and movie folder.
+-Use command line.
 
-Easy bash files:
---------
+-It's just a bash script to use ffmpeg.
 
-#Convert all file in folder into MP3 -> ConvertALLfolderMP3.sh
+-Convert audio files (6 channels) to AC3 6 channels. (Wav, Aac, Dts, Flac)
 
-#Convert all files in FLAC folder into MP3 -> ConvertFLACfolderMP3.sh
+-Convert AAC or another audio files.
 
-#Convert XXX selected to AAC -> ConvertXXXtoAAC.sh
-
-#Convert XXX selected to AC3 -> ConvertXXXtoAC3.sh
-
-#Convert XXX selected to DTS -> ConvertXXXtoDTS.sh
-
-#Convert XXX selected to MP3 128kb -> ConvertXXXtoMP3 128.sh
-
-#Convert XXX selected to MP3 320kb -> ConvertXXXtoMP3 320.sh
-
-#Reseize image to correct folder.jpg and cover.jpg -> Resize CoverFolder.sh (Added in version 2021-12-15)
+-An easy way to convert audio (with video) AAC 6 channels to AC3 or DTS 6 channels.
 
 How to ?
---------
+---------------------------------------------
 
 -Make it executable.
 
@@ -57,24 +32,60 @@ How to ?
 
 -Select a file and press enter.
 
-Specials & Extras
---------
+	
+Converters files:
+---------------------------------------------
 
-#Extract Srt From Mkv -> extractSRTfromMKV_choosefile.sh
+	Convert ALLfolderAC3.sh
+		-All files in folder will be converted to AC3.
+	Convert ALLfolderMP3 128
+	Convert ALLfolderMP3 320.sh
+	Convert FLACfolderMP3.sh
+		All .Flac files in folder will be converted to Mp3 in 320kbps.
+	Convert XXXtoAAC.sh
+	Convert XXXtoAC3.sh
+		-An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels.
+	Convert XXXtoDTS.sh
+		-DTS conversion is now considered stable (in most cases) , just try it before use.
+	Convert XXXtoMP3 128.sh
+	Convert XXXtoMP3 320.sh
+		-As te name sugges 128 or 320.
+	
+Creator files:
+---------------------------------------------
 
-#Extract Srt From Mkv -> extractSRTfromMKV_samefolder.sh
+	creator CoverFolder.sh
+		-Take an image file (movie poster) and convert it to:
+		Cover.jpg an 500x500 px
+		Folder.jpg an 1000x1000 px
+		{Name of folder reside in}.jpg 1000x1000px
+		For music and movie folder.
+	
+	creator playlist mp3 m3u.sh
+		-Create an m3u list for the specified folder.
+		Only mp3 ... but you can change it in file.
 
--Extract subtitles SRT from each MKV file in the given file.
+Extractor files:
+---------------------------------------------
 
--Extract subtitles SRT from each MKV file in the given directory.
-	-WILL DO ALL MKV FILES IN THE DIRECTORY
+	extract SRTfromMKV_choosefile.sh
+	extract SRTfromMKV_samefolder.sh
+		Exttract SRT files from a video, only extract first SRT if many present.
 
--Could extract not the language you want if many is present.
+test files:
+---------------------------------------------
 
+	testfile.aac51.mkv
+		Audio in .mp4a (aac 6 ch), so you can tet with this file for convert, extract er turn.
+		
+Others files:
+---------------------------------------------
 
--turn video into 90 degree -> turn-video-90.sh
+	turn-video-90.sh
+		Turn an video 90 deg angle.
+		-The video was turned the audio was copied.
 
---------
+---------------------------------------------
 
 Version 2021-02-16
 
@@ -84,7 +95,7 @@ Version 2021-12-15
 
 ![Screenshot](picture_2.jpg)
 
---------
+---------------------------------------------
 
 	*How to correctly name a multimedia video file.
 
@@ -117,12 +128,12 @@ Version 2021-12-15
 
 	*AudioRes:   (Dts and Ac3 is supported in linux/windows)
 
-    AtTr    Atmos TrueHd (5.1 or more)
-    Dts71   Dts 7.1 / Dts-hd 7.1
-    Dts6.1  Dts 6.1
-    Dts51   Dts 5.1 or Dts-hd 5.1 (2.0 or more)
-    Ac351   Ac3 5.1 (5.1 or more)
-    Ac320   Ac3 is provide as 1.0 to 5.1
+    Atmos   Atmos TrueHd (5.1 or more)
+    DtsHd   Dts 7.1
+    DtsEx   Dts 6.1
+    Dts51   Dts 5.1 or Dts-hd 5.1 (2.0 or more, max 5.1)
+    Ac351   Ac3 5.1
+    Ac320   Ac3 2.0 (Ac3 could be 1.0 to 5.1)
     St      Stereo (always 2.0)
     Mo      Mono (always 1.0)
 
@@ -143,5 +154,5 @@ Version 2021-12-15
     VLC will auto load theses srt files; same name of the video file.
 
 
---------
+---------------------------------------------
 

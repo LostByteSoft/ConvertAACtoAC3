@@ -5,17 +5,19 @@ printf '\033[8;50;125t'		# will resize the window
 
 # -----------------------------------------------------------------------------
 
-echo "Turn a video 90 deg"
+echo "Convert ONE FILE to audio MP3"
 echo "By LostByteSoft"
-echo "Version 2021-07-17"
+echo "Version 2021-02-16"
 echo "Use ffmpeg only"
 
-echo -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 echo "Select filename using dialog"
 FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
 
-echo -----------------------------------------------------------------------------
+#echo "Your file is $FILE"
+
+# -----------------------------------------------------------------------------
 
 if test -z "$FILE"
 	then
@@ -28,17 +30,11 @@ if test -z "$FILE"
 		echo "You have selected "$FILE""
 fi
 
-echo "GO !"
+sleep 1
 
-echo -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-ffmpeg -i "$FILE" -vf "transpose=2" ""$FILE"-OUT.mp4"
-
-echo -----------------------------------------------------------------------------
-
-	echo Finish... exing
-	echo Press ENTER to continue.
-	read name
+ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a mp3 "$FILE"-128.mp3
 
 echo -----------------------------------------------------------------------------
 
