@@ -1,9 +1,13 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 start=$SECONDS
+now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+echo "Current time : $now"
+echo --- Start of bash ---
+sleep 0.5				# Leave time to windows to reseize.
 printf '\033[8;50;125t'		# will resize the window
 
-# -----------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------
 
 echo "Convert ALL audio/video file in folder to audio mp3"
 echo "By LostByteSoft"
@@ -25,8 +29,13 @@ done
 
 echo -----------------------------------------------------------------------------
 
-	echo Finish... This script take $(( SECONDS - start )) seconds to complete
+	echo Finish... This script take $(( SECONDS - start )) seconds to complete.
+	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+	echo "Time needed: $date"
+	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+	echo "Current time : $now"
 	echo Press ENTER key to exit !
 	read name
+	exit
 
 echo --- End of bash ---

@@ -1,5 +1,10 @@
 #!/bin/bash
+#!/usr/bin/ffmpeg
 start=$SECONDS
+now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+echo "Current time : $now"
+echo --- Start of bash ---
+sleep 0.5				# Leave time to windows to reseize.
 printf '\033[8;25;100t'		# will resize the window
 
 echo -----------------------------------------------------------------------------
@@ -55,7 +60,6 @@ echo "Get the last Folder"
 INPUT="$(dirname "${VAR1}")"
 echo ${INPUT##*/}                
 
-
 echo "Copy and convert files."
 echo cp
 echo cp "$FILE" """$(dirname "${VAR1}")""/Folder.jpg"
@@ -75,25 +79,13 @@ mogrify -resize 1000x1000 """$(dirname "${VAR1}")""/${INPUT##*/}.jpg"
 
 echo -----------------------------------------------------------------------------
 
-	echo Finish... This script take $(( SECONDS - start )) seconds to complete
+	echo Finish... This script take $(( SECONDS - start )) seconds to complete.
+	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+	echo "Time needed: $date"
+	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+	echo "Current time : $now"
 	echo Press ENTER key to exit !
 	read name
+	exit
 
 echo --- End of bash ---
-
-            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-                        Version 3.1415926535
-                          February 2022
-
-	  As is customary and in compliance with current global and
-	interplanetary regulations, the author of these pages disclaims
-	all liability for the consequences of the advice given here,
-	in particular in the event of partial or total destruction of
-	the material, Loss of rights to the manufacturer warranty,
-	electrocution, drowning, divorce, civil war, the effects of
-	radiation due to atomic fission, unexpected tax recalls or
-	    encounters with extraterrestrial beings elsewhere.
-
-      LostByteSoft no copyright or copyleft we are in the center.
-
-# --- End of file ---
