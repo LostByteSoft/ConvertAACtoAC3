@@ -4,7 +4,7 @@ start=$SECONDS
 now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 echo "Current time : $now"
 echo --- Start of bash ---
-sleep 0.5				# Leave time to windows to reseize.
+sleep 0.5			# Leave time to windows to reseize.
 printf '\033[8;50;100t'		# will resize the window
 
 echo --- Start of file ---
@@ -24,6 +24,17 @@ echo ---------------------------------------------------------------------------
 	echo "Select folder"
 		
 	way="$(zenity --file-selection --title="Choose a directory of mp3 files" --filename=$HOME/$USER --directory)"
+
+if test -z "$way"
+	then
+		echo "\$WAY is empty and now exit. You don't have selected a folder."
+		echo Press ENTER to EXIT.
+		read name
+		exit
+	else
+		echo "\$way is NOT empty."
+		echo "You have selected "$way""
+fi
 
 echo -----------------------------------------------------------------------------
 	echo "Directory and file name"

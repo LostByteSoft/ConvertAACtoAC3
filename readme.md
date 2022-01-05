@@ -28,9 +28,7 @@ How to ?
 
 -Make it executable.
 
--Double click on it, select your file.
-
--Select a file and press enter.
+-Double click on it, select your file and press enter.
 
 	
 Converters files:
@@ -76,7 +74,7 @@ test files:
 ---------------------------------------------
 
 	testfile.aac51.mkv
-		Audio in .mp4a (aac 6 ch), so you can tet with this file for convert, extract er turn.
+		Audio in .mp4a (aac 6 ch), so you can tet with this file for convert, extract or turn.
 		
 Others files:
 ---------------------------------------------
@@ -84,14 +82,23 @@ Others files:
 	turn-video-90.sh
 		Turn an video 90 deg angle.
 		-The video was turned the audio was copied.
+		
+	Convert HDRtoSDR.sh
+		-Convert VIDEO HDR to SDR, for thoses who don't have HDR display.
+		-HDR or HDR10 or HDR10+
+		-Will need to recode all file (Takes long time).
+		-You can fild HDR and HDR10 files here https://4kmedia.org/
+		
+![Screenshot](zzfromhdr.jpg)
+![Screenshot](zztosdr.jpg)
 
 ---------------------------------------------
 
-Version 2021-02-16
+Version 2021-02-16 - File converter - Convert XXXtoAC3
 
 ![Screenshot](picture_1.jpg)
 
-Version 2021-12-15
+Version 2021-12-15 - Folder and Cover - creator CoverFolder
 
 ![Screenshot](picture_2.jpg)
 

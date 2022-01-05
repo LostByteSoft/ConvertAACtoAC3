@@ -4,7 +4,7 @@ start=$SECONDS
 now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 echo "Current time : $now"
 echo --- Start of bash ---
-sleep 0.5				# Leave time to windows to reseize.
+sleep 0.5			# Leave time to windows to reseize.
 printf '\033[8;25;100t'		# will resize the window
 
 echo -----------------------------------------------------------------------------
