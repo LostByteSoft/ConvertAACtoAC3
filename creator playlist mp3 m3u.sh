@@ -4,7 +4,7 @@ start=$SECONDS
 now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 echo "Current time : $now"
 echo --- Start of bash ---
-sleep 0.5			# Leave time to windows to reseize.
+#sleep 0.5			# Leave time to windows to reseize.
 printf '\033[8;50;100t'		# will resize the window
 
 echo --- Start of file ---
@@ -70,7 +70,7 @@ echo ---------------------------------------------------------------------------
 	do
 	echo "$line1"
 	done < "$input1"
-	sleep 1
+	#sleep 1
 	
 	##work# sed -e 's!/home/master/Desktop/OST/!!' /dev/shm/m3u.tmp > "$way"/"$(basename "${VAR1}")".m3u""
 	##NOT work# sed e 's!"$way"/!!' "/dev/shm/m3u.tmp" > "$way"/"$(basename "${VAR1}")".m3u""
@@ -88,7 +88,7 @@ echo ---------------------------------------------------------------------------
 	do
 	echo "$line2"
 	done < "$input2"
-	sleep 1
+	#sleep 1
 	
 	echo
 	echo "Final File location"

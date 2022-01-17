@@ -9,24 +9,36 @@ printf '\033[8;50;125t'		# will resize the window
 
 echo -----------------------------------------------------------------------------
 
-echo "Convert ALL audio/video file in folder to audio mp3"
+echo "Convert ONE FILE to audio AAC"
 echo "By LostByteSoft"
 echo "Version 2021-02-16"
 echo "Use ffmpeg only"
 
 echo -----------------------------------------------------------------------------
 
-echo You must put this file in the same directory of the file you want to extract !
-echo Be careful it will extract ALL video MKV file in the directory.
-echo Press ENTER to continue.
-echo -----------------------------------------------------------------------------
-read name
+echo "Select filename using dialog"
+FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
 
-for i in *.*;
-  do name=`echo "$i" | cut -d'.' -f1`
-  echo "$name"
-  ffmpeg -i "$i" -codec:a libmp3lame -b:a 320k "${name}"-320.mp3
-done
+#echo "Your file is $FILE"
+
+echo -----------------------------------------------------------------------------
+
+if test -z "$FILE"
+	then
+		echo "\$FILE is empty and now exit. You don't have selected a file."
+		echo Press ENTER to continue.
+		read name
+		exit
+	else
+		echo "\$FILE is NOT empty."
+		echo "You have selected "$FILE""
+fi
+
+sleep 1
+
+echo -----------------------------------------------------------------------------
+
+ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a aac "$FILE".aac
 
 echo -----------------------------------------------------------------------------
 
