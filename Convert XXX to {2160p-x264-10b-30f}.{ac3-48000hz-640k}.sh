@@ -11,39 +11,63 @@
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
 
-	echo "creator playlist all m3u in subfolder"
+	echo "Convert XXX to {2160p-x264-10b-30f}.{ac3-48000hz-640k}"
 echo -------------------------========================-------------------------
 
 	echo What it does ?
-	echo "creator playlist all m3u in subfolder"
+	echo "Convert ONE video file to {2160p-x264-30fps}.{ac3} upscale or downscale 4k"
 echo -------------------------========================-------------------------
 
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
-echo "bash script to create playlist files in music subdirectories"
-echo "Steve Carlson (stevengcarlson@gmail.com)"
+	echo "Use ffmpeg only"
+echo "https://ffmpeg.org/ffmpeg.html"
+echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+echo "4k demo HDR https://4kmedia.org/"
 	
 echo -------------------------========================-------------------------
 echo Version compiled on:
 echo 2022-01-20_Thursday_01:33:25
 echo -------------------------========================-------------------------
+echo "Select filename using dialog !"
 
-find . -type d |
-while read subdir
-do
-  rm -f "$subdir"/*.m3u
+	FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
 
-  for filename in "$subdir"/*
-  do
-    if [ ${filename: -4} == ".mp3" ] || [ ${filename: -5} == ".flac" ] || [ ${filename: -5} == ".loss" ] || [ ${filename: -5} == ".aiff" ] || [ ${filename: -4} == ".aif" ]
-    then
-	echo "${filename##*/}"
-	echo "${filename##*/}" >> ./"$subdir"/"${subdir##*/}.m3u"
-    fi
-  done
+if test -z "$FILE"
+	then
+		echo "You don't have selected a file, now exit."
+		echo Press ENTER to continue.
+		read name
+		exit
+	else
+		echo "You have selected :"
+		echo "$FILE"
+fi
 
-done
+echo -------------------------========================-------------------------
+echo "Input name and output name"
+
+	## Set working path.
+	# mypath=`realpath $0`
+	# cd `dirname $mypath`
+	dir=$(pwd)
+
+	NAME=`echo "$FILE" | cut -d'.' -f1`
+	echo "Output file : "$NAME".{2160p-x264-10b-30f}.{ac3-48000hz-640k}"
+	
+	echo "Working dir : "$dir""
+	export VAR="$FILE"
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Selected file name: "$(basename "${VAR}")"
+	
+echo -------------------------========================-------------------------
+## The code program.
+echo "ffmpeg conversion"
+
+ffmpeg -i "$FILE" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$NAME".{2160p-x264-10b-30f}.{ac3-48000hz-640k}.mkv
+
+#ffmpeg -i "$FILE" -vf scale=1920x1080:flags=lanczos -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$NAME".{2160p-x264-30}.{ac3-48000-640}.mkv
 
 echo -------------------------========================-------------------------
 ## Software lead out.

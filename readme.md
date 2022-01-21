@@ -47,12 +47,10 @@ Converters files:
 		-An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels.
 	Convert XXXtoDTS.sh
 		-DTS conversion is now considered stable (in most cases) , just try it before use.
-	Convert XXXtoMP3 128.sh
 	Convert XXXtoMP3 320.sh
-		-As te name sugges 128 or 320.
 		
-	Convert HDRtoSDR.{SDR-x264-10b}.{no-audio}.sh
-	Convert HDRtoSDR.{SDR-x265-10b}.{no-audio}.sh
+	Convert HDRtoSDR.{SDR-2160p-x264-10b}.{ac3-48000-640}.sh
+	Convert HDRtoSDR.{SDR-x264-10b}.{ac3}.sh
 		-Convert VIDEO HDR to SDR, for thoses who don't have HDR display.
 		-NO audio in final file. Use MKVtoolNIX or something else.
 		-HDR or HDR10 or HDR10+
@@ -62,10 +60,11 @@ Converters files:
 ![Screenshot](zzfromhdr.jpg)
 ![Screenshot](zztosdr.jpg)
 		
-	Convert XXX to {720p.x264.8bit}.{aac-2.0-44100}.sh
+	Convert XXX to {720p-x264-8b-30f}.{aac-2.0-44100hz}.sh
 		-Excellent small format for facebook.
-	Convert XXX to {x264-30fps}.{ac3}.sh	
-	Convert XXX to {x265-30fps}.{ac3}.sh
+	Convert XXX to {2160p-x264-10b-30f}.{ac3-48000hz-640k}
+		-HD 4k upscale or downnscale
+		-Takes 1 hour (ages) to downscale an 8k video of 2 min lengt.
 	
 Creator files:
 ---------------------------------------------
@@ -83,7 +82,7 @@ Creator files:
 		Takes all mp3 find in subfolder and create m3u here.
 	creator playlist mp3 m3u.sh
 		-Create an m3u list for the specified folder.
-		Only mp3 ... but you can change it in file.
+		-Only mp3 ... but you can change it in file.
 		
 		
 
@@ -91,20 +90,21 @@ Extractor files:
 ---------------------------------------------
 
 	extract SRTfromMKV_choosefile.sh
+		-Exttract SRT files from a video, only extract first SRT if many present.
 	extract SRTfromMKV_samefolder.sh
-		Exttract SRT files from a video, only extract first SRT if many present.
+		-Exttract SRT files from all video files in folder.
 
 test files:
 ---------------------------------------------
 
 	testfile.aac51.mkv
-		Audio in .mp4a (aac 6 ch), so you can test with this file for convert, extract or turn.
+		-Audio in .mp4a (aac 6 ch), so you can test with this file for convert, extract or turn.
 		
 Others files:
 ---------------------------------------------
 
 	turn-video-90.sh
-		Turn an video 90 deg angle.
+		-Turn an video 90 deg angle.
 		-The video was turned the audio was copied.
 
 ---------------------------------------------
@@ -125,6 +125,30 @@ Suggested ram size to convert (hd) video files:
 	1080p -> 8gb
 	4k -> 16 gb
 	8k -> 32 gb
+	
+Bitrate (normal std):
+
+	Cd -> 1.411k 16b 44100khz
+	Ac3 -> 640k 48000khz (Created 1987)
+	Dts -> 768k and 1536k 48000khz (Created 1993)
+	AAC -> 448k 48000 khz (Created 1997)
+	Dts-hd -> 1536k 24b 48000khz
+	
+	Sample rate:
+	AAC: 8 to 192 kHz
+	AC3: 32, 44.1, 48 kHz
+
+	Bitrate:	
+	AAC: 8-529 kbit/s (stereo)
+	AC3: 32-640 kbit/s 
+	
+Resolutions:
+
+	Dvd -> 720 x 480
+	Hd -> 1280 x 720
+	Hd -> 1920 x 1080
+	4K -> 3840 x 2160
+	8K -> 7680 x 4320
 
 ---------------------------------------------
 
@@ -133,7 +157,7 @@ Suggested ram size to convert (hd) video files:
     Movie.Title.year.{Source}.{Video-Compression}.{Audio-Compression}.ext
     Movie.Title.year.{Source}.{Video-Compression}.{Audio-Compression}.language.srt
 
-    {Br}.{8k-x266-60fps}.{Atmos-12.2}
+    {Br}.{8k-x266-12b-60f}.{Atmos-12.2}
     {Br}.{2160px265}.{audio}
     {Br}.{1080pX264}.{Dts51}
     {Br}.{1080pX264}.{Ac351}
@@ -179,7 +203,7 @@ Suggested ram size to convert (hd) video files:
 
 	*Exemples:
 
-    Dune.2021.{8k-x266-60fps}.{Atmos-12.2}.mkv
+    Dune.2021.{8k-x266-12b-60f}.{Atmos-12.2}.mkv
     Die.Hard.1988.{Br.4kx26510b.Dts51}.mkv
     Die.Hard.1988.{Br.4kx26510b.Dts51}.eng.srt
     Die.Hard.1988.{Br.4kx26510b.Dts51}.fra.srt
@@ -191,4 +215,26 @@ Suggested ram size to convert (hd) video files:
 
 
 ---------------------------------------------
+
+JUST DO WHAT YOU WANT WITH THE PUBLIC LICENSE
+
+Version 3.1415926532 (January 2022)
+
+TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+   
+Everyone is permitted to copy and distribute verbatim or modified copies of
+this license document.
+
+As is customary and in compliance with current global and interplanetary
+regulations, the author of these pages disclaims all liability for the
+consequences of the advice given here, in particular in the event of partial
+or total destruction of the material, Loss of rights to the manufacturer
+warranty, electrocution, drowning, divorce, civil war, the effects of radiation
+due to atomic fission, unexpected tax recalls or encounters with
+extraterrestrial beings elsewhere.
+
+LostByteSoft no copyright or copyleft we are in the center.
+
+--------------------------------------------------------------------
+# --- End of file ---
 

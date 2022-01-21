@@ -11,39 +11,72 @@
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
 
-	echo "creator playlist all m3u in subfolder"
+	echo "Convert XXX to {720p-x264-8b-30f}.{aac-2.0-44100hz-160k}"
 echo -------------------------========================-------------------------
 
 	echo What it does ?
-	echo "creator playlist all m3u in subfolder"
+	echo "Convert ONE video file to 720p x264 8bit aac-2.0 44100"
 echo -------------------------========================-------------------------
 
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
-echo "bash script to create playlist files in music subdirectories"
-echo "Steve Carlson (stevengcarlson@gmail.com)"
+	echo "Use ffmpeg only"
+echo "https://ffmpeg.org/ffmpeg.html"
 	
 echo -------------------------========================-------------------------
 echo Version compiled on:
 echo 2022-01-20_Thursday_01:33:25
 echo -------------------------========================-------------------------
+echo "Select filename using dialog !"
 
-find . -type d |
-while read subdir
-do
-  rm -f "$subdir"/*.m3u
+	FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
 
-  for filename in "$subdir"/*
-  do
-    if [ ${filename: -4} == ".mp3" ] || [ ${filename: -5} == ".flac" ] || [ ${filename: -5} == ".loss" ] || [ ${filename: -5} == ".aiff" ] || [ ${filename: -4} == ".aif" ]
-    then
-	echo "${filename##*/}"
-	echo "${filename##*/}" >> ./"$subdir"/"${subdir##*/}.m3u"
-    fi
-  done
+if test -z "$FILE"
+	then
+		echo "You don't have selected a file, now exit."
+		echo Press ENTER to continue.
+		read name
+		exit
+	else
+		echo "You have selected :"
+		echo "$FILE"
+fi
 
-done
+echo -------------------------========================-------------------------
+echo "Input name and output name"
+
+	## Set working path.
+	# mypath=`realpath $0`
+	# cd `dirname $mypath`
+	dir=$(pwd)
+
+	NAME=`echo "$FILE" | cut -d'.' -f1`
+	echo "Output file : "$NAME".{720p-x264-8b-30f}.{aac-2.0-44100hz-160k}.mkv"
+	
+	echo "Working dir : "$dir""
+	export VAR="$FILE"
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Selected file name: "$(basename "${VAR}")"
+	
+echo -------------------------========================-------------------------
+## The code program.
+echo "ffmpeg conversion"
+
+### debug pixel info
+### ffmpeg -h encoder=libx265 | grep pixel
+
+### -ar 44100 -ac 2 -b:a 192k
+### -c:a aac -strict -2
+
+#ffmpeg -i "$FILE" -vf scale=1280:720,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -c:a aac -ar 44100 -ac 2 -b:a 160k "$NAME".{720p-x264-8b-30f}.{aac-2.0-44100hz}.mkv
+
+ffmpeg -i "$FILE" -vf scale=1280x720:flags=lanczos,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -c:a aac -ar 44100 -ac 2 -b:a 160k "$NAME".{720p-x264-8b-30f}.{aac-2.0-44100hz-160k}.mkv
+
+### ffmpeg -i "$FILE" -s hd720 -c:v libx264 -crf 25 -c:a aac -ar 44100 -ac 2 -b:a 160k "$NAME".{720p-x264-8bit}.{aac-2.0-44100}.mkv
+
+## -preset ultrafast
+## -preset medium
 
 echo -------------------------========================-------------------------
 ## Software lead out.

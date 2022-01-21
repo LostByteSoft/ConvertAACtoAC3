@@ -9,40 +9,26 @@
 	echo "Current time : $now"
 
 echo -------------------------========================-------------------------
-
-echo "Verify if imagemagick is installed."
-echo "sudo apt-get install imagemagick."
-
-gnudate() {
-    if hash imagemagick 2>/dev/null; then
-        imagemagick "$@"
-    else
-        date "$@"
-    fi
-}
-
-echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
 
-	echo "creator CoverFolder"
+	echo "Convert HDRtoSDR.{SDR-x264-10b-30f}.{ac3}"
 echo -------------------------========================-------------------------
 
 	echo What it does ?
-	echo "You specify ONE image file and this convert to THREE files."
+	echo "Convert ONE video file HDR to SDR"
 echo -------------------------========================-------------------------
 
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
-echo "Convert ONE image file to 1000 x 1000 px poster.jpg"
-echo "Convert ONE image file to 1000 x 1000 px nameofthefolder.jpg"
-echo "Convert ONE image file to 500 x 500 px cover.jpg"
-echo "Create files for music album or movie folder"
-echo "Bash and imagemagic only"
+	echo "Use ffmpeg only"
+	echo "https://ffmpeg.org/ffmpeg.html"
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://4kmedia.org/"
 	
 echo -------------------------========================-------------------------
-echo Version compiled on:
-echo 2022-01-20_Thursday_01:33:25
+	echo Version compiled on:
+	echo 2022-01-20_Thursday_01:33:25
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
@@ -68,7 +54,7 @@ echo "Input name and output name"
 	dir=$(pwd)
 
 	NAME=`echo "$FILE" | cut -d'.' -f1`
-	echo "Output file : "$NAME" (if implemented)"
+	echo "Output file : "$NAME".{SDR-x264-10b-30f}.{ac3}"
 	
 	echo "Working dir : "$dir""
 	export VAR="$FILE"
@@ -77,27 +63,29 @@ echo "Input name and output name"
 	
 echo -------------------------========================-------------------------
 ## The code program.
+echo "ffmpeg conversion"
 
-echo "Get the last Folder"
-INPUT="$(dirname "${VAR1}")"
-echo ${INPUT##*/}                
+### debug pixel info
+### ffmpeg -h encoder=libx265 | grep pixel
 
-echo "Copy and convert files."
-echo cp
-echo cp "$FILE" """$(dirname "${VAR1}")""/Folder.jpg"
-echo cp "$FILE" """$(dirname "${VAR1}")""/Cover.jpg"
-echo cp "$FILE" """$(dirname "${VAR1}")""/${INPUT##*/}".jpg
-cp "$FILE" """$(dirname "${VAR1}")""/Folder.jpg"
-cp "$FILE" """$(dirname "${VAR1}")""/Cover.jpg"
-cp "$FILE" """$(dirname "${VAR1}")""/${INPUT##*/}".jpg
+### x264 8b preset
 
-echo mogrify
-echo mogrify -resize 1000x1000 """$(dirname "${VAR1}")""/Folder.jpg"
-echo mogrify -resize 500x500 """$(dirname "${VAR1}")""/Cover.jpg"
-echo mogrify -resize 500x500 """$(dirname "${VAR1}")""/${INPUT##*/}.jpg"
-mogrify -resize 1000x1000 """$(dirname "${VAR1}")""/Folder.jpg"
-mogrify -resize 500x500 """$(dirname "${VAR1}")""/Cover.jpg"
-mogrify -resize 1000x1000 """$(dirname "${VAR1}")""/${INPUT##*/}.jpg"
+### good quality (Low) (x264 8bit)
+### ffmpeg -i "$FILE" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$NAME".{SDR.x264.8b}.{no.audio}.mkv
+
+### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
+### ffmpeg -i "$FILE" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x264.8b}.{no.audio}.mkv
+
+###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
+ffmpeg -i "$FILE" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -preset faster -tune fastdecode -c:a ac3 "$NAME".{SDR-x264-10b-30f}.{ac3}.mkv
+
+### x265 10b presets
+
+### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
+### ffmpeg -i "$FILE" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
+
+## -preset ultrafast
+## -preset medium
 
 echo -------------------------========================-------------------------
 ## Software lead out.
