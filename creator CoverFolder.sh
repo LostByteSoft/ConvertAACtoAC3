@@ -1,17 +1,22 @@
 #!/bin/bash
-	printf '\033[8;40;100t'			# will resize the window, if needed.
-	#printf '\033[8;40;200t'		# will resize the window, if needed.
-
+#!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-	## Software lead in
+	#printf '\033[8;50;80t'		# will resize the window, if needed.
+	printf '\033[8;30;80t'		# will resize the window, if needed.
+	#printf '\033[8;50;200t'	# will resize the window, if needed.
+	
+part=1
+echo -------------------------============= $part ============-------------------------
+## Software lead in
 	start=$SECONDS
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
 
-echo -------------------------========================-------------------------
+part=$((part+1))
+echo -------------------------============= $part ============-------------------------
 
-echo "Verify if imagemagick is installed."
-echo "sudo apt-get install imagemagick."
+	echo "Verify if imagemagick is installed."
+	echo "sudo apt-get install imagemagick."
 
 gnudate() {
     if hash imagemagick 2>/dev/null; then
@@ -21,85 +26,87 @@ gnudate() {
     fi
 }
 
-echo -------------------------========================-------------------------
+part=$((part+1))
+echo -------------------------============= $part ============-------------------------
 ## Software name, what is this, version, informations.
-
 	echo "creator CoverFolder"
-echo -------------------------========================-------------------------
-
 	echo What it does ?
 	echo "You specify ONE image file and this convert to THREE files."
-echo -------------------------========================-------------------------
-
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
-echo "Convert ONE image file to 1000 x 1000 px poster.jpg"
-echo "Convert ONE image file to 1000 x 1000 px nameofthefolder.jpg"
-echo "Convert ONE image file to 500 x 500 px cover.jpg"
-echo "Create files for music album or movie folder"
-echo "Bash and imagemagic only"
-	
-echo -------------------------========================-------------------------
-echo Version compiled on:
-echo 2022-01-20_Thursday_01:33:25
-echo -------------------------========================-------------------------
+	echo
+	echo "Convert ONE image file to 1000 x 1000 px poster.jpg"
+	echo "Convert ONE image file to 1000 x 1000 px nameofthefolder.jpg"
+	echo "Convert ONE image file to 500 x 500 px cover.jpg"
+	echo "Create files for music album or movie folder"
+	echo "Bash and imagemagic only"
+part=$((part+1))
+echo -------------------------============= $part ============-------------------------
+	echo Version compiled on : Also serves as a version
+	echo 2022-01-25_Tuesday_11:34:45
+part=$((part+1))
+echo -------------------------============= $part ============-------------------------
 echo "Select filename using dialog !"
 
-	FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
+	file="$(zenity --file-selection --filename=$HOME/$USER --file-filter="*.jpg *.jpeg *.bmp *.tiff *.gif *.webp" --title="Select a file, image format only")"
+	## --file-filter="*.jpg"
 
-if test -z "$FILE"
+if test -z "$file"
 	then
-		echo "You don't have selected a file, now exit."
-		echo Press ENTER to continue.
-		read name
+		echo "You don't have selected a file, now auto-exit in 3 seconds."
+		part=$((part+1))
+		echo -------------------------============= $part ============-------------------------
+		sleep 3
 		exit
 	else
 		echo "You have selected :"
-		echo "$FILE"
+		echo "$file"
 fi
 
-echo -------------------------========================-------------------------
-echo "Input name and output name"
+part=$((part+1))
+echo -------------------------============= $part ============-------------------------
+echo "Input name, directory and output name :"
 
 	## Set working path.
-	# mypath=`realpath $0`
-	# cd `dirname $mypath`
 	dir=$(pwd)
-
-	NAME=`echo "$FILE" | rev | cut -f 2- -d '.' | rev`
-	echo "Output file : "$NAME" (if implemented)"
+	
+	echo Input file : "$file"
 	
 	echo "Working dir : "$dir""
-	export VAR="$FILE"
+	export VAR="$file"
 	echo Base directory : "$(dirname "${VAR}")"
-	echo Selected file name: "$(basename "${VAR}")"
+	echo Base name: "$(basename "${VAR}")"
 	
-echo -------------------------========================-------------------------
+	## Output file name
+	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output file : "$name""
+	
+	echo "Get the last Folder"
+	INPUT="$(dirname "${VAR}")"
+	echo ${INPUT##*/} 
+
+part=$((part+1))
+echo -------------------------============= $part ============-------------------------
 ## The code program.
 
-echo "Get the last Folder"
-INPUT="$(dirname "${VAR1}")"
-echo ${INPUT##*/}                
+	echo "Copy and convert files."
+	echo cp "$file" """$(dirname "${VAR}")""/Folder.jpg"
+	echo cp "$file" """$(dirname "${VAR}")""/Cover.jpg"
+	echo cp "$file" """$(dirname "${VAR}")""/${INPUT##*/}".jpg
+	cp "$file" """$(dirname "${VAR}")""/Folder.jpg"
+	cp "$file" """$(dirname "${VAR}")""/Cover.jpg"
+	cp "$file" """$(dirname "${VAR}")""/${INPUT##*/}".jpg
 
-echo "Copy and convert files."
-echo cp
-echo cp "$FILE" """$(dirname "${VAR1}")""/Folder.jpg"
-echo cp "$FILE" """$(dirname "${VAR1}")""/Cover.jpg"
-echo cp "$FILE" """$(dirname "${VAR1}")""/${INPUT##*/}".jpg
-cp "$FILE" """$(dirname "${VAR1}")""/Folder.jpg"
-cp "$FILE" """$(dirname "${VAR1}")""/Cover.jpg"
-cp "$FILE" """$(dirname "${VAR1}")""/${INPUT##*/}".jpg
+	echo "Copy and convert files."
+	echo mogrify -resize 1000x1000 """$(dirname "${VAR}")""/Folder.jpg"
+	echo mogrify -resize 500x500 """$(dirname "${VAR}")""/Cover.jpg"
+	echo mogrify -resize 500x500 """$(dirname "${VAR}")""/${INPUT##*/}.jpg"
+	mogrify -resize 1000x1000 """$(dirname "${VAR}")""/Folder.jpg"
+	mogrify -resize 500x500 """$(dirname "${VAR}")""/Cover.jpg"
+	mogrify -resize 1000x1000 """$(dirname "${VAR}")""/${INPUT##*/}.jpg"
 
-echo mogrify
-echo mogrify -resize 1000x1000 """$(dirname "${VAR1}")""/Folder.jpg"
-echo mogrify -resize 500x500 """$(dirname "${VAR1}")""/Cover.jpg"
-echo mogrify -resize 500x500 """$(dirname "${VAR1}")""/${INPUT##*/}.jpg"
-mogrify -resize 1000x1000 """$(dirname "${VAR1}")""/Folder.jpg"
-mogrify -resize 500x500 """$(dirname "${VAR1}")""/Cover.jpg"
-mogrify -resize 1000x1000 """$(dirname "${VAR1}")""/${INPUT##*/}.jpg"
-
-echo -------------------------========================-------------------------
+echo -------------------------============= $part ============-------------------------
 ## Software lead out.
 	echo "Finish..."
 	echo "This script take $(( SECONDS - start )) seconds to complete."
@@ -107,26 +114,30 @@ echo -------------------------========================-------------------------
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-echo -------------------------========================-------------------------
+part=$((part+1))
+echo -------------------------============= $part ============-------------------------
 ## Press enter or auto-quit here.
 	echo "If a script takes MORE than 120 seconds to complete it will ask you to"
 	echo "press ENTER to terminate."
 	echo
 	echo "If a script takes LESS than 120 seconds to complete it will auto"
 	echo "terminate after 10 seconds"
-echo -------------------------========================-------------------------
+part=$((part+1))
+echo -------------------------============= $part ============-------------------------
 ## Exit, wait or auto-quit.
 if [ $(( SECONDS - start )) -gt 120 ]
 	then
 	echo "Script takes more than 120 seconds to complete."
 	echo Press ENTER key to exit !
-	echo -------------------------========================-------------------------
+	part=$((part+1))
+	echo -------------------------============= $part ============-------------------------
 	read name
 	exit
 fi
 	echo "Script takes less than 120 seconds to complete."
 	echo "Auto-quit in 10 sec. (You can press X)"
-	echo -------------------------========================-------------------------
+	part=$((part+1))
+	echo -------------------------============= $part ============-------------------------
 	sleep 10
 	exit
 ## -----===== End of bash =====-----
