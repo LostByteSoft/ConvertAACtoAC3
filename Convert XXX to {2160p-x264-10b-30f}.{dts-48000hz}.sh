@@ -2,8 +2,8 @@
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
 
-	printf '\033[8;40;100t'		# will resize the window, if needed.
-	#printf '\033[8;40;200t'	# will resize the window, if needed.
+	#printf '\033[8;40;100t'	# will resize the window, if needed.
+	printf '\033[8;40;125t'		# will resize the window, if needed.
 
 	## Software lead in
 	start=$SECONDS
@@ -12,23 +12,28 @@
 
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Convert XXX to DTS"
+	echo "Convert XXX to {2160p-x264-10b-30f}.{dts-48000hz}"
 echo -------------------------========================-------------------------
 	echo What it does ?
-	echo "Convert ONE FILE to audio DTS"
+	echo "Convert ONE video file to {2160p-x264-10b-30f}.{dts-48000hz} upscale or downscale 4k"
 echo -------------------------========================-------------------------
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
+	echo
+	echo "Use ffmpeg only"
+	echo "https://ffmpeg.org/ffmpeg.html"
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://4kmedia.org/"
 echo -------------------------========================-------------------------
 	echo Version compiled on:
-	echo 2022-01-21_Friday_08:32:23
+	echo 2022-01-20_Thursday_01:33:25
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
+	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file")"
 
-if test -z "$FILE"
+if test -z "$file"
 	then
 		echo "You don't have selected a file, now exit."
 		echo Press ENTER to continue.
@@ -36,31 +41,37 @@ if test -z "$FILE"
 		exit
 	else
 		echo "You have selected :"
-		echo "$FILE"
+		echo "$file"
 fi
 
 echo -------------------------========================-------------------------
-echo "Input name and output name"
+echo "Input name, directory and output name :"
 
 	## Set working path.
-	# mypath=`realpath $0`
-	# cd `dirname $mypath`
 	dir=$(pwd)
-
-	NAME=`echo "$FILE" | rev | cut -f 2- -d '.' | rev`
-	echo "Output file : "$NAME".{dts-48000hz-768k}.dts"
+	
+	echo Input file : "$file"
 	
 	echo "Working dir : "$dir""
-	export VAR="$FILE"
+	export VAR="$file"
 	echo Base directory : "$(dirname "${VAR}")"
-	echo Selected file name: "$(basename "${VAR}")"
+	echo Base name: "$(basename "${VAR}")"
+	
+	## Output file name
+	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output file : "$name".{2160p-x264-10b-30f}.{dts-48000hz}.mkv"
 	
 echo -------------------------========================-------------------------
 ## The code program.
+echo "ffmpeg conversion"
 
-ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$NAME".{dts-48000hz-768k}.dts
+## Ac3 sound
+## ffmpeg -i "$file" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{2160p-x264-10b-30f}.{ac3-48000hz-640k}.mkv
 
-#ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$NAME".{dts-48000hz-768k}.dts
+## Dts sound
+ffmpeg -i "$file" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -strict experimental -c:a dts -ar 48000 "$name".{2160p-x264-10b-30f}.{dts-48000hz}.mkv
+
+#ffmpeg -i "$file" -vf scale=1920x1080:flags=lanczos -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{2160p-x264-30}.{ac3-48000-640}.mkv
 
 echo -------------------------========================-------------------------
 ## Software lead out.

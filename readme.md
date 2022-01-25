@@ -2,9 +2,10 @@ LostByteSoft ; ConvertFFMPEG
 
 Convert or modify multimedia files with FFMPEG.
 
-
 Features:
 ---------------------------------------------
+
+Audio, video & images at different level.
 
 -Convert multimedia files, audio and video to standart format.
 
@@ -13,7 +14,7 @@ Features:
 
 -Use Zenity to find your files.
 
--Use command line.
+-Use command line, for conversions.
 
 -It's just a bash script for easy use ffmpeg.
 
@@ -24,6 +25,8 @@ Features:
 -An easy way to convert audio (with video) AAC 6 channels to AC3 or DTS 6 channels.
 
 -Convert video to x264 and x265.
+
+History: I start this "thing" just for convert aac 6 ch to ac3 6 ch and became what it is now.
 
 How to ?
 ---------------------------------------------
@@ -42,15 +45,15 @@ Converters files:
 	Convert ALLfolderMP3 320.sh
 	Convert FLACfolderMP3.sh
 		All .Flac files in folder will be converted to Mp3 in 320kbps.
-	Convert XXXtoAAC.sh
-	Convert XXXtoAC3.sh
+	Convert XXX to AACC.sh
+	Convert XXX to AC3.sh
 		-An easy way to convert audio (with video) AAC 6 channels to AC3 6 channels.
-	Convert XXXtoDTS.sh
+	Convert XXX to DTS.sh
 		-DTS conversion is now considered stable (in most cases) , just try it before use.
-	Convert XXXtoMP3 320.sh
+	Convert XXX to MP3 320.sh
 		
-	Convert HDRtoSDR.{SDR-2160p-x264-10b}.{ac3-48000-640}.sh
-	Convert HDRtoSDR.{SDR-x264-10b}.{ac3}.sh
+	Convert HDRtoSDR.{SDR-2160p-x264-10b}.{dts-48000}.sh
+	Convert HDRtoSDR.{SDR-x264-10b}.{ac3-48000hz-640k}.sh
 		-Convert VIDEO HDR to SDR, for thoses who don't have HDR display.
 		-NO audio in final file. Use MKVtoolNIX or something else.
 		-HDR or HDR10 or HDR10+
@@ -62,7 +65,7 @@ Converters files:
 		
 	Convert XXX to {720p-x264-8b-30f}.{aac-2.0-44100hz}.sh
 		-Excellent small format for facebook.
-	Convert XXX to {2160p-x264-10b-30f}.{ac3-48000hz-640k}
+	Convert XXX to {2160p-x264-10b-30f}.{dts-48000hz}.sh
 		-HD 4k upscale or downnscale
 		-Takes 1 hour (ages) to downscale an 8k video of 2 min lengt.
 	
@@ -216,24 +219,24 @@ Resolutions:
 
 ---------------------------------------------
 
-JUST DO WHAT YOU WANT WITH THE PUBLIC LICENSE
+	JUST DO WHAT YOU WANT WITH THE PUBLIC LICENSE
 
-Version 3.1415926532 (January 2022)
+	Version 3.1415926532 (January 2022)
 
-TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+	TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
    
-Everyone is permitted to copy and distribute verbatim or modified copies of
-this license document.
+	Everyone is permitted to copy and distribute verbatim or modified copies of
+	this license document.
 
-As is customary and in compliance with current global and interplanetary
-regulations, the author of these pages disclaims all liability for the
-consequences of the advice given here, in particular in the event of partial
-or total destruction of the material, Loss of rights to the manufacturer
-warranty, electrocution, drowning, divorce, civil war, the effects of radiation
-due to atomic fission, unexpected tax recalls or encounters with
-extraterrestrial beings elsewhere.
+	As is customary and in compliance with current global and interplanetary
+	regulations, the author of these pages disclaims all liability for the
+	consequences of the advice given here, in particular in the event of partial
+	or total destruction of the material, Loss of rights to the manufacturer
+	warranty, electrocution, drowning, divorce, civil war, the effects of radiation
+	due to atomic fission, unexpected tax recalls or encounters with
+	extraterrestrial beings elsewhere.
 
-LostByteSoft no copyright or copyleft we are in the center.
+	LostByteSoft no copyright or copyleft we are in the center.
 
 --------------------------------------------------------------------
 # --- End of file ---

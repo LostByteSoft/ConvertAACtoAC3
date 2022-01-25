@@ -2,8 +2,8 @@
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
 
-	printf '\033[8;40;100t'		# will resize the window, if needed.
-	#printf '\033[8;40;200t'	# will resize the window, if needed.
+	#printf '\033[8;40;100t'	# will resize the window, if needed.
+	printf '\033[8;40;125t'		# will resize the window, if needed.
 
 	## Software lead in
 	start=$SECONDS
@@ -12,23 +12,27 @@
 
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Convert XXX to DTS"
+	echo "Convert HDRtoSDR.{SDR-x264-10b-30f}.{ac3-48000hz-640k}"
 echo -------------------------========================-------------------------
 	echo What it does ?
-	echo "Convert ONE FILE to audio DTS"
+	echo "Convert ONE video file HDR to SDR {SDR-x264-10b-30f}.{ac3-48000hz-640k}"
 echo -------------------------========================-------------------------
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
+	echo "Use ffmpeg only"
+	echo "https://ffmpeg.org/ffmpeg.html"
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://4kmedia.org/"
 echo -------------------------========================-------------------------
 	echo Version compiled on:
-	echo 2022-01-21_Friday_08:32:23
+	echo 2022-01-21_Friday_08:24:06
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
+	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file")"
 
-if test -z "$FILE"
+if test -z "$file"
 	then
 		echo "You don't have selected a file, now exit."
 		echo Press ENTER to continue.
@@ -36,31 +40,51 @@ if test -z "$FILE"
 		exit
 	else
 		echo "You have selected :"
-		echo "$FILE"
+		echo "$file"
 fi
 
 echo -------------------------========================-------------------------
-echo "Input name and output name"
+echo "Input name, directory and output name :"
 
 	## Set working path.
-	# mypath=`realpath $0`
-	# cd `dirname $mypath`
 	dir=$(pwd)
-
-	NAME=`echo "$FILE" | rev | cut -f 2- -d '.' | rev`
-	echo "Output file : "$NAME".{dts-48000hz-768k}.dts"
+	
+	echo Input file : "$file"
 	
 	echo "Working dir : "$dir""
-	export VAR="$FILE"
+	export VAR="$file"
 	echo Base directory : "$(dirname "${VAR}")"
-	echo Selected file name: "$(basename "${VAR}")"
+	echo Base name: "$(basename "${VAR}")"
 	
+	## Output file name
+	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output file : "$name".{SDR-x264-10b-30f}.{ac3-48000hz-640k}.mkv"
+
 echo -------------------------========================-------------------------
 ## The code program.
+echo "ffmpeg conversion"
 
-ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$NAME".{dts-48000hz-768k}.dts
+### debug pixel info
+### ffmpeg -h encoder=libx265 | grep pixel
 
-#ffmpeg -i "$FILE" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$NAME".{dts-48000hz-768k}.dts
+### x264 8b preset
+
+### good quality (Low) (x264 8bit)
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$NAME".{SDR.x264.8b}.{no.audio}.mkv
+
+### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x264.8b}.{no.audio}.mkv
+
+###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -preset faster -tune fastdecode -c:a ac3 -ar 48000 -b:a 640k "$NAME".{SDR-x264-10b-30f}.{ac3-48000hz-640k}.mkv
+
+### x265 10b presets
+
+### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
+
+## -preset ultrafast
+## -preset medium
 
 echo -------------------------========================-------------------------
 ## Software lead out.
