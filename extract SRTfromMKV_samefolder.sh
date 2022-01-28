@@ -1,32 +1,31 @@
 #!/bin/bash
-	printf '\033[8;40;100t'			# will resize the window, if needed.
-	#printf '\033[8;40;200t'		# will resize the window, if needed.
-
+#!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-	## Software lead in
+	#printf '\033[8;40;75t'		# will resize the window, if needed.
+	printf '\033[8;40;125t'		# will resize the window, if needed.
+	#printf '\033[8;50;200t'	# will resize the window, if needed.
+echo -------------------------========================-------------------------
+## Software lead in
 	start=$SECONDS
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
+	echo
+	echo Version compiled on : Also serves as a version
+	echo 2022-01-28_Friday_06:54:17
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-
 	echo "extract SRTfromMKV_samefolder"
-echo -------------------------========================-------------------------
-
+	echo
 	echo What it does ?
 	echo "Extract subtitles from each MKV IDX SUB file in the given directory"
-echo -------------------------========================-------------------------
-
+	echo
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
 	echo "https://askubuntu.com/questions/452268/extract-subtitle-from-mkv-files"
-echo "Author: https://askubuntu.com/users/230052/nux"
-	
-echo -------------------------========================-------------------------
-echo Version compiled on:
-echo 2022-01-20_Thursday_01:33:25
+	echo "Author: https://askubuntu.com/users/230052/nux"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
 
 echo You must put this file in the same directory of the file you want to extract !

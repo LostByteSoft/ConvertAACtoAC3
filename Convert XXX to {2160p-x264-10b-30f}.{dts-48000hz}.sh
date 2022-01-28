@@ -1,22 +1,25 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-
-	#printf '\033[8;40;100t'	# will resize the window, if needed.
+	#printf '\033[8;40;75t'		# will resize the window, if needed.
 	printf '\033[8;40;125t'		# will resize the window, if needed.
-
-	## Software lead in
+	#printf '\033[8;50;200t'	# will resize the window, if needed.
+echo -------------------------========================-------------------------
+## Software lead in
 	start=$SECONDS
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
+	echo
+	echo Version compiled on : Also serves as a version
+	echo 2022-01-28_Friday_06:54:17
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
+
 	echo "Convert XXX to {2160p-x264-10b-30f}.{dts-48000hz}"
-echo -------------------------========================-------------------------
+	echo
 	echo What it does ?
 	echo "Convert ONE video file to {2160p-x264-10b-30f}.{dts-48000hz} upscale or downscale 4k"
-echo -------------------------========================-------------------------
+	echo
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
@@ -25,9 +28,8 @@ echo -------------------------========================-------------------------
 	echo "https://ffmpeg.org/ffmpeg.html"
 	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
 	echo "4k demo HDR https://4kmedia.org/"
-echo -------------------------========================-------------------------
-	echo Version compiled on:
-	echo 2022-01-20_Thursday_01:33:25
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 

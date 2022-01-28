@@ -1,22 +1,24 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-
-	#printf '\033[8;40;100t'	# will resize the window, if needed.
+	#printf '\033[8;40;75t'		# will resize the window, if needed.
 	printf '\033[8;40;125t'		# will resize the window, if needed.
-
-	## Software lead in
+	#printf '\033[8;50;200t'	# will resize the window, if needed.
+echo -------------------------========================-------------------------
+## Software lead in
 	start=$SECONDS
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
+	echo
+	echo Version compiled on : Also serves as a version
+	echo 2022-01-28_Friday_06:54:17
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
 	echo "Convert HDRtoSDR.{SDR-2160p-x264-10b}.{dts-48000}"
-echo -------------------------========================-------------------------
+	echo
 	echo What it does ?
 	echo "Convert HDR to SDR.{SDR-2160p-x264-10b}.{dts-48000}"
-echo -------------------------========================-------------------------
+	echo
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
@@ -25,9 +27,8 @@ echo -------------------------========================-------------------------
 	echo "https://ffmpeg.org/ffmpeg.html"
 	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
 	echo "4k demo HDR https://4kmedia.org/"
-echo -------------------------========================-------------------------
-	echo Version compiled on:
-	echo 2022-01-21_Friday_08:24:06
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
@@ -77,7 +78,7 @@ echo "ffmpeg conversion"
 ### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$name".{SDR.x264.8b}.{no.audio}.mkv
 
 ###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,scale=3840:2160,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -preset faster -tune fastdecode -strict experimental -c:a dts -ar 48000 "$name".{SDR-2160p-x264-10b}.{dts-48000}.mkv
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,scale=3840:2160,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -strict experimental -c:a dts -ar 48000 "$name".{SDR-2160p-x264-10b}.{dts-48000}.mkv
 
 ### x265 10b presets
 

@@ -1,28 +1,29 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-
-	printf '\033[8;40;100t'		# will resize the window, if needed.
-	#printf '\033[8;40;200t'	# will resize the window, if needed.
-
-	## Software lead in
+	#printf '\033[8;40;75t'		# will resize the window, if needed.
+	printf '\033[8;40;125t'		# will resize the window, if needed.
+	#printf '\033[8;50;200t'	# will resize the window, if needed.
+echo -------------------------========================-------------------------
+## Software lead in
 	start=$SECONDS
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
+	echo
+	echo Version compiled on : Also serves as a version
+	echo 2022-01-28_Friday_06:54:17
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
 	echo "Convert XXX to MP3 320"
-echo -------------------------========================-------------------------
+	echo
 	echo What it does ?
 	echo "Convert ONE FILE to audio MP3"
-echo -------------------------========================-------------------------
+	echo
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
-echo -------------------------========================-------------------------
-	echo Version compiled on:
-	echo 2022-01-21_Friday_08:32:23
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
