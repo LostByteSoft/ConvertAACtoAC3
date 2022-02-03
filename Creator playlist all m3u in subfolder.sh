@@ -19,26 +19,35 @@ echo -------------------------========================-------------------------
 	echo 2022-02-03_Thursday_04:43:34
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Software name: Turn a video 90 deg"
-echo "By LostByteSoft"
-echo "Version 2021-07-17"
-echo "Use ffmpeg only"
+	echo "Software name: creator playlist all m3u in subfolder"
+	echo
+	echo What it does ?
+	echo "creator playlist all m3u in subfolder"
+	echo
+	echo Informations :
+	echo "By LostByteSoft, no copyright or copyleft"
+	echo "https://github.com/LostByteSoft"
+	echo "bash script to create playlist files in music subdirectories"
+	echo "Steve Carlson (stevengcarlson@gmail.com)"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
 
-echo -----------------------------------------------------------------------------
+find . -type d |
+while read subdir
+do
+  rm -f "$subdir"/*.m3u
 
-echo "Select filename using dialog"
-FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
+  for filename in "$subdir"/*
+  do
+    if [ ${filename: -4} == ".mp3" ] || [ ${filename: -5} == ".flac" ] || [ ${filename: -5} == ".loss" ] || [ ${filename: -5} == ".aiff" ] || [ ${filename: -4} == ".aif" ]
+    then
+	echo "${filename##*/}"
+	echo "${filename##*/}" >> ./"$subdir"/"${subdir##*/}.m3u"
+    fi
+  done
 
-if test -z "$FILE"
-	then
-		echo "\$FILE is empty and now exit. You don't have selected a file."
-		echo Press ENTER to continue.
-		read name
-		exit
-	else
-		echo "\$FILE is NOT empty."
-		echo "You have selected "$FILE""
-fi
+done
 
 ## Error detector.
 if [ "$?" -ge 1 ]; then

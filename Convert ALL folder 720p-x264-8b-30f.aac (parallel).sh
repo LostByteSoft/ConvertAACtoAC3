@@ -19,29 +19,102 @@ echo -------------------------========================-------------------------
 	echo 2022-02-03_Thursday_04:43:34
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Software name: Turn a video 90 deg"
-echo "By LostByteSoft"
-echo "Version 2021-07-17"
-echo "Use ffmpeg only"
+	echo "Software name: Convert MANY files to video Convert ALL folder 720p-x264-8b-30f.aac (parallel)"
+	echo
+	echo What it does ?
+	echo "Convert MANY video file to Convert ALL folder 720p-x264-8b-30f.aac (parallel).sh"
+	echo
+	echo Informations :
+	echo "By LostByteSoft, no copyright or copyleft"
+	echo "https://github.com/LostByteSoft"
+	echo "Use ffmpeg only"
+	echo "https://ffmpeg.org/ffmpeg.html"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+echo "Check installed requirements !"
 
-echo -----------------------------------------------------------------------------
-
-echo "Select filename using dialog"
-FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
-
-if test -z "$FILE"
+if command -v ffmpeg >/dev/null 2>&1
 	then
-		echo "\$FILE is empty and now exit. You don't have selected a file."
-		echo Press ENTER to continue.
-		read name
+		echo "Ffmpeg installed continue."
+	else
+		echo "You don't have ' parallel ' installed, now exit in 3 seconds."
+		echo "Add with : sudo apt-get install ffmpeg"
+		echo -------------------------========================-------------------------
+		sleep 3
+		exit
+fi
+
+if command -v parallel >/dev/null 2>&1
+	then
+		echo "Parallel installed continue."
+	else
+		echo "You don't have ' parallel ' installed, now exit in 3 seconds."
+		echo "Add with : sudo apt-get install parallel"
+		echo -------------------------========================-------------------------
+		sleep 3
+		exit
+fi
+
+echo -------------------------========================-------------------------
+echo "Enter cores to use ?"
+	cpu=$(nproc)
+	def=$(( cpu / 2 ))
+#entry=$(zenity --entry --width 500 --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have $cpu cores !\n\nDefault value is $def\n\n(1 to whatever core you want to use)")
+
+entry=$(zenity --scale --value="$cpu" --value="$def" --min-value="1" --max-value="$cpu" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have $cpu cores !\n\nDefault value is $def, it is suggested you only use real cores.\n\n(1 to whatever core you want to use)")
+
+if test -z "$entry"
+	then
+		echo "Default value of $cpu / 2 will be used. Now continue in 3 seconds."
+		entry=$(( cpu / 2 ))
+		echo "You have selected : $entry"
+		sleep 3
+	else
+		echo "You have selected : $entry"
+fi
+
+echo -------------------------========================-------------------------
+echo "Select filename using dialog !"
+
+	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	## --file-filter="*.jpg *.gif"
+
+if test -z "$file"
+	then
+		echo "You don't have selected a file, now exit in 3 seconds."
+		echo -------------------------========================-------------------------
+		sleep 3
 		exit
 	else
-		echo "\$FILE is NOT empty."
-		echo "You have selected "$FILE""
+		echo "You have selected :"
+		echo "$file"
 fi
+echo -------------------------========================-------------------------
+echo "Input name, directory and output name : (Debug helper)"
+## Set working path.
+	dir=$(pwd)
+	echo Input file : "$file"
+	echo "Working dir : "$dir""
+	export VAR="$file"
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Base name: "$(basename "${VAR}")"
+## Output file name
+	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output file : "$name""
+echo -------------------------========================-------------------------
+## Variables, for program."
+	part=0
+
+## The code program.
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	parallel -j $entry ffmpeg -i {} -vf scale=1280x720:flags=lanczos,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -c:a aac {.}.720p-x264-8b-30f.aac.mkv ::: "$file"/*.*
 
 ## Error detector.
 if [ "$?" -ge 1 ]; then
+	echo
 	echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"
 	echo
 	echo "${red}ERROR ███████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"

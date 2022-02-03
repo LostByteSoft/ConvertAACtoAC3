@@ -19,27 +19,76 @@ echo -------------------------========================-------------------------
 	echo 2022-02-03_Thursday_04:43:34
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Software name: Turn a video 90 deg"
-echo "By LostByteSoft"
-echo "Version 2021-07-17"
-echo "Use ffmpeg only"
+	echo "Software name: Auto-compiler software"
+	echo
+	echo "What it does ? Make an program of all contents with sources."
+	echo
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft."
+	echo "https://github.com/LostByteSoft"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+echo "Check installed requirements !"
 
-echo -----------------------------------------------------------------------------
-
-echo "Select filename using dialog"
-FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
-
-if test -z "$FILE"
+if command -v ffmpeg >/dev/null 2>&1
 	then
-		echo "\$FILE is empty and now exit. You don't have selected a file."
-		echo Press ENTER to continue.
-		read name
-		exit
+		echo "Ffmpeg installed continue."
 	else
-		echo "\$FILE is NOT empty."
-		echo "You have selected "$FILE""
+		echo "You don't have ' parallel ' installed, now exit in 5 seconds."
+		echo "Add with : sudo apt-get install ffmpeg"
+		echo -------------------------========================-------------------------
+		sleep 5
+		exit
 fi
 
+echo -------------------------========================-------------------------
+echo "Select filename using dialog !"
+
+	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	## --file-filter="*.jpg *.gif"
+
+if test -z "$file"
+	then
+		echo "You don't have selected a file, now exit in 3 seconds."
+		echo -------------------------========================-------------------------
+		sleep 3
+		exit
+	else
+		echo "You have selected :"
+		echo "$file"
+fi
+echo -------------------------========================-------------------------
+echo "Input name, directory and output name :"
+
+	## Set working path.
+	dir=$(pwd)
+	
+	echo Input file : "$file"
+	
+	echo "Working dir : "$dir""
+	export VAR="$file"
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Base name: "$(basename "${VAR}")"
+	
+	## Output file name
+	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output file : "$name""
+echo -------------------------========================-------------------------
+## The code program.
+part=0
+
+for i in "$file"/*.*;
+	#do name=`echo "$i" | cut -d'.' -f1`
+	do name=`echo "$i" | rev | cut -f 2- -d '.' | rev`
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	echo "$name"
+	export VAR="$i"
+	ffmpeg -i "$i" -vn -acodec copy "$name".aac
+	done
+	
 ## Error detector.
 if [ "$?" -ge 1 ]; then
 	echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"

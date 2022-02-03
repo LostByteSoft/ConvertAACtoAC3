@@ -19,26 +19,62 @@ echo -------------------------========================-------------------------
 	echo 2022-02-03_Thursday_04:43:34
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Software name: Turn a video 90 deg"
-echo "By LostByteSoft"
-echo "Version 2021-07-17"
-echo "Use ffmpeg only"
+	echo "Software name: extract SRTfromMKV_choosefile"
+	echo
+	echo What it does ?
+	echo "Extract subtitles from MKV file MKV IDX SUB for a specified file"
+	echo
+	echo Informations :
+	echo "By LostByteSoft, no copyright or copyleft"
+	echo "https://github.com/LostByteSoft"
+	echo "https://askubuntu.com/questions/452268/extract-subtitle-from-mkv-files"
+	echo "Author: https://askubuntu.com/users/230052/nux"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+
+#DIR="$(zenity --file-selection --filename=$HOME/$USER --file-filter=*.mkv --title="Select a file *.mkv")"
+DIR="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file *.*")"
 
 echo -----------------------------------------------------------------------------
 
-echo "Select filename using dialog"
-FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
-
-if test -z "$FILE"
+if test -z "$DIR"
 	then
-		echo "\$FILE is empty and now exit. You don't have selected a file."
+		echo "\$DIR is empty and now exit. You don't have selected a file."
 		echo Press ENTER to continue.
 		read name
 		exit
 	else
-		echo "\$FILE is NOT empty."
-		echo "You have selected "$FILE""
+		echo "\$DIR is NOT empty."
+		echo "You have selected "$DIR""
 fi
+
+echo -----------------------------------------------------------------------------
+
+	echo "Please wait..."
+	#echo DIR = "$DIR"
+	#echo Press ENTER to continue.
+	#read name
+
+echo -----------------------------------------------------------------------------
+
+# Get all the MKV files in this dir and its subdirs
+find "$DIR" -type f -name '*.m2ts' | while read filename
+do
+  # Find out which tracks contain the subtitles
+  mkvmerge -i "$filename" | grep 'subtitles' | while read subline
+  do
+    # Grep the number of the subtitle track
+    tracknumber=`echo $subline | egrep -o "[0-9]{1,2}" | head -1`
+
+    # Get base name for subtitle
+    subtitlename=${filename%.*}
+
+    # Extract the track to a .tmp file
+    `mkvextract tracks "$filename" $tracknumber:"$subtitlename.srt" > /dev/null 2>&1`
+    `chmod g+rw "$subtitlename.srt"`
+  done
+done
 
 ## Error detector.
 if [ "$?" -ge 1 ]; then

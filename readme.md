@@ -39,6 +39,8 @@ How to ?
 Converters files:
 ---------------------------------------------
 
+-Single core ffmpeg (You can start many of theses sh files)
+
 	Convert ALLfolderAC3.sh
 		-All files in folder will be converted to AC3.
 	Convert ALLfolderMP3 128.sh
@@ -52,8 +54,8 @@ Converters files:
 		-DTS conversion is now considered stable (in most cases) , just try it before use.
 	Convert XXX to MP3 320.sh
 		
-	Convert HDRtoSDR.{SDR-2160p-x264-10b}.{dts-48000}.sh
-	Convert HDRtoSDR.{SDR-x264-10b}.{ac3-48000hz-640k}.sh
+	Convert HDRtoSDR.SDR-2160p-x264-10b.dts-48000.sh
+	Convert HDRtoSDR.SDR-x264-10b.ac3-48000hz-640k.sh
 		-Convert VIDEO HDR to SDR, for thoses who don't have HDR display.
 		-NO audio in final file. Use MKVtoolNIX or something else.
 		-HDR or HDR10 or HDR10+
@@ -63,11 +65,17 @@ Converters files:
 ![Screenshot](zzfromhdr.jpg)
 ![Screenshot](zztosdr.jpg)
 		
-	Convert XXX to {720p-x264-8b-30f}.{aac-2.0-44100hz}.sh
+	Convert XXX to 720p-x264-8b-30f.aac-2.0-44100hz.sh
 		-Excellent small format for facebook.
-	Convert XXX to {2160p-x264-10b-30f}.{dts-48000hz}.sh
+	Convert XXX to 2160p-x264-10b-30f.dts-48000hz.sh
 		-HD 4k upscale or downnscale
 		-Takes 1 hour (ages) to downscale an 8k video of 2 min lengt.
+		
+-Parallel ffmpeg (Uses all cores or select the numbers of cores you select)
+
+	Convert ALL folder 720p-x264-8b-30f.aac (parallel).sh
+	Convert ALL folder AC3 (parallel).sh
+	Convert ALL folder MP3 320 (parallel).sh
 	
 Creator files:
 ---------------------------------------------
@@ -76,7 +84,7 @@ Creator files:
 		-Take an image file (movie poster) and convert it to:
 		Cover.jpg an 500x500 px
 		Folder.jpg an 1000x1000 px
-		{Name of folder reside in}.jpg 1000x1000px
+		Name of folder reside in.jpg 1000x1000px
 		For music and movie folder.
 		
 	creator playlist all m3u in subfolder.sh
@@ -156,20 +164,23 @@ Resolutions:
 ---------------------------------------------
 
 	*How to correctly name a multimedia video file.
+	
+	source video and audio separated by an . (dot)
+	Video and audio data separated by - (dash)
+	
+    Movie.Title.year.Source.Video-Compression.Audio-Compression.ext
+    Movie.Title.year.Source.Video-Compression.Audio-Compression.language.srt
 
-    Movie.Title.year.{Source}.{Video-Compression}.{Audio-Compression}.ext
-    Movie.Title.year.{Source}.{Video-Compression}.{Audio-Compression}.language.srt
-
-    {Br}.{8k-x266-12b-60f}.{Atmos-12.2}
-    {Br}.{2160px265}.{audio}
-    {Br}.{1080pX264}.{Dts51}
-    {Br}.{1080pX264}.{Ac351}
-    {Br}.{1080pX264}.{St}
-    {Br}.{720pX264}.{Ac351}
-    {Br}.{720pX264}.{Ac320}
-    {Dvd}.{480X264}.{Ac351}
-    {Dvd}.{480X264}.{St}
-    {Tv}.{SdX264}.{St}
+    Br.8k-x266-12b-60f.Atmos-12.2
+    Br.2160px265.audio
+    Br.1080pX264.Dts51
+    Br.1080pX264.Ac351
+    Br.1080pX264.St
+    Br.720pX264.Ac351
+    Br.720pX264.Ac320
+    Dvd.480X264.Ac351
+    Dvd.480X264.St
+    Tv.SdX264.St
 
 	*Source:
 
@@ -206,13 +217,13 @@ Resolutions:
 
 	*Exemples:
 
-    Dune.2021.{8k-x266-12b-60f}.{Atmos-12.2}.mkv
-    Die.Hard.1988.{Br.4kx26510b.Dts51}.mkv
-    Die.Hard.1988.{Br.4kx26510b.Dts51}.eng.srt
-    Die.Hard.1988.{Br.4kx26510b.Dts51}.fra.srt
-    Jurassic.Park.1993.{Br1080px264.Ac351}.avi
-    Jurassic.Park.1993.{Br1080px264.Ac351}.eng.srt
-    Jurassic.Park.1993.{Br1080px264.Ac351}.chn.srt
+    Dune.2021.8k-x266-12b-60f.Atmos-12.2.mkv
+    Die.Hard.1988.Br.4kx26510b.Dts51.mkv
+    Die.Hard.1988.Br.4kx26510b.Dts51.eng.srt
+    Die.Hard.1988.Br.4kx26510b.Dts51.fra.srt
+    Jurassic.Park.1993.Br1080px264.Ac351.avi
+    Jurassic.Park.1993.Br1080px264.Ac351.eng.srt
+    Jurassic.Park.1993.Br1080px264.Ac351.chn.srt
     
     VLC will auto load theses srt files; same name of the video file.
 

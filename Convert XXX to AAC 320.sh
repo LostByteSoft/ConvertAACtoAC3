@@ -19,26 +19,54 @@ echo -------------------------========================-------------------------
 	echo 2022-02-03_Thursday_04:43:34
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Software name: Turn a video 90 deg"
-echo "By LostByteSoft"
-echo "Version 2021-07-17"
-echo "Use ffmpeg only"
+	echo "Software name: Convert XXX to AAC"
+	echo
+	echo What it does ?
+	echo "Convert ONE FILE to audio AAC 320"
+	echo
+	echo Informations :
+	echo "Use ffmpeg only"
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft."
+	echo "https://github.com/LostByteSoft"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+echo "Select filename using dialog !"
 
-echo -----------------------------------------------------------------------------
-
-echo "Select filename using dialog"
-FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
+	FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
 
 if test -z "$FILE"
 	then
-		echo "\$FILE is empty and now exit. You don't have selected a file."
+		echo "You don't have selected a file, now exit."
 		echo Press ENTER to continue.
 		read name
 		exit
 	else
-		echo "\$FILE is NOT empty."
-		echo "You have selected "$FILE""
+		echo "You have selected :"
+		echo "$FILE"
 fi
+
+echo -------------------------========================-------------------------
+echo "Input name and output name"
+
+	## Set working path.
+	# mypath=`realpath $0`
+	# cd `dirname $mypath`
+	dir=$(pwd)
+
+	NAME=`echo "$FILE" | rev | cut -f 2- -d '.' | rev`
+	echo "Output file : "$NAME".aac-320k.aac"
+	
+	echo "Working dir : "$dir""
+	export VAR="$FILE"
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Selected file name: "$(basename "${VAR}")"
+	
+echo -------------------------========================-------------------------
+## The code program.
+
+ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a aac -b:a 320k "$FILE".aac-320k.aac
 
 ## Error detector.
 if [ "$?" -ge 1 ]; then

@@ -19,26 +19,97 @@ echo -------------------------========================-------------------------
 	echo 2022-02-03_Thursday_04:43:34
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Software name: Turn a video 90 deg"
-echo "By LostByteSoft"
-echo "Version 2021-07-17"
-echo "Use ffmpeg only"
+	echo "Software name: creator playlist mp3 m3u"
+	echo
+	echo What it does ?
+	echo "Auto create m3u playlist for folders (with autoname)"
+	echo
+	echo Informations :
+	echo "By LostByteSoft, no copyright or copyleft"
+	echo "https://github.com/LostByteSoft"
+	echo "Version 2021-12-14 Original release"
+	echo "Version 2021-12-15 folder select"
+	echo "Version 2021-12-16 debug update"
+	echo "--- Read me ---"
+	echo "Select a MUSIC MP3 folder and create m3u for this folder."
+	echo "Will take the folder name for the *.m3u name"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+echo "Select filename using dialog !"
 
-echo -----------------------------------------------------------------------------
-
-echo "Select filename using dialog"
-FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
+	FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
 
 if test -z "$FILE"
 	then
-		echo "\$FILE is empty and now exit. You don't have selected a file."
+		echo "You don't have selected a file, now exit."
 		echo Press ENTER to continue.
 		read name
 		exit
 	else
-		echo "\$FILE is NOT empty."
-		echo "You have selected "$FILE""
+		echo "You have selected :"
+		echo "$FILE"
 fi
+
+echo -------------------------========================-------------------------
+echo "Input name and output name"
+
+	## Set working path.
+	# mypath=`realpath $0`
+	# cd `dirname $mypath`
+	dir=$(pwd)
+
+	NAME=`echo "$FILE" | cut -d'.' -f1`
+	echo "Output file : "$NAME" (if implemented)"
+	
+	echo "Working dir : "$dir""
+	export VAR="$FILE"
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Selected file name: "$(basename "${VAR}")"
+	
+echo -------------------------========================-------------------------
+	echo "Create m3u list, Mp3 in direct folder, with name"
+	echo "There are a problem if there are many ' . ' in the file name DO NO PUT . (dot) EVERYWHERE"
+	echo
+	echo "Temp File location:"
+	echo "/dev/shm/m3u.tmp"
+	echo
+	echo "Selected folder:"
+	echo "$way"
+	
+	find "$way" -type f -iname "*.mp3" > "/dev/shm/m3u.tmp"
+
+	## Need code to sort files in correct number order, not by date created.
+	echo
+	echo "Files are sorted from "/dev/shm/m3u.tmp" to "/dev/shm/m4u.tmp""
+	sort /dev/shm/m3u.tmp > /dev/shm/m4u.tmp
+	
+	echo
+	echo "Mp3 files found (Others format ignored):"
+	input1="/dev/shm/m4u.tmp"
+	while IFS= read -r line1
+	do
+	echo "$line1"
+	done < "$input1"
+
+	## work with bizzare empty var
+	## remove the path inside the file and needed an extra
+	## These 2 lines write actual mp3 find in the folder you specified.
+	new=
+	sed "s|$way/|$new|g" "/dev/shm/m4u.tmp" > "$way"/"$(basename "${VAR1}")".m3u""
+	
+	echo
+	echo "Final Playlist:"
+	input2="$way"/"$(basename "${VAR1}")".m3u""
+	while IFS= read -r line2
+	do
+	echo "$line2"
+	done < "$input2"
+	#sleep 1
+	
+	echo
+	echo "Final File location"
+	echo "$way"/"$(basename "${VAR1}")".m3u""
 
 ## Error detector.
 if [ "$?" -ge 1 ]; then

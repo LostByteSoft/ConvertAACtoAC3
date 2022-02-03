@@ -19,26 +19,69 @@ echo -------------------------========================-------------------------
 	echo 2022-02-03_Thursday_04:43:34
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Software name: Turn a video 90 deg"
-echo "By LostByteSoft"
-echo "Version 2021-07-17"
-echo "Use ffmpeg only"
+	echo "Software name: creator playlist all music select.sh"
+	echo
+	echo What it does ?
+	echo "Auto create m3u playlist for folders (with autoname)"
+	echo
+	echo Informations :
+	echo "By LostByteSoft, no copyright or copyleft"
+	echo "https://github.com/LostByteSoft"
+	echo "Take the name of previous folder for *.m3u name"
+	echo "Will create an *.m3u file for group of *.mp3 in THE DIRECT FOLDER"
+	echo "Will do not create for folders or sub folders."
+	echo "Version 2021-12-14 Original release"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
 
-echo -----------------------------------------------------------------------------
+echo -------------------------========================-------------------------
+echo "Select filename using dialog !"
 
-echo "Select filename using dialog"
-FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
+	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to put playlist with subdir" --directory)
+	## --file-filter="*.jpg *.gif"
 
-if test -z "$FILE"
+if test -z "$file"
 	then
-		echo "\$FILE is empty and now exit. You don't have selected a file."
-		echo Press ENTER to continue.
-		read name
+		echo "You don't have selected a file, now exit in 3 seconds."
+		echo -------------------------========================-------------------------
+		sleep 3
 		exit
 	else
-		echo "\$FILE is NOT empty."
-		echo "You have selected "$FILE""
+		echo "You have selected :"
+		echo "$file"
 fi
+echo -------------------------========================-------------------------
+echo "Input name, directory and output name :"
+
+	## Set working path.
+	dir=$(pwd)
+	echo Input file : "$file"
+	echo "Working dir : "$dir""
+	export VAR="$file"
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Base name: "$(basename "${VAR}")"
+	
+	## Output file name
+	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output file : "$name""
+
+echo -------------------------========================-------------------------
+## "Variables, for program."
+	part=0
+
+echo "The code program."
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+
+find $file . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > $file/$(basename "${VAR}").m3u
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+
+	sleep 1
+	cat $file/$(basename "${VAR}").m3u
 
 ## Error detector.
 if [ "$?" -ge 1 ]; then

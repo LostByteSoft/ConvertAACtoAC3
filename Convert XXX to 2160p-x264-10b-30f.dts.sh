@@ -19,26 +19,66 @@ echo -------------------------========================-------------------------
 	echo 2022-02-03_Thursday_04:43:34
 echo -------------------------========================-------------------------
 ## Software name, what is this, version, informations.
-	echo "Software name: Turn a video 90 deg"
-echo "By LostByteSoft"
-echo "Version 2021-07-17"
-echo "Use ffmpeg only"
+	echo "Software name: Convert XXX to 2160p-x264-10b-30f.dts.sh"
+	echo
+	echo What it does ?
+	echo "Convert ONE video file to 2160p-x264-10b-30f.dts upscale or downscale 4k"
+	echo
+	echo Informations :
+	echo "Use ffmpeg only"
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft."
+	echo "https://github.com/LostByteSoft"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+	echo
+	echo "https://ffmpeg.org/ffmpeg.html"
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://4kmedia.org/"
+echo -------------------------========================-------------------------
+echo "Select filename using dialog !"
 
-echo -----------------------------------------------------------------------------
+	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file")"
 
-echo "Select filename using dialog"
-FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
-
-if test -z "$FILE"
+if test -z "$file"
 	then
-		echo "\$FILE is empty and now exit. You don't have selected a file."
+		echo "You don't have selected a file, now exit."
 		echo Press ENTER to continue.
 		read name
 		exit
 	else
-		echo "\$FILE is NOT empty."
-		echo "You have selected "$FILE""
+		echo "You have selected :"
+		echo "$file"
 fi
+
+echo -------------------------========================-------------------------
+echo "Input name, directory and output name :"
+
+	## Set working path.
+	dir=$(pwd)
+	
+	echo Input file : "$file"
+	
+	echo "Working dir : "$dir""
+	export VAR="$file"
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Base name: "$(basename "${VAR}")"
+	
+	## Output file name
+	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output file : "$name".2160p-x264-10b-30f.dts.mkv"
+	
+echo -------------------------========================-------------------------
+## The code program.
+echo "ffmpeg conversion"
+
+## Ac3 sound
+## ffmpeg -i "$file" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{2160p-x264-10b-30f}.{ac3-48000hz-640k}.mkv
+
+## Dts sound
+ffmpeg -i "$file" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -strict experimental -c:a dts "$name".2160p-x264-10b-30f.dts.mkv
+
+#ffmpeg -i "$file" -vf scale=1920x1080:flags=lanczos -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{2160p-x264-30}.{ac3-48000-640}.mkv
 
 ## Error detector.
 if [ "$?" -ge 1 ]; then
