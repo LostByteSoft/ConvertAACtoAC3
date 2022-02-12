@@ -40,6 +40,10 @@ if test -z "$FILE"
 		echo "You have selected "$FILE""
 fi
 
+echo -------------------------========================-------------------------
+
+ffmpeg -i "$FILE" -vf "transpose=2" ""$FILE"-turn-out.mp4"
+
 ## Error detector.
 if [ "$?" -ge 1 ]; then
 	echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"

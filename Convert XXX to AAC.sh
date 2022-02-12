@@ -41,8 +41,10 @@ echo -------------------------========================-------------------------
 	echo 2022-02-12_Saturday_08:59:30
 	echo
 ## Software name, what is this, version, informations.
+	echo "Software name: Convert XXX to AAC"
+	echo
 	echo What it does ?
-	echo "Convert ONE FILE to audio DTS"
+	echo "Convert ONE FILE to audio AAC 320"
 	echo
 	echo Informations :
 	echo "Use ffmpeg only"
@@ -106,9 +108,7 @@ echo -------------------------========================-------------------------
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 
-#ffmpeg -i "$file" -c:s copy -c:v copy -strict experimental -c:a dts "$name"-dts.dts
-
-ffmpeg -i "$file" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".dts-48000hz-768k.dts
+ffmpeg -i "$file" -c:s copy -c:v copy -c:a aac -ar 44100 -b:a 320k "$name".aac-44100hz-320k.aac
 
 	error $?
 	

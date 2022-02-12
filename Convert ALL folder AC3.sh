@@ -74,17 +74,16 @@ for i in "$file"/*.*;
 	echo name="$name"
 	export VAR="$i"
 	ffmpeg -i "$i" -c:s copy -c:v copy -c:a ac3 -ar 48000 -b:a 640k "$name".ac3-48000hz-640k.ac3
+		## Error detector.
+			if [ "$?" -ge 1 ]; then
+			echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"
+			echo
+			echo "${red}ERROR ███████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
+			read name
+			exit
+		fi
 	done
 
-## Error detector.
-if [ "$?" -ge 1 ]; then
-	echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"
-	echo
-	echo "${red}ERROR ███████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
-	read name
-	exit
-fi
-	
 echo -------------------------========================-------------------------
 ## Software lead-out.
 	echo "Finish... with numbers of actions : $part"

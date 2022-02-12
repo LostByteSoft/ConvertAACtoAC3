@@ -75,16 +75,15 @@ for i in "$file"/*.*;
 	echo "$name"
 	export VAR="$i"
 	ffmpeg -i "$i" -codec:a libmp3lame -b:a 320k "${name}".mp3-320.mp3
-	done
-
-## Error detector.
-if [ "$?" -ge 1 ]; then
+	## Error detector.
+	if [ "$?" -ge 1 ]; then
 	echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"
 	echo
 	echo "${red}ERROR ███████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
 	read name
 	exit
-fi
+	fi
+	done
 	
 echo -------------------------========================-------------------------
 ## Software lead-out.

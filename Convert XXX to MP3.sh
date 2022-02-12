@@ -41,8 +41,10 @@ echo -------------------------========================-------------------------
 	echo 2022-02-12_Saturday_08:59:30
 	echo
 ## Software name, what is this, version, informations.
+	echo "Software name: Convert XXX to MP3 320"
+	echo
 	echo What it does ?
-	echo "Convert ONE FILE to audio DTS"
+	echo "Convert ONE FILE to audio MP3"
 	echo
 	echo Informations :
 	echo "Use ffmpeg only"
@@ -106,9 +108,7 @@ echo -------------------------========================-------------------------
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 
-#ffmpeg -i "$file" -c:s copy -c:v copy -strict experimental -c:a dts "$name"-dts.dts
-
-ffmpeg -i "$file" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".dts-48000hz-768k.dts
+ffmpeg -i "$file" -codec:a libmp3lame -b:a 320k "$name".mp3-320k.mp3
 
 	error $?
 	

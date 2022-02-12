@@ -75,16 +75,15 @@ for i in "$file"/*.*;
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 	ffmpeg -i "$i" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".dts-48000hz-768k.dts
-	done
-
-## Error detector.
-if [ "$?" -ge 1 ]; then
+	## Error detector.
+	if [ "$?" -ge 1 ]; then
 	echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"
 	echo
 	echo "${red}ERROR ███████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
 	read name
 	exit
-fi
+	fi
+	done
 	
 echo -------------------------========================-------------------------
 ## Software lead-out.

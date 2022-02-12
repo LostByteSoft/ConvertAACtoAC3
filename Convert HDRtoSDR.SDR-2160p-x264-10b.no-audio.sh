@@ -3,21 +3,43 @@
 ## -----===== Start of bash =====-----
 	#printf '\033[8;30;80t'		# will resize the window, if needed.
 	printf '\033[8;40;80t'		# will resize the window, if needed.
-	#printf '\033[8;40;125t'	# will resize the window, if needed.
+	#printf '\033[8;40;100t'	# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
+	sleep 0.25
+	
 echo -------------------------========================-------------------------
 ## Software lead-in
-	red=`tput setaf 1`
-	green=`tput setaf 2`
-	yellow=`tput setaf 3`
-	reset=`tput sgr0`
 	start=$SECONDS
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-	echo
-	echo Version compiled on : Also serves as a version
-	echo 2022-02-03_Thursday_04:43:34
+	red=`tput setaf 1`
+	green=`tput setaf 2`
+	yellow=`tput setaf 11`
+	reset=`tput sgr0`
+
 echo -------------------------========================-------------------------
+echo Function Error detector. If errorlevel is 1 or greater will show error msg.
+	error()
+	{
+	if [ "$?" -ge 1 ]; then
+		echo
+		echo "${red}ERROR █████████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
+		echo
+		echo "!!! ERROR was detected !!! Press ENTER key to try to CONTINUE !!! Will probably exit !!!"
+		echo
+		echo "This script take $(( SECONDS - start )) seconds to complete."
+		date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+		echo "Time needed: $date"
+		echo
+		read -n 1 -s -r -p "Press any key to continue"
+		echo
+	fi
+	}
+
+echo -------------------------========================-------------------------
+	echo Version compiled on : Also serves as a version
+	echo 2022-02-12_Saturday_08:59:30
+	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert HDRtoSDR.SDR-2160p-x264-10b.no-audio"
 	echo
@@ -35,40 +57,59 @@ echo -------------------------========================-------------------------
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
+echo "Check installed requirement !"
+
+if command -v ffmpeg >/dev/null 2>&1
+	then
+		echo "Ffmpeg installed continue."
+	else
+		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install ffmpeg"
+		echo -------------------------========================-------------------------
+		sleep 10
+		exit
+fi
+echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file")"
+	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	#file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	## --file-filter="*.jpg *.gif"
 
 if test -z "$file"
 	then
-		echo "You don't have selected a file, now exit."
-		echo Press ENTER to continue.
-		read name
+		echo "You don't have selected a file, now exit in 3 seconds."
+		echo -------------------------========================-------------------------
+		sleep 3
 		exit
 	else
 		echo "You have selected :"
 		echo "$file"
 fi
-
 echo -------------------------========================-------------------------
-echo "Input name, directory and output name :"
-
-	## Set working path.
+echo "Input name, directory and output name : (Debug helper)"
+## Set working path.
 	dir=$(pwd)
-	
-	echo Input file : "$file"
-	
 	echo "Working dir : "$dir""
+	echo Input file : "$file"
 	export VAR="$file"
+	echo
 	echo Base directory : "$(dirname "${VAR}")"
 	echo Base name: "$(basename "${VAR}")"
-	
-	## Output file name
+	echo
+## Output file name
 	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
-	echo "Output file : "$name".SDR-2160p-x264-10b.no-audio.mkv"
+	echo "Output name ext : "$name""
+	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
+## Variables, for program."
+	part=0
+
 ## The code program.
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
 echo "ffmpeg conversion"
 
 ### debug pixel info
@@ -93,14 +134,7 @@ ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,to
 ## -preset ultrafast
 ## -preset medium
 
-## Error detector.
-if [ "$?" -ge 1 ]; then
-	echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"
-	echo
-	echo "${red}ERROR ███████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
-	read name
-	exit
-fi
+	error $?
 	
 echo -------------------------========================-------------------------
 ## Software lead-out.

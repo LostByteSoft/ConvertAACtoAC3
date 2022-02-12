@@ -63,7 +63,7 @@ echo "Enter cores to use ?"
 	def=$(( cpu / 2 ))
 #entry=$(zenity --entry --width 500 --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have $cpu cores !\n\nDefault value is $def\n\n(1 to whatever core you want to use)")
 
-entry=$(zenity --scale --value="$cpu" --value="$def" --min-value="1" --max-value="$cpu" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have $cpu cores !\n\nDefault value is $def, it is suggested you only use real cores.\n\n(1 to whatever core you want to use)")
+entry=$(zenity --scale --value="$def" --min-value="1" --max-value="$cpu" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have $cpu cores !\n\nDefault value is $def, it is suggested you only use real cores.\n\n(1 to whatever core you want to use)")
 
 if test -z "$entry"
 	then
