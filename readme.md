@@ -54,13 +54,14 @@ Converters files:
 		-DTS conversion is now considered stable (in most cases) , just try it before use.
 	Convert XXX to MP3 320.sh
 		
-	Convert HDRtoSDR.SDR-2160p-x264-10b.dts-48000.sh
-	Convert HDRtoSDR.SDR-x264-10b.ac3-48000hz-640k.sh
+	Convert HDRtoSDR.SDR-x264-10b-ac3-48000hz-640k.sh
+	Convert HDRtoSDR-SDR-x264-10b-copy.sh
+	Convert HDRtoSDR-SDR-x264-10b-no-audio.sh
 		-Convert VIDEO HDR to SDR, for thoses who don't have HDR display.
-		-NO audio in final file. Use MKVtoolNIX or something else.
+		-NO audio, ac3 or copy in final file. Use MKVtoolNIX or something else.
 		-HDR or HDR10 or HDR10+
 		-Will need to recode all file (Takes long time).
-		-You can fild HDR and HDR10 files here https://4kmedia.org/
+		-You can find HDR and HDR10 files here https://4kmedia.org/
 
 ![Screenshot](zzfromhdr.jpg)
 ![Screenshot](zztosdr.jpg)
@@ -71,11 +72,12 @@ Converters files:
 		-HD 4k upscale or downnscale
 		-Takes 1 hour (ages) to downscale an 8k video of 2 min lengt.
 		
--Parallel ffmpeg (Uses all cores or select the numbers of cores you select)
+-Parallel ffmpeg (Uses all cores or select the numbers of cores you want)
 
 	Convert ALL folder 720p-x264-8b-30f.aac (parallel).sh
 	Convert ALL folder AC3 (parallel).sh
 	Convert ALL folder MP3 320 (parallel).sh
+		-Need ffmpeg and parallel to work.
 	
 Creator files:
 ---------------------------------------------

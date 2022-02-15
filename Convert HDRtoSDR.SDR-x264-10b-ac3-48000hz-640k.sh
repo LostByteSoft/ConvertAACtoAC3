@@ -25,7 +25,7 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 		echo
 		echo "${red}ERROR █████████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
 		echo
-		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
+		echo "!!! ERROR was detected !!! Press ENTER key to try to CONTINUE !!! Will probably exit !!!"
 		echo
 		echo "This script take $(( SECONDS - start )) seconds to complete."
 		date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
@@ -37,65 +37,37 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	}
 
 echo -------------------------========================-------------------------
+	echo Version compiled on : Also serves as a version
+	echo 2022-02-12_Saturday_08:59:30
+	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert MANY files to video Convert ALL folder 720p-x264-8b-30f.aac (parallel)"
+	echo "Software name: Convert HDRtoSDR-SDR-x264-10b-ac3-48000hz-640k"
 	echo
 	echo What it does ?
-	echo "Convert MANY video file to Convert ALL folder 720p-x264-8b-30f.aac (parallel).sh"
+	echo "Convert ONE video file HDR to SDR Convert HDRtoSDR-SDR-x264-10b-ac3-48000hz-640k"
 	echo
 	echo Informations :
 	echo "By LostByteSoft, no copyright or copyleft"
 	echo "https://github.com/LostByteSoft"
 	echo "Use ffmpeg only"
 	echo "https://ffmpeg.org/ffmpeg.html"
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://4kmedia.org/"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
-	echo Version compiled on : Also serves as a version
-	echo 2022-02-14_Monday_08:05:14
-echo -------------------------========================-------------------------
-echo "Check installed requirements !"
+echo "Check installed requirement !"
 
 if command -v ffmpeg >/dev/null 2>&1
 	then
 		echo "Ffmpeg installed continue."
-		dpkg -s ffmpeg | grep Version
 	else
-		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
+		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
 		echo "Add with : sudo apt-get install ffmpeg"
 		echo -------------------------========================-------------------------
 		sleep 10
 		exit
 fi
-
-if command -v parallel >/dev/null 2>&1
-	then
-		echo "Parallel installed continue."
-		dpkg -s parallel | grep Version
-	else
-		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
-		echo "Add with : sudo apt-get install parallel"
-		echo -------------------------========================-------------------------
-		sleep 10
-		exit
-fi
-
-echo -------------------------========================-------------------------
-echo "Enter cores to use ?"
-	cpu=$(nproc)
-	def=$(( cpu / 2 ))
-	entry=$(zenity --scale --value="$def" --min-value="1" --max-value="$cpu" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have $cpu cores !\n\nDefault value is $def, it is suggested you only use real cores.\n\n(1 to whatever core you want to use)")
-
-if test -z "$entry"
-	then
-		echo "Default value of $cpu / 2 will be used. Now continue in 3 seconds."
-		entry=$(( cpu / 2 ))
-		echo "You have selected : $entry"
-		#sleep 3
-	else
-		echo "You have selected : $entry"
-fi
-
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
@@ -137,9 +109,30 @@ echo -------------------------========================-------------------------
 ## The code program.
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
-	parallel -j $entry ffmpeg -i {} -vf scale=1280x720:flags=lanczos,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -c:a aac {.}.720p-x264-8b-30f.aac.mkv ::: "$file"/*.*
+echo "ffmpeg conversion"
 
-## Error detector.
+### debug pixel info
+### ffmpeg -h encoder=libx265 | grep pixel
+
+### x264 8b preset
+
+### good quality (Low) (x264 8bit)
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$NAME".{SDR.x264.8b}.{no.audio}.mkv
+
+### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x264.8b}.{no.audio}.mkv
+
+###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -preset faster -tune fastdecode -c:a ac3 -ar 48000 -b:a 640k "$name".SDR-x264-10b-30f.ac3-48000hz-640k.mkv
+
+### x265 10b presets
+
+### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
+
+## -preset ultrafast
+## -preset medium
+
 	error $?
 	
 echo -------------------------========================-------------------------
@@ -152,14 +145,13 @@ echo -------------------------========================-------------------------
 	echo "Current time : $now"
 echo -------------------------========================-------------------------
 ## Press enter or auto-quit here.
-	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
-	echo "Press ENTER to terminate."
+	echo "If a script takes MORE than 120 seconds to complete it will ask you to"
+	echo "press ENTER to terminate."
 	echo
-	echo "${green}If a script takes LESS than 120 seconds to complete it will auto-terminate !${reset}"
-	echo "Auto-terminate after 10 seconds"
+	echo "If a script takes LESS than 120 seconds to complete it will auto"
+	echo "terminate after 10 seconds"
 	echo
 
-echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
 if [ $(( SECONDS - start )) -gt 120 ]
 then
