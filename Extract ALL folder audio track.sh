@@ -2,26 +2,31 @@
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
 	#printf '\033[8;30;80t'		# will resize the window, if needed.
-	printf '\033[8;40;80t'		# will resize the window, if needed.
-	#printf '\033[8;40;125t'	# will resize the window, if needed.
+	#printf '\033[8;40;80t'		# will resize the window, if needed.
+	printf '\033[8;40;100t'	# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
+	sleep 0.50
+	
 echo -------------------------========================-------------------------
 ## Software lead-in
-	red=`tput setaf 1`
-	green=`tput setaf 2`
-	yellow=`tput setaf 3`
-	reset=`tput sgr0`
 	start=$SECONDS
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-	echo
-	echo Version compiled on : Also serves as a version
-	echo 2022-02-03_Thursday_04:43:34
+	red=`tput setaf 1`
+	green=`tput setaf 2`
+	yellow=`tput setaf 11`
+	reset=`tput sgr0`
+
 echo -------------------------========================-------------------------
-## Software name, what is this, version, informations.
-	echo "Software name: Auto-compiler software"
+	echo Version compiled on : Also serves as a version
+	echo 2022-02-18_Friday_09:29:38
 	echo
-	echo "What it does ? Make an program of all contents with sources."
+## Software name, what is this, version, informations.
+	echo "Software name: Extract all audio track."
+	echo "File name : Extract ALL folder audio track.sh"
+	echo
+	echo "What it does ? Extract all audio track form folder of video files."
+	echo "Ffmpeg demand the exact file type to output."
 	echo
 	echo "Informations : (EULA at the end of file, open in text.)"
 	echo "By LostByteSoft, no copyright or copyleft."
@@ -29,16 +34,48 @@ echo -------------------------========================-------------------------
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
-echo "Check installed requirements !"
+echo Function Debug. Activate via source program debug=1.
+	debug()
+	{
+	if [ "$debug" -ge 1 ]; then
+		echo
+		echo "${yellow}DEBUG █████████████████████████████ DEBUG █████████████████████████████ DEBUG ${reset}"
+		echo
+		read -n 1 -s -r -p "Press any key to continue"
+		echo
+	fi
+	}
+
+echo Function Error detector. If errorlevel is 1 or greater will show error msg.
+	error()
+	{
+	if [ "$?" -ge 1 ]; then
+		echo
+		echo "${red}ERROR █████████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
+		echo
+		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
+		echo
+		echo "This script take $(( SECONDS - start )) seconds to complete."
+		date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+		echo "Time needed: $date"
+		echo
+		read -n 1 -s -r -p "Press any key to continue"
+		echo
+	fi
+	}
+
+echo -------------------------========================-------------------------
+echo "Check installed requirement !"
 
 if command -v ffmpeg >/dev/null 2>&1
 	then
 		echo "Ffmpeg installed continue."
+		dpkg -s ffmpeg | grep Version
 	else
-		echo "You don't have ' parallel ' installed, now exit in 5 seconds."
+		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
 		echo "Add with : sudo apt-get install ffmpeg"
 		echo -------------------------========================-------------------------
-		sleep 5
+		sleep 10
 		exit
 fi
 
@@ -60,42 +97,42 @@ if test -z "$file"
 		echo "$file"
 fi
 echo -------------------------========================-------------------------
-echo "Input name, directory and output name :"
-
-	## Set working path.
+echo "Input name, directory and output name : (Debug helper)"
+## Set working path.
 	dir=$(pwd)
-	
-	echo Input file : "$file"
-	
 	echo "Working dir : "$dir""
+	echo Input file : "$file"
 	export VAR="$file"
+	echo
 	echo Base directory : "$(dirname "${VAR}")"
 	echo Base name: "$(basename "${VAR}")"
-	
-	## Output file name
+	echo
+## Output file name
 	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
-	echo "Output file : "$name""
+	echo "Output name ext : "$name""
+	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output name bis : "$name1""
+	
 echo -------------------------========================-------------------------
 ## The code program.
 part=0
+debug=0
+
+ext=$(zenity --entry --text="Enter the correct OUTPUT extension type without the dot (ex: aac , eac3 , dts) ?")
 
 for i in "$file"/*.*;
 	#do name=`echo "$i" | cut -d'.' -f1`
 	do name=`echo "$i" | rev | cut -f 2- -d '.' | rev`
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
-	echo "$name"
+	echo i = $i
+	echo name = "$name"
 	export VAR="$i"
-	ffmpeg -i "$i" -vn -acodec copy "$name".aac
-	## Error detector.
-	if [ "$?" -ge 1 ]; then
-	echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"
-	echo
-	echo "${red}ERROR ███████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
-	read name
-	exit
-	fi
+	echo var = $VAR
+	ffmpeg -i "$i" -vn -acodec copy "$VAR".$ext
 	done
+	
+error $?
 	
 echo -------------------------========================-------------------------
 ## Software lead-out.
@@ -105,15 +142,17 @@ echo -------------------------========================-------------------------
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
+
 echo -------------------------========================-------------------------
 ## Press enter or auto-quit here.
-	echo "If a script takes MORE than 120 seconds to complete it will ask you to"
-	echo "press ENTER to terminate."
+	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
+	echo "Press ENTER to terminate."
 	echo
-	echo "If a script takes LESS than 120 seconds to complete it will auto"
-	echo "terminate after 10 seconds"
+	echo "${green}If a script takes LESS than 120 seconds to complete it will auto-terminate !${reset}"
+	echo "Auto-terminate after 10 seconds"
 	echo
 
+echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
 if [ $(( SECONDS - start )) -gt 120 ]
 then
@@ -129,7 +168,9 @@ else
 	echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
 	sleep 10
 fi
+	debug $?
 	exit
+
 ## -----===== End of bash =====-----
 
 End-user license agreement (eula)

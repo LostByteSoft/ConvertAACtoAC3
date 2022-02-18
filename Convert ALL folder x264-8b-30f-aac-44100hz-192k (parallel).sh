@@ -5,7 +5,7 @@
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
 	printf '\033[8;40;100t'	# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
-	sleep 0.50
+	sleep 0.25
 	
 echo -------------------------========================-------------------------
 ## Software lead-in
@@ -18,34 +18,6 @@ echo -------------------------========================-------------------------
 	reset=`tput sgr0`
 
 echo -------------------------========================-------------------------
-	echo Version compiled on : Also serves as a version
-	echo 2022-02-18_Friday_08:03:40
-	echo
-## Software name, what is this, version, informations.
-	echo "Software name: Convert ALL folder to DTS"
-	echo
-	echo What it does ?
-	echo "Convert ALL audio/video file in folder to audio DTS dts-48000hz-768k"
-	echo
-	echo Informations :
-	echo "Use ffmpeg only"
-	echo "By LostByteSoft, no copyright or copyleft"
-	echo "https://github.com/LostByteSoft"
-	echo
-	echo "Don't hack paid software, free software exists and does the job better."
-echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
-	debug()
-	{
-	if [ "$debug" -ge 1 ]; then
-		echo
-		echo "${yellow}DEBUG █████████████████████████████ DEBUG █████████████████████████████ DEBUG ${reset}"
-		echo
-		read -n 1 -s -r -p "Press any key to continue"
-		echo
-	fi
-	}
-
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	error()
 	{
@@ -53,7 +25,7 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 		echo
 		echo "${red}ERROR █████████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
 		echo
-		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
+		echo "!!! ERROR was detected !!! Press ENTER key to try to CONTINUE !!! Will probably exit !!!"
 		echo
 		echo "This script take $(( SECONDS - start )) seconds to complete."
 		date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
@@ -65,12 +37,37 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	}
 
 echo -------------------------========================-------------------------
+	echo Version compiled on : Also serves as a version
+	echo 2022-02-16_Wednesday_11:58:53
+	echo
+## Software name, what is this, version, informations.
+	echo
+## Software name, what is this, version, informations.
+	echo "Software name: Convert ALL folder files to x264 aac (parallel)"
+	echo "File name: Convert ALL folder x264-8b-30f-aac-44100hz-192k (parallel).sh"
+	echo
+	echo What it does ?
+	echo "Convert ONE video file to x264-8b-30f.aac-2.0-44100hz-192k.mkv"
+	echo "Perfect format for facebook."
+	echo
+	echo Informations :
+	echo "Use ffmpeg only"
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft."
+	echo "https://github.com/LostByteSoft"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+	echo "${red}		███████████████████████████████████████████████${reset}"
+	echo "		SPACES ARE NOT SUPPORTED IN PARALLEL CONVERSION"
+	echo "${red}		███████████████████████████████████████████████${reset}"
+	#read -n 1 -s -r -p "Press any key to continue"
+
 echo "Check installed requirement !"
 
 if command -v ffmpeg >/dev/null 2>&1
 	then
 		echo "Ffmpeg installed continue."
-		dpkg -s ffmpeg | grep Version
 	else
 		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
 		echo "Add with : sudo apt-get install ffmpeg"
@@ -79,11 +76,39 @@ if command -v ffmpeg >/dev/null 2>&1
 		exit
 fi
 
+if command -v parallel >/dev/null 2>&1
+	then
+		echo "Parallel installed continue."
+		dpkg -s parallel | grep Version
+	else
+		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install parallel"
+		echo -------------------------========================-------------------------
+		sleep 10
+		exit
+fi
+
+echo -------------------------========================-------------------------
+echo "Enter cores to use ?"
+	cpu=$(nproc)
+	def=$(( cpu / 4 ))
+	#entry=$(zenity --scale --value="$def" --min-value="1" --max-value="$cpu" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have $cpu cores !\n\nDefault value is $def, it is suggested you only use real cores.\n\n(1 to whatever core you want to use)\n\n!!! DO NOT USE VIRTUAL CORES !!!")
+
+if test -z "$entry"
+	then
+		echo "Default value of $cpu / 2 will be used. Now continue in 3 seconds."
+		entry=$def
+		echo "You have selected : $entry"
+		#sleep 3
+	else
+		echo "You have selected : $entry"
+fi
+
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
 	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file, will auto select only VIDEO files to convert." --directory)
 	## --file-filter="*.jpg *.gif"
 
 if test -z "$file"
@@ -96,6 +121,7 @@ if test -z "$file"
 		echo "You have selected :"
 		echo "$file"
 fi
+
 echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
 ## Set working path.
@@ -117,22 +143,34 @@ echo -------------------------========================-------------------------
 ## Variables, for program."
 	part=0
 	debug=0
+	rm "/dev/shm/findvideo.txt"
 ## The code program.
 
-ext=$(zenity --entry --text="Enter the correct INPUT extension type (ex: aac , eac3) ?")
+## find files
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+echo Finding files...
+
+	## Easy way to add a file format, copy paste a new line.
+	echo "Will find files in sub folders too...."
+	find $file -name '*.*'  >> "/dev/shm/findvideo.txt"
+	#find $file -name '*.mp4'  >> "/dev/shm/findvideo.txt"
+	#find $file -name '*.webm'  >> "/dev/shm/findvideo.txt"
+	#find $file -name '*.mkv'  >> "/dev/shm/findvideo.txt"
 	
-for i in "$file"/*.$ext;
-	do name=`echo "$i" | rev | cut -f 2- -d '.' | rev`
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
-	echo i="$i"
-	echo name="$name"
-	export VAR="$i"
-	ffmpeg -i "$i" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".dts-48000hz-768k.dts
-	done
-	
+	cat "/dev/shm/findvideo.txt"
+
+echo Finding finish.
+
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+echo Conversion started...
+
+	echo "Parallel convert"
+	parallel -j $entry ffmpeg -i {} -vf format=yuv420p -c:v libx264 -crf 20 -r:v 30 -c:a aac {.}-x264-8b-30f.aac.mkv ::: "$file"/*.*
 	error $?
 
+echo Conversion finish...
 echo -------------------------========================-------------------------
 ## Software lead-out.
 	echo "Finish... with numbers of actions : $part"
@@ -141,17 +179,15 @@ echo -------------------------========================-------------------------
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
 echo -------------------------========================-------------------------
 ## Press enter or auto-quit here.
-	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
-	echo "Press ENTER to terminate."
+	echo "If a script takes MORE than 120 seconds to complete it will ask you to"
+	echo "press ENTER to terminate."
 	echo
-	echo "${green}If a script takes LESS than 120 seconds to complete it will auto-terminate !${reset}"
-	echo "Auto-terminate after 10 seconds"
+	echo "If a script takes LESS than 120 seconds to complete it will auto"
+	echo "terminate after 10 seconds"
 	echo
 
-echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
 if [ $(( SECONDS - start )) -gt 120 ]
 then
@@ -167,9 +203,7 @@ else
 	echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
 	sleep 10
 fi
-	debug $?
 	exit
-
 ## -----===== End of bash =====-----
 
 End-user license agreement (eula)

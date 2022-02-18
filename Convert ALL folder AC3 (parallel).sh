@@ -100,8 +100,8 @@ fi
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	#file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
 	## --file-filter="*.jpg *.gif"
 
 if test -z "$file"

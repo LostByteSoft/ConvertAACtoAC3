@@ -108,7 +108,7 @@ echo -------------------------========================-------------------------
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 
-ffmpeg -i "$file" -codec:a libmp3lame -b:a 320k "$name".mp3-320k.mp3
+ffmpeg -i "$file" -codec:a libmp3lame -b:a 320k -ar 44100 "$name".mp3-44100hz-320k.mp3
 
 	error $?
 	

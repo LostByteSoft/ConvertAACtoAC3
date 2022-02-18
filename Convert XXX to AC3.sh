@@ -110,7 +110,7 @@ echo -------------------------========================-------------------------
 
 #ffmpeg -i "$FILE" -c:s copy -c:v copy -c:a ac3 "$NAME".ac3.ac3
 
-ffmpeg -i "$file" -c:s copy -c:v copy -c:a ac3 -ar 48000 -b:a 640k "$name".ac3-48000hz-640k.dts
+ffmpeg -i "$file" -c:s copy -c:v copy -c:a ac3 -ar 48000 -b:a 640k "$name".ac3-48000hz-640k.ac3
 
 	error $?
 	
