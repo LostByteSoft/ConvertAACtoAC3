@@ -94,8 +94,8 @@ Creator files:
 	creator playlist all music here.sh
 		Takes all mp3 find in subfolder and create m3u here.
 
-![Screenshot](picture_5.jpg)
-![Screenshot](picture_6.jpg)
+![Screenshot](picture_5.png)
+![Screenshot](picture_6.png)
 
 	creator playlist mp3 m3u.sh
 		-Create an m3u list for the specified folder.
