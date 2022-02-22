@@ -28,6 +28,8 @@ echo -------------------------========================-------------------------
 	echo "What it does ? Extract all audio track form folder of video files."
 	echo "Ffmpeg demand the exact file type to output."
 	echo
+	echo "Ffmpeg require to have to good extension, could not guess or give one randomly."
+	echo
 	echo "Informations : (EULA at the end of file, open in text.)"
 	echo "By LostByteSoft, no copyright or copyleft."
 	echo "https://github.com/LostByteSoft"
@@ -117,7 +119,7 @@ echo -------------------------========================-------------------------
 ## The code program.
 part=0
 debug=0
-
+echo "Ffmpeg require to have the good extension, could not guess or give one randomly."
 ext=$(zenity --entry --text="Enter the correct OUTPUT extension type without the dot (ex: aac , eac3 , dts) ?")
 
 for i in "$file"/*.*;
@@ -154,6 +156,7 @@ echo -------------------------========================-------------------------
 
 echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
+	debug $?
 if [ $(( SECONDS - start )) -gt 120 ]
 then
 	echo "Script takes more than 120 seconds to complete."
@@ -168,7 +171,6 @@ else
 	echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
 	sleep 10
 fi
-	debug $?
 	exit
 
 ## -----===== End of bash =====-----

@@ -33,6 +33,10 @@ echo -------------------------========================-------------------------
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
 
+echo "Will create a m3u file for each sub folder."
+echo "Will NOT create an m3u file in the folder you have seleced."
+sleep 3
+
 find . -type d |
 while read subdir
 do

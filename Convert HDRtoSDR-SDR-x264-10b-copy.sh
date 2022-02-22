@@ -5,7 +5,7 @@
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
 	printf '\033[8;40;100t'	# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
-	sleep 0.25
+	sleep 0.50
 	
 echo -------------------------========================-------------------------
 ## Software lead-in
@@ -15,30 +15,17 @@ echo -------------------------========================-------------------------
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
+	blue=`tput setaf 12`
 	reset=`tput sgr0`
-
-echo -------------------------========================-------------------------
-echo Function Error detector. If errorlevel is 1 or greater will show error msg.
-	error()
-	{
-	if [ "$?" -ge 1 ]; then
-		echo
-		echo "${red}ERROR █████████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
-		echo
-		echo "!!! ERROR was detected !!! Press ENTER key to try to CONTINUE !!! Will probably exit !!!"
-		echo
-		echo "This script take $(( SECONDS - start )) seconds to complete."
-		date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
-		echo "Time needed: $date"
-		echo
-		read -n 1 -s -r -p "Press any key to continue"
-		echo
-	fi
-	}
+## COmmon variables, you can changes theses variables as you wish to test (0 or 1)
+	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
+	debug=0		# test debug
+	error=0		# test error
+	part=0		# don't change this value
 
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-02-13_Sunday_07:12:27
+	echo 2022-02-20_Sunday_08:45:21
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert HDRtoSDR-no-audio"
@@ -56,6 +43,41 @@ echo -------------------------========================-------------------------
 	echo "4k demo HDR https://4kmedia.org/"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+echo Function Debug. Activate via source program debug=1.
+	debug()
+	if [ "$debug" -ge 1 ]; then
+		echo
+		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
+		echo
+		echo debug = $debug
+		echo part = $part
+		echo INPUT = $INPUT
+		echo {INPUT##*/}  = ${INPUT##*/} 
+		echo input = $input
+		echo cpu = $(nproc)
+		echo def = $def
+		echo entry = $entry
+		echo autoquit = $autoquit
+		echo 
+		read -n 1 -s -r -p "Press any key to EXIT"
+		exit
+	fi
+
+echo Function Error detector. If errorlevel is 1 or greater will show error msg.
+	error()
+	{
+	if [ "$?" -ge 1 ]; then
+		echo
+		echo "${red}█████████████████████████████████ ERROR █████████████████████████████████${reset}"
+		echo
+		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
+		echo
+		read -n 1 -s -r -p "Press any key to CONTINUE"
+		echo
+	fi
+	}
+
 echo -------------------------========================-------------------------
 echo "Check installed requirement !"
 
@@ -87,6 +109,26 @@ if test -z "$file"
 		echo "$file"
 fi
 echo -------------------------========================-------------------------
+echo "Input name, directory and output name : (Debug helper)"
+## Set working path.
+	dir=$(pwd)
+	echo "Working dir : "$dir""
+	echo Input file : "$file"
+	export VAR="$file"
+	echo
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Base name: "$(basename "${VAR}")"
+	echo
+## Output file name
+	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output name ext : "$name""
+	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output name bis : "$name1""
+	
+echo -------------------------========================-------------------------
+echo "Get the last Folder :"
+	INPUT="$(dirname "${VAR}")"
+	echo ${INPUT##*/} 
 ## Variables, for program."
 	part=0
 
@@ -130,31 +172,49 @@ echo -------------------------========================-------------------------
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
+
 echo -------------------------========================-------------------------
 ## Press enter or auto-quit here.
-	echo "If a script takes MORE than 120 seconds to complete it will ask you to"
-	echo "press ENTER to terminate."
+	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
+	echo "Press ENTER to terminate."
 	echo
-	echo "If a script takes LESS than 120 seconds to complete it will auto"
-	echo "terminate after 10 seconds"
+	echo "${green}If a script takes LESS than 120 seconds to complete it will auto-terminate !${reset}"
+	echo "Auto-terminate after 10 seconds"
 	echo
 
+echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
-if [ $(( SECONDS - start )) -gt 120 ]
+	debug $?
+
+if [ "$autoquit" -eq "1" ]
 then
-	echo "Script takes more than 120 seconds to complete."
-	echo "Press ENTER key to exit !"
-	echo
-	echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-	read name
-else
-	echo "Script takes less than 120 seconds to complete."
-	echo "Auto-quit in 10 sec. (You can press X)"
-	echo
-	echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-	sleep 10
-fi
+	echo "${blue}██████████████████████████████ Finish Now ████████████████████████████████${blue}"
+	sleep 2
 	exit
+	else
+	{
+	if [ $(( SECONDS - start )) -gt 120 ]
+		then
+			echo "Script takes more than 120 seconds to complete."
+			echo "Press ENTER key to exit !"
+			echo
+			echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			read name
+			exit
+		else
+			echo "Script takes less than 120 seconds to complete."
+			echo "Auto-quit in 10 sec. (You can press X)"
+			echo
+			echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			sleep 9
+			exit
+		fi
+	}
+fi
+	sleep 1
+	exit
+
+
 ## -----===== End of bash =====-----
 
 End-user license agreement (eula)

@@ -25,24 +25,28 @@ echo -------------------------========================-------------------------
 
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-02-21_Monday_05:01:37
+	echo 2022-02-20_Sunday_07:26:49
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: creator playlist all music select.sh"
+	echo "Software name: Convert XXX to 2160p-x264-10b-30f-copy audio"
+	echo "File name : Convert XXX to x264-10b-30f-copy.sh"
 	echo
 	echo What it does ?
-	echo "Auto create m3u playlist for folders (with autoname)"
+	echo "Convert ONE video file to 2160p-x264-10b-30f-copy upscale or downscale 4k"
 	echo
-	echo Informations :
-	echo "By LostByteSoft, no copyright or copyleft"
+	echo "Read me for this file (and known bugs) :"
+	echo
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "Use ffmpeg only"
+	echo
+	echo "https://ffmpeg.org/ffmpeg.html"
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://4kmedia.org/"
+	echo
+	echo "By LostByteSoft, no copyright or copyleft."
 	echo "https://github.com/LostByteSoft"
-	echo "Take the name of previous folder for *.m3u name"
-	echo "Will create an *.m3u file for group of *.mp3 in THE DIRECT FOLDER"
-	echo "Will do not create for folders or sub folders."
-	echo "Version 2021-12-14 Original release"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
-
 echo -------------------------========================-------------------------
 echo Function Debug. Activate via source program debug=1.
 	debug()
@@ -79,10 +83,25 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	}
 
 echo -------------------------========================-------------------------
+echo "Check installed requirement !"
+
+if command -v ffmpeg >/dev/null 2>&1
+	then
+		echo "Ffmpeg installed continue."
+		dpkg -s ffmpeg | grep Version
+	else
+		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install ffmpeg"
+		echo -------------------------========================-------------------------
+		sleep 10
+		exit
+fi
+
+echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	#file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
 	## --file-filter="*.jpg *.gif"
 
 if test -z "$file"
@@ -113,39 +132,23 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-## "Variables, for program."
-	part=0
-	echo "Will create an m3u file in the folder you selected."
-	echo "All audio files in sub folders are find and put in file"
-	sleep 3
+echo "Get the last Folder :"
+	INPUT="$(dirname "${VAR}")"
+	echo ${INPUT##*/}
 
-echo "The code program."
-
+## The code program.
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
-	echo "Finding files..."
-	echo file = "$file"
-	echo "(basename "${VAR}")" = "$(basename "${VAR}")"
-find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "$file"/"$(basename "${VAR}")".m3u
-	error $?
+echo "ffmpeg conversion"
 
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
-	echo "Listing..."
-	sleep 1
-	cat "$file"/"$(basename "${VAR}")".m3u
-	error $?
-	
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
-	echo "Name sort"
-	if zenity --question --text="Do you want to sort by file name ?"
-	then 
-	sort "$file"/"$(basename "${VAR}")".m3u > "$file"/"$(basename "${VAR}")".m3v
-	cat "$file"/"$(basename "${VAR}")".m3v
-	echo
-	echo "Remove m3u and rename m3v files"
-	fi
+## Ac3 sound
+## ffmpeg -i "$file" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{2160p-x264-10b-30f}.{ac3-48000hz-640k}.mkv
+
+## Dts sound
+ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a copy "$name".2160p-x264-10b-30f-copy.mkv
+
+#ffmpeg -i "$file" -vf scale=1920x1080:flags=lanczos -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{2160p-x264-30}.{ac3-48000-640}.mkv
+
 	error $?
 	
 echo -------------------------========================-------------------------
