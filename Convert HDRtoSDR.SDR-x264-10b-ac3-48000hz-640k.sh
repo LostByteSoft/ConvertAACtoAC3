@@ -3,9 +3,9 @@
 ## -----===== Start of bash =====-----
 	#printf '\033[8;30;80t'		# will resize the window, if needed.
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	printf '\033[8;40;100t'	# will resize the window, if needed.
+	printf '\033[8;40;125t'		# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
-	sleep 0.25
+	sleep 0.50
 	
 echo -------------------------========================-------------------------
 ## Software lead-in
@@ -15,30 +15,17 @@ echo -------------------------========================-------------------------
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
+	blue=`tput setaf 12`
 	reset=`tput sgr0`
-
-echo -------------------------========================-------------------------
-echo Function Error detector. If errorlevel is 1 or greater will show error msg.
-	error()
-	{
-	if [ "$?" -ge 1 ]; then
-		echo
-		echo "${red}ERROR █████████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
-		echo
-		echo "!!! ERROR was detected !!! Press ENTER key to try to CONTINUE !!! Will probably exit !!!"
-		echo
-		echo "This script take $(( SECONDS - start )) seconds to complete."
-		date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
-		echo "Time needed: $date"
-		echo
-		read -n 1 -s -r -p "Press any key to continue"
-		echo
-	fi
-	}
+## COmmon variables, you can changes theses variables as you wish to test (0 or 1)
+	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
+	debug=0		# test debug
+	error=0		# test error
+	part=0		# don't change this value
 
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-02-12_Saturday_08:59:30
+	echo 2022-02-25_Friday_12:35:10
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert HDRtoSDR-SDR-x264-10b-ac3-48000hz-640k"
@@ -46,15 +33,36 @@ echo -------------------------========================-------------------------
 	echo What it does ?
 	echo "Convert ONE video file HDR to SDR Convert HDRtoSDR-SDR-x264-10b-ac3-48000hz-640k"
 	echo
-	echo Informations :
-	echo "By LostByteSoft, no copyright or copyleft"
-	echo "https://github.com/LostByteSoft"
-	echo "Use ffmpeg only"
-	echo "https://ffmpeg.org/ffmpeg.html"
+	echo "Read me for this file (and known bugs) :"
+	echo
+	echo "Use 7z https://www.7-zip.org/download.html"
+	echo "Use https://imagemagick.org/index.php"
+	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
+	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
+	echo
 	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
-	echo "4k demo HDR https://4kmedia.org/"
+	echo "4k demo HDR https://www.demolandia.net"
+	echo
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+echo Function Error detector. If errorlevel is 1 or greater will show error msg.
+	error()
+	{
+	if [ "$?" -ge 1 ]; then
+		part=$((part+1))
+		echo
+		echo "${red}█████████████████████████████████ ERROR $part █████████████████████████████████${reset}"
+		echo
+		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
+		echo
+		read -n 1 -s -r -p "Press any key to CONTINUE"
+		echo
+	fi
+	}
+
 echo -------------------------========================-------------------------
 echo "Check installed requirement !"
 

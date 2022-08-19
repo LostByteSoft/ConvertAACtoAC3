@@ -28,6 +28,8 @@ Audio, video & images at different level.
 
 History: I start this "thing" just for convert aac 6 ch to ac3 6 ch and became what it is now.
 
+-Update 2022-08-18 : dump just small updates.
+
 How to ?
 ---------------------------------------------
 
@@ -93,8 +95,11 @@ Creator files:
 		Create m3u in subfolder only.
 	creator playlist all music here.sh
 		Takes all mp3 find in subfolder and create m3u here.
-
+		
 ![Screenshot](picture_5.png)
+
+	Only one or two files are created, in the folder you specified. m3v are sorted by file name.
+
 ![Screenshot](picture_6.png)
 
 	creator playlist mp3 m3u.sh

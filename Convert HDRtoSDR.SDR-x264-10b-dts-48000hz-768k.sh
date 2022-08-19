@@ -3,7 +3,7 @@
 ## -----===== Start of bash =====-----
 	#printf '\033[8;30;80t'		# will resize the window, if needed.
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	printf '\033[8;40;100t'	# will resize the window, if needed.
+	printf '\033[8;40;125t'		# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
 	sleep 0.50
 	
@@ -15,19 +15,23 @@ echo -------------------------========================-------------------------
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
+	blue=`tput setaf 12`
 	reset=`tput sgr0`
+## COmmon variables, you can changes theses variables as you wish to test (0 or 1)
+	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
+	debug=0		# test debug
+	error=0		# test error
+	part=0		# don't change this value
 
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-02-18_Friday_08:03:40
+	echo 2022-02-25_Friday_12:35:10
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert ALL folder to DTS"
+	echo "Software name: Convert HDRtoSDR-SDR-x264-10b-30f.dts-48000hz-768k"
 	echo
 	echo What it does ?
-	echo "Convert ALL audio/video file in folder to audio DTS dts-48000hz-768k"
-	echo
-	echo "This is a single core conversion"
+	echo "Convert ONE video file HDR to SDR Convert HDRtoSDR-SDR-x264-10b-30f.dts-48000hz-768k.mkv"
 	echo
 	echo "Read me for this file (and known bugs) :"
 	echo
@@ -44,32 +48,17 @@ echo -------------------------========================-------------------------
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
-	debug()
-	{
-	if [ "$debug" -ge 1 ]; then
-		echo
-		echo "${yellow}DEBUG █████████████████████████████ DEBUG █████████████████████████████ DEBUG ${reset}"
-		echo
-		read -n 1 -s -r -p "Press any key to continue"
-		echo
-	fi
-	}
-
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	error()
 	{
 	if [ "$?" -ge 1 ]; then
+		part=$((part+1))
 		echo
-		echo "${red}ERROR █████████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
+		echo "${red}█████████████████████████████████ ERROR $part █████████████████████████████████${reset}"
 		echo
 		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
 		echo
-		echo "This script take $(( SECONDS - start )) seconds to complete."
-		date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
-		echo "Time needed: $date"
-		echo
-		read -n 1 -s -r -p "Press any key to continue"
+		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
 	fi
 	}
@@ -80,7 +69,6 @@ echo "Check installed requirement !"
 if command -v ffmpeg >/dev/null 2>&1
 	then
 		echo "Ffmpeg installed continue."
-		dpkg -s ffmpeg | grep Version
 	else
 		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
 		echo "Add with : sudo apt-get install ffmpeg"
@@ -88,12 +76,11 @@ if command -v ffmpeg >/dev/null 2>&1
 		sleep 10
 		exit
 fi
-
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	#file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
 	## --file-filter="*.jpg *.gif"
 
 if test -z "$file"
@@ -126,23 +113,36 @@ echo "Input name, directory and output name : (Debug helper)"
 echo -------------------------========================-------------------------
 ## Variables, for program."
 	part=0
-	debug=0
-## The code program.
 
-ext=$(zenity --entry --text="Enter the correct INPUT extension type (ex: aac , eac3) ?")
-	
-for i in "$file"/*.$ext;
-	do name=`echo "$i" | rev | cut -f 2- -d '.' | rev`
+## The code program.
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
-	echo i="$i"
-	echo name="$name"
-	export VAR="$i"
-	ffmpeg -i "$i" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".dts-48000hz-768k.dts
-	done
-	
-	error $?
+echo "ffmpeg conversion"
 
+### debug pixel info
+### ffmpeg -h encoder=libx265 | grep pixel
+
+### x264 8b preset
+
+### good quality (Low) (x264 8bit)
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$NAME".{SDR.x264.8b}.{no.audio}.mkv
+
+### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x264.8b}.{no.audio}.mkv
+
+###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -preset faster -tune fastdecode -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".SDR-x264-10b-30f.dts-48000hz-768k.mkv
+
+### x265 10b presets
+
+### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
+
+## -preset ultrafast
+## -preset medium
+
+	error $?
+	
 echo -------------------------========================-------------------------
 ## Software lead-out.
 	echo "Finish... with numbers of actions : $part"
@@ -151,17 +151,15 @@ echo -------------------------========================-------------------------
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
 echo -------------------------========================-------------------------
 ## Press enter or auto-quit here.
-	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
-	echo "Press ENTER to terminate."
+	echo "If a script takes MORE than 120 seconds to complete it will ask you to"
+	echo "press ENTER to terminate."
 	echo
-	echo "${green}If a script takes LESS than 120 seconds to complete it will auto-terminate !${reset}"
-	echo "Auto-terminate after 10 seconds"
+	echo "If a script takes LESS than 120 seconds to complete it will auto"
+	echo "terminate after 10 seconds"
 	echo
 
-echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
 if [ $(( SECONDS - start )) -gt 120 ]
 then
@@ -177,9 +175,7 @@ else
 	echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
 	sleep 10
 fi
-	debug $?
 	exit
-
 ## -----===== End of bash =====-----
 
 End-user license agreement (eula)

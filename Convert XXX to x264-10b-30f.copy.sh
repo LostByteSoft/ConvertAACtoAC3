@@ -3,7 +3,7 @@
 ## -----===== Start of bash =====-----
 	#printf '\033[8;30;80t'		# will resize the window, if needed.
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	printf '\033[8;40;100t'	# will resize the window, if needed.
+	printf '\033[8;40;125t'	# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
 	sleep 0.50
 	
@@ -19,13 +19,21 @@ echo -------------------------========================-------------------------
 	reset=`tput sgr0`
 ## COmmon variables, you can changes theses variables as you wish to test (0 or 1)
 	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
-	debug=0		# test debug
-	error=0		# test error
 	part=0		# don't change this value
 
 echo -------------------------========================-------------------------
+
+if [ "$autoquit" -eq "1" ]; then
+	echo
+	echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
+	echo
+	echo -------------------------========================-------------------------
+	sleep 3
+	fi
+
+echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-02-20_Sunday_07:26:49
+	echo 2022-03-09_Wednesday_08:46:39
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert XXX to 2160p-x264-10b-30f-copy audio"
@@ -34,53 +42,35 @@ echo -------------------------========================-------------------------
 	echo What it does ?
 	echo "Convert ONE video file to 2160p-x264-10b-30f-copy upscale or downscale 4k"
 	echo
+	echo "This is a single core conversion"
+	echo
 	echo "Read me for this file (and known bugs) :"
 	echo
-	echo "Informations : (EULA at the end of file, open in text.)"
-	echo "Use ffmpeg only"
+	echo "Use 7z https://www.7-zip.org/download.html"
+	echo "Use https://imagemagick.org/index.php"
+	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
+	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
 	echo
-	echo "https://ffmpeg.org/ffmpeg.html"
 	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
-	echo "4k demo HDR https://4kmedia.org/"
+	echo "4k demo HDR https://www.demolandia.net"
 	echo
-	echo "By LostByteSoft, no copyright or copyleft."
-	echo "https://github.com/LostByteSoft"
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
-	debug()
-	if [ "$debug" -ge 1 ]; then
-		echo
-		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
-		echo
-		echo debug = $debug
-		echo part = $part
-		echo INPUT = $INPUT
-		echo {INPUT##*/}  = ${INPUT##*/} 
-		echo input = $input
-		echo cpu = $(nproc)
-		echo def = $def
-		echo entry = $entry
-		echo autoquit = $autoquit
-		echo 
-		read -n 1 -s -r -p "Press any key to EXIT"
-		exit
-	fi
-
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	error()
-	{
 	if [ "$?" -ge 1 ]; then
+		part=$((part+1))
 		echo
-		echo "${red}█████████████████████████████████ ERROR █████████████████████████████████${reset}"
+		echo "${red}█████████████████████████████████ ERROR $part █████████████████████████████████${reset}"
 		echo
 		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
 		echo
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-	fi
-	}
+		fi
 
 echo -------------------------========================-------------------------
 echo "Check installed requirement !"
@@ -118,10 +108,14 @@ echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
 ## Set working path.
 	dir=$(pwd)
+## file or folder selected
 	echo "Working dir : "$dir""
 	echo Input file : "$file"
 	export VAR="$file"
 	echo
+## directory section
+	INPUT="$(dirname "${VAR}")"	
+	echo "Get the last Folder : ${INPUT##*/}"
 	echo Base directory : "$(dirname "${VAR}")"
 	echo Base name: "$(basename "${VAR}")"
 	echo
@@ -159,8 +153,7 @@ echo -------------------------========================-------------------------
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
-echo -------------------------========================-------------------------
+	echo
 ## Press enter or auto-quit here.
 	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
 	echo "Press ENTER to terminate."
@@ -171,13 +164,14 @@ echo -------------------------========================-------------------------
 
 echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
-	debug $?
-
 if [ "$autoquit" -eq "1" ]
 then
-	echo "${blue}██████████████████████████████ Finish Now ████████████████████████████████${blue}"
-	sleep 2
-	exit
+		echo "Script will auto quit in 2 seconds."
+		echo
+		echo "${blue}██████████████████████████████ Finish Now ████████████████████████████████${reset}"
+		echo
+		sleep 3
+		exit
 	else
 	{
 	if [ $(( SECONDS - start )) -gt 120 ]

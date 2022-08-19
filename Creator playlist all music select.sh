@@ -25,20 +25,24 @@ echo -------------------------========================-------------------------
 
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-02-21_Monday_05:01:37
+	echo 2022-02-22_Tuesday_06:56:13
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: creator playlist all music select.sh"
+	echo "Software name: Creator playlist all music"
+	echo "File name : Creator playlist all music select.sh"
 	echo
 	echo What it does ?
 	echo "Auto create m3u playlist for folders (with autoname)"
 	echo
-	echo Informations :
-	echo "By LostByteSoft, no copyright or copyleft"
-	echo "https://github.com/LostByteSoft"
+	echo "Will create an m3u file in the folder you selected."
+	echo "All audio files in sub folders are find and put in file"
 	echo "Take the name of previous folder for *.m3u name"
 	echo "Will create an *.m3u file for group of *.mp3 in THE DIRECT FOLDER"
 	echo "Will do not create for folders or sub folders."
+	echo
+	echo Informations :
+	echo "By LostByteSoft, no copyright or copyleft"
+	echo "https://github.com/LostByteSoft"
 	echo "Version 2021-12-14 Original release"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
@@ -68,8 +72,9 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	error()
 	{
 	if [ "$?" -ge 1 ]; then
+		part=$((part+1))
 		echo
-		echo "${red}█████████████████████████████████ ERROR █████████████████████████████████${reset}"
+		echo "${red}█████████████████████████████████ ERROR $part █████████████████████████████████${reset}"
 		echo
 		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
 		echo
@@ -99,10 +104,14 @@ echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
 ## Set working path.
 	dir=$(pwd)
+## file or folder selected
 	echo "Working dir : "$dir""
 	echo Input file : "$file"
 	export VAR="$file"
 	echo
+## directory section
+	INPUT="$(dirname "${VAR}")"	
+	echo "Get the last Folder : ${INPUT##*/}"
 	echo Base directory : "$(dirname "${VAR}")"
 	echo Base name: "$(basename "${VAR}")"
 	echo
@@ -113,12 +122,6 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-## "Variables, for program."
-	part=0
-	echo "Will create an m3u file in the folder you selected."
-	echo "All audio files in sub folders are find and put in file"
-	sleep 3
-
 echo "The code program."
 
 	part=$((part+1))
@@ -126,28 +129,44 @@ echo "The code program."
 	echo "Finding files..."
 	echo file = "$file"
 	echo "(basename "${VAR}")" = "$(basename "${VAR}")"
-find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "$file"/"$(basename "${VAR}")".m3u
+#find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "$file"/"$(basename "${VAR}")".m3u
+find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "/dev/shm/m3u.tmp"
 	error $?
 
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 	echo "Listing..."
 	sleep 1
-	cat "$file"/"$(basename "${VAR}")".m3u
+	#cat "$file"/"$(basename "${VAR}")".m3u
+	cat "/dev/shm/m3u.tmp"
 	error $?
 	
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
-	echo "Name sort"
-	if zenity --question --text="Do you want to sort by file name ?"
-	then 
-	sort "$file"/"$(basename "${VAR}")".m3u > "$file"/"$(basename "${VAR}")".m3v
-	cat "$file"/"$(basename "${VAR}")".m3v
-	echo
-	echo "Remove m3u and rename m3v files"
+	echo "Name sort (Yes or No (Suggest Yes))"
+	if zenity --question --text="Do you want to sort by file name ? (Yes or No (Suggest Yes))"
+	then
+		part=$((part+1))
+		echo "-------------------------===== Section $part =====-------------------------"
+		#sort "$file"/"$(basename "${VAR}")".m3u > "$file"/"$(basename "${VAR}")".m3v
+		sort "/dev/shm/m3u.tmp" > "/dev/shm/m3u.srt"
+		cp "/dev/shm/m3u.srt" "$file"/"$(basename "${VAR}")".m3u
+		cat "$file"/"$(basename "${VAR}")".m3u
+		echo
+		part=$((part+1))
+		echo "-------------------------===== Section $part =====-------------------------"
+		echo "Files are sorted and m3u is in $file"
+	else
+		part=$((part+1))
+		echo "-------------------------===== Section $part =====-------------------------"
+		cp "/dev/shm/m3u.srt" "$file"/"$(basename "${VAR}")".m3u
+		cat "$file"/"$(basename "${VAR}")".m3u
+		part=$((part+1))
+		echo "-------------------------===== Section $part =====-------------------------"
+		echo "Files are NOT sorted and m3u is in $file"
 	fi
 	error $?
-	
+
 echo -------------------------========================-------------------------
 ## Software lead-out.
 	echo "Finish... with numbers of actions : $part"
@@ -156,8 +175,7 @@ echo -------------------------========================-------------------------
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
-echo -------------------------========================-------------------------
+	echo
 ## Press enter or auto-quit here.
 	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
 	echo "Press ENTER to terminate."

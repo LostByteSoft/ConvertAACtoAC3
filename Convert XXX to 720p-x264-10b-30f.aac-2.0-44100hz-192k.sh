@@ -3,7 +3,7 @@
 ## -----===== Start of bash =====-----
 	#printf '\033[8;30;80t'		# will resize the window, if needed.
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	printf '\033[8;40;100t'	# will resize the window, if needed.
+	printf '\033[8;40;125t'	# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
 	sleep 0.50
 	
@@ -15,17 +15,32 @@ echo -------------------------========================-------------------------
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
+	blue=`tput setaf 12`
 	reset=`tput sgr0`
+## COmmon variables, you can changes theses variables as you wish to test (0 or 1)
+	autoquit=1	# autoquit anyway to script takes more than 2 min to complete
+	part=0		# don't change this value
+
+echo -------------------------========================-------------------------
+
+if [ "$autoquit" -eq "1" ]; then
+	echo
+	echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
+	echo
+	echo -------------------------========================-------------------------
+	sleep 0.25
+	fi
 
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-02-18_Friday_08:03:40
+	echo 2022-03-09_Wednesday_08:46:39
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert ALL folder to DTS"
+	echo "Software name: Convert XXX to 720p-x264-10b-30f.aac-2.0-44100hz-192k.sh"
 	echo
 	echo What it does ?
-	echo "Convert ALL audio/video file in folder to audio DTS dts-48000hz-768k"
+	echo "Convert ONE video file to 720p-x264-10b-30f.aac-2.0-44100hz-192k.mkv"
+	echo "Perfect format for facebook."
 	echo
 	echo "This is a single core conversion"
 	echo
@@ -44,35 +59,18 @@ echo -------------------------========================-------------------------
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
-	debug()
-	{
-	if [ "$debug" -ge 1 ]; then
-		echo
-		echo "${yellow}DEBUG █████████████████████████████ DEBUG █████████████████████████████ DEBUG ${reset}"
-		echo
-		read -n 1 -s -r -p "Press any key to continue"
-		echo
-	fi
-	}
-
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	error()
-	{
 	if [ "$?" -ge 1 ]; then
+		part=$((part+1))
 		echo
-		echo "${red}ERROR █████████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
+		echo "${red}█████████████████████████████████ ERROR $part █████████████████████████████████${reset}"
 		echo
 		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
 		echo
-		echo "This script take $(( SECONDS - start )) seconds to complete."
-		date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
-		echo "Time needed: $date"
+		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-		read -n 1 -s -r -p "Press any key to continue"
-		echo
-	fi
-	}
+		fi
 
 echo -------------------------========================-------------------------
 echo "Check installed requirement !"
@@ -92,8 +90,8 @@ fi
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	#file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
 	## --file-filter="*.jpg *.gif"
 
 if test -z "$file"
@@ -110,10 +108,14 @@ echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
 ## Set working path.
 	dir=$(pwd)
+## file or folder selected
 	echo "Working dir : "$dir""
 	echo Input file : "$file"
 	export VAR="$file"
 	echo
+## directory section
+	INPUT="$(dirname "${VAR}")"	
+	echo "Get the last Folder : ${INPUT##*/}"
 	echo Base directory : "$(dirname "${VAR}")"
 	echo Base name: "$(basename "${VAR}")"
 	echo
@@ -126,23 +128,15 @@ echo "Input name, directory and output name : (Debug helper)"
 echo -------------------------========================-------------------------
 ## Variables, for program."
 	part=0
-	debug=0
-## The code program.
 
-ext=$(zenity --entry --text="Enter the correct INPUT extension type (ex: aac , eac3) ?")
-	
-for i in "$file"/*.$ext;
-	do name=`echo "$i" | rev | cut -f 2- -d '.' | rev`
+## The code program.
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
-	echo i="$i"
-	echo name="$name"
-	export VAR="$i"
-	ffmpeg -i "$i" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".dts-48000hz-768k.dts
-	done
-	
-	error $?
 
+ffmpeg -i "$file" -vf scale=1280x720:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a aac -ar 44100 -ac 2 -b:a 192k "$name".720p-x264-10b-30f.aac-2.0-44100hz-192k.mkv
+
+	error $?
+	
 echo -------------------------========================-------------------------
 ## Software lead-out.
 	echo "Finish... with numbers of actions : $part"
@@ -151,8 +145,7 @@ echo -------------------------========================-------------------------
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
-echo -------------------------========================-------------------------
+	echo
 ## Press enter or auto-quit here.
 	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
 	echo "Press ENTER to terminate."
@@ -163,22 +156,37 @@ echo -------------------------========================-------------------------
 
 echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
-if [ $(( SECONDS - start )) -gt 120 ]
+if [ "$autoquit" -eq "1" ]
 then
-	echo "Script takes more than 120 seconds to complete."
-	echo "Press ENTER key to exit !"
-	echo
-	echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-	read name
-else
-	echo "Script takes less than 120 seconds to complete."
-	echo "Auto-quit in 10 sec. (You can press X)"
-	echo
-	echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-	sleep 10
+		echo "Script will auto quit in 2 seconds."
+		echo
+		echo "${blue}██████████████████████████████ Finish Now ████████████████████████████████${reset}"
+		echo
+		sleep 3
+		exit
+	else
+	{
+	if [ $(( SECONDS - start )) -gt 120 ]
+		then
+			echo "Script takes more than 120 seconds to complete."
+			echo "Press ENTER key to exit !"
+			echo
+			echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			read name
+			exit
+		else
+			echo "Script takes less than 120 seconds to complete."
+			echo "Auto-quit in 10 sec. (You can press X)"
+			echo
+			echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			sleep 9
+			exit
+		fi
+	}
 fi
-	debug $?
+	sleep 1
 	exit
+
 
 ## -----===== End of bash =====-----
 

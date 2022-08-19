@@ -27,10 +27,20 @@ echo -------------------------========================-------------------------
 	echo What it does ?
 	echo "Convert ALL audio/video file in folder to audio AC3 ac3-48000hz-640k"
 	echo
-	echo Informations :
-	echo "Use ffmpeg only"
-	echo "By LostByteSoft, no copyright or copyleft"
-	echo "https://github.com/LostByteSoft"
+	echo "This is a single core conversion"
+	echo
+	echo "Read me for this file (and known bugs) :"
+	echo
+	echo "Use 7z https://www.7-zip.org/download.html"
+	echo "Use https://imagemagick.org/index.php"
+	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
+	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
+	echo
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://www.demolandia.net"
+	echo
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------

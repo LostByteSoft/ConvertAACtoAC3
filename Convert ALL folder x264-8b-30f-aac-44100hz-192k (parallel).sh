@@ -89,15 +89,21 @@ if command -v parallel >/dev/null 2>&1
 fi
 
 echo -------------------------========================-------------------------
-echo "Enter cores to use ?"
+echo "Numbers of parallel multi-cores to use ?"
 	cpu=$(nproc)
-	def=$(( cpu / 4 ))
-	#entry=$(zenity --scale --value="$def" --min-value="1" --max-value="$cpu" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have $cpu cores !\n\nDefault value is $def, it is suggested you only use real cores.\n\n(1 to whatever core you want to use)\n\n!!! DO NOT USE VIRTUAL CORES !!!")
+	defv=$(( cpu / 4 ))	## for video files
+	defa=$(nproc)		## for audio files
+	defi=$(( cpu * 2 ))	## for images files
+	#echo cpu = $cpu
+	#echo defv = $defv
+	#echo defa = $defa
+	#echo defi = $defi
+	entry=$(zenity --scale --value="$defv" --min-value="1" --max-value="32" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defa" for audio.\n\n\tDefault suggested value is "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
 
 if test -z "$entry"
 	then
-		echo "Default value of $cpu / 2 will be used. Now continue in 3 seconds."
-		entry=$def
+		echo "Default value of $cpu will be used. Now continue in 3 seconds."
+		entry=$(nproc)
 		echo "You have selected : $entry"
 		#sleep 3
 	else
