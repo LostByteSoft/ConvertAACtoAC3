@@ -3,9 +3,9 @@
 ## -----===== Start of bash =====-----
 	#printf '\033[8;30;80t'		# will resize the window, if needed.
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	printf '\033[8;40;125t'		# will resize the window, if needed.
+	printf '\033[8;40;100t'	# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
-	sleep 0.50
+	sleep 0.25
 	
 echo -------------------------========================-------------------------
 ## Software lead-in
@@ -15,55 +15,55 @@ echo -------------------------========================-------------------------
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
-	blue=`tput setaf 12`
 	reset=`tput sgr0`
-## COmmon variables, you can changes theses variables as you wish to test (0 or 1)
-	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
-	debug=0		# test debug
-	error=0		# test error
-	part=0		# don't change this value
 
-echo -------------------------========================-------------------------
-	echo Version compiled on : Also serves as a version
-	echo 2022-09-09_Friday_12:35:10
-	echo
-## Software name, what is this, version, informations.
-	echo "Software name: Convert HDRtoSDR-no-audio"
-	echo
-	echo What it does ?
-	echo "Convert HDRtoSDR-SDR-x264-10b-no-audio.sh"
-	echo
-	echo "Read me for this file (and known bugs) :"
-	echo
-	echo "Use 7z https://www.7-zip.org/download.html"
-	echo "Use https://imagemagick.org/index.php"
-	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
-	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
-	echo
-	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
-	echo "4k demo HDR https://www.demolandia.net"
-	echo
-	echo "Informations : (EULA at the end of file, open in text.)"
-	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
-	echo
-	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	error()
 	{
 	if [ "$?" -ge 1 ]; then
-		part=$((part+1))
 		echo
-		echo "${red}█████████████████████████████████ ERROR $part █████████████████████████████████${reset}"
+		echo "${red}ERROR █████████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
 		echo
-		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
+		echo "!!! ERROR was detected !!! Press ENTER key to try to CONTINUE !!! Will probably exit !!!"
 		echo
-		read -n 1 -s -r -p "Press any key to CONTINUE"
+		echo "This script take $(( SECONDS - start )) seconds to complete."
+		date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+		echo "Time needed: $date"
+		echo
+		read -n 1 -s -r -p "Press any key to continue"
 		echo
 	fi
 	}
 
 echo -------------------------========================-------------------------
+	echo Version compiled on : Also serves as a version
+	echo 2022-02-16_Wednesday_11:58:53
+	echo
+## Software name, what is this, version, informations.
+	echo
+## Software name, what is this, version, informations.
+	echo "Software name: Convert ALL folder files to x264 aac (parallel)"
+	echo "File name: Convert ALL folder x264-8b-30f-aac-44100hz-192k (parallel).sh"
+	echo
+	echo What it does ?
+	echo "Convert ONE video file to x264-8b-30f.aac-2.0-44100hz-192k.mkv"
+	echo "Perfect format for facebook."
+	echo
+	echo Informations :
+	echo "Use ffmpeg only"
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft."
+	echo "https://github.com/LostByteSoft"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+	echo "${red}		███████████████████████████████████████████████${reset}"
+	echo "		SPACES ARE NOT SUPPORTED IN PARALLEL CONVERSION"
+	echo "${red}		███████████████████████████████████████████████${reset}"
+	echo -------------------------========================-------------------------
+	#read -n 1 -s -r -p "Press any key to continue"
+
 echo "Check installed requirement !"
 
 if command -v ffmpeg >/dev/null 2>&1
@@ -76,11 +76,46 @@ if command -v ffmpeg >/dev/null 2>&1
 		sleep 10
 		exit
 fi
+
+if command -v parallel >/dev/null 2>&1
+	then
+		echo "Parallel installed continue."
+		dpkg -s parallel | grep Version
+	else
+		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install parallel"
+		echo -------------------------========================-------------------------
+		sleep 10
+		exit
+fi
+
+echo -------------------------========================-------------------------
+echo "Numbers of parallel multi-cores to use ?"
+	cpu=$(nproc)
+	defv=$(( cpu / 4 ))	## for video files
+	defa=$(nproc)		## for audio files
+	defi=$(( cpu * 2 ))	## for images files
+	#echo cpu = $cpu
+	#echo defv = $defv
+	#echo defa = $defa
+	#echo defi = $defi
+	entry=$(zenity --scale --value="$defv" --min-value="1" --max-value="32" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defa" for audio.\n\n\tDefault suggested value is "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
+
+if test -z "$entry"
+	then
+		echo "Default value of $cpu will be used. Now continue in 3 seconds."
+		entry=$(nproc)
+		echo "You have selected : $entry"
+		#sleep 3
+	else
+		echo "You have selected : $entry"
+fi
+
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	#file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file, will auto select only VIDEO files to convert." --directory)
 	## --file-filter="*.jpg *.gif"
 
 if test -z "$file"
@@ -93,6 +128,7 @@ if test -z "$file"
 		echo "You have selected :"
 		echo "$file"
 fi
+
 echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
 ## Set working path.
@@ -111,62 +147,41 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-echo "Get the last Folder :"
-	INPUT="$(dirname "${VAR}")"
-	echo ${INPUT##*/} 
 ## Variables, for program."
 	part=0
-
+	debug=0
+	rm "/dev/shm/findvideo.txt"
 ## The code program.
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
-echo "ffmpeg conversion"
 
-### debug pixel info
-### ffmpeg -h encoder=libx265 | grep pixel
+## find files
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+echo Finding files...
 
-### x264 8b preset
-
-### good quality (Low) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$name".{SDR.x264.8b}.{no.audio}.mkv
-
-### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$name".{SDR.x264.8b}.{no.audio}.mkv
-
-###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
-
-#ffmpeg -vsync 0 -hwaccel cuda -init_hw_device opencl=ocl -filter_hw_device ocl -extra_hw_frames 3 -threads 16 -c:v hevc_cuvid -i "$file" -vf "format=p010,hwupload,tonemap_opencl=tonemap=mobius:param=0.01:desat=0:r=tv:p=bt709:t=bt709:m=bt709:format=nv12,hwdownload,format=nv12" -an -c:s copy -c:v libx264 -max_muxing_queue_size 9999 "$name".SDR-2160p-x264-10b.no-audio.mkv
-
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -r:v 30 -c:a copy "$name".{BluRay-2160p}.{SDR-x264-10b}.{copy}.mkv
-
-### x265 10b presets
-
-### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
-#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -an -preset superfast -tune fastdecode "$name"-SDR.x265.10b-no.audio.mkv
-
-## -preset ultrafast
-## -preset medium
-
-	error $?
+	## Easy way to add a file format, copy paste a new line.
+	echo "Will find files in sub folders too...."
+	find $file -name '*.*'  >> "/dev/shm/findvideo.txt"
+	#find $file -name '*.mp4'  >> "/dev/shm/findvideo.txt"
+	#find $file -name '*.webm'  >> "/dev/shm/findvideo.txt"
+	#find $file -name '*.mkv'  >> "/dev/shm/findvideo.txt"
 	
-echo -------------------------========================-------------------------
-## Software lead-out.
-	echo "Finish... with numbers of actions : $part"
-	echo "This script take $(( SECONDS - start )) seconds to complete."
-	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
-	echo "Time needed: $date"
-	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
-	echo "Current time : $now"
+	cat "/dev/shm/findvideo.txt"
 
-echo -------------------------========================-------------------------
-## Press enter or auto-quit here.
-	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
-	echo "Press ENTER to terminate."
-	echo
-	echo "${green}If a script takes LESS than 120 seconds to complete it will auto-terminate !${reset}"
-	echo "Auto-terminate after 10 seconds"
-	echo
+echo Finding finish.
 
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+echo Conversion started...
+
+	echo "Parallel convert"
+
+	## parallel -j $entry ffmpeg -i {} -vf format=yuv420p -c:v libx264 -crf 20 -r:v 30 -c:a aac {.}-x264-8b-30f.aac.mkv ::: "$file"/*.*
+	
+	parallel -j $entry ffmpeg -i {} -vf format=yuv420p -c:v libx264 -crf 20 -c:a aac -ar 44100 -ac 2 -b:a 192k {.}-x264-8b.aac-44khz-192k.mkv ::: "$file"/*.*
+	
+	error $?
+
+echo Conversion finish...
 echo -------------------------========================-------------------------
 ## Software lead-out.
 	echo "Finish... with numbers of actions : $part"

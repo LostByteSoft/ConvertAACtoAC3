@@ -3,7 +3,7 @@
 ## -----===== Start of bash =====-----
 	#printf '\033[8;30;80t'		# will resize the window, if needed.
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	printf '\033[8;40;125t'		# will resize the window, if needed.
+	printf '\033[8;40;125t'	# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
 	sleep 0.50
 	
@@ -19,19 +19,30 @@ echo -------------------------========================-------------------------
 	reset=`tput sgr0`
 ## COmmon variables, you can changes theses variables as you wish to test (0 or 1)
 	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
-	debug=0		# test debug
-	error=0		# test error
 	part=0		# don't change this value
 
 echo -------------------------========================-------------------------
+
+if [ "$autoquit" -eq "1" ]; then
+	echo
+	echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
+	echo
+	echo -------------------------========================-------------------------
+	sleep 3
+	fi
+
+echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-09-09_Friday_12:35:10
+	echo 2022-03-09_Wednesday_08:46:39
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert HDRtoSDR-no-audio"
+	echo "Software name: Convert XXX to x265-8b.aac-2.0-44khz-192k"
+	echo "File name : Convert XXX to x265-8b.aac-2.0-44khz-192k"
 	echo
 	echo What it does ?
-	echo "Convert HDRtoSDR-SDR-x264-10b-no-audio.sh"
+	echo "Convert ONE video file to x265-8b.aac-2.0-44khz-192k"
+	echo
+	echo "This is a single core conversion"
 	echo
 	echo "Read me for this file (and known bugs) :"
 	echo
@@ -50,7 +61,6 @@ echo -------------------------========================-------------------------
 echo -------------------------========================-------------------------
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 	error()
-	{
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
 		echo
@@ -60,8 +70,7 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 		echo
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-	fi
-	}
+		fi
 
 echo -------------------------========================-------------------------
 echo "Check installed requirement !"
@@ -69,6 +78,7 @@ echo "Check installed requirement !"
 if command -v ffmpeg >/dev/null 2>&1
 	then
 		echo "Ffmpeg installed continue."
+		dpkg -s ffmpeg | grep Version
 	else
 		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
 		echo "Add with : sudo apt-get install ffmpeg"
@@ -76,6 +86,7 @@ if command -v ffmpeg >/dev/null 2>&1
 		sleep 10
 		exit
 fi
+
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
@@ -97,10 +108,14 @@ echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
 ## Set working path.
 	dir=$(pwd)
+## file or folder selected
 	echo "Working dir : "$dir""
 	echo Input file : "$file"
 	export VAR="$file"
 	echo
+## directory section
+	INPUT="$(dirname "${VAR}")"	
+	echo "Get the last Folder : ${INPUT##*/}"
 	echo Base directory : "$(dirname "${VAR}")"
 	echo Base name: "$(basename "${VAR}")"
 	echo
@@ -113,39 +128,22 @@ echo "Input name, directory and output name : (Debug helper)"
 echo -------------------------========================-------------------------
 echo "Get the last Folder :"
 	INPUT="$(dirname "${VAR}")"
-	echo ${INPUT##*/} 
-## Variables, for program."
-	part=0
+	echo ${INPUT##*/}
 
 ## The code program.
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 echo "ffmpeg conversion"
 
-### debug pixel info
-### ffmpeg -h encoder=libx265 | grep pixel
+## Multiples choice here.
 
-### x264 8b preset
+## ffmpeg -i "$file" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{x264-10b-30f}.{ac3-48000hz-640k}.mkv
 
-### good quality (Low) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$name".{SDR.x264.8b}.{no.audio}.mkv
+## ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a copy "$name".copy-x264-10b-30f-copy.mkv
 
-### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$name".{SDR.x264.8b}.{no.audio}.mkv
+ffmpeg -i "$file" -vf format=yuv420p -c:v libx265 -crf 20 -c:a aac -ar 44100 -ac 2 -b:a 192k "$name".x265-8b.aac-2.0-44khz-192k.mkv
 
-###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
-
-#ffmpeg -vsync 0 -hwaccel cuda -init_hw_device opencl=ocl -filter_hw_device ocl -extra_hw_frames 3 -threads 16 -c:v hevc_cuvid -i "$file" -vf "format=p010,hwupload,tonemap_opencl=tonemap=mobius:param=0.01:desat=0:r=tv:p=bt709:t=bt709:m=bt709:format=nv12,hwdownload,format=nv12" -an -c:s copy -c:v libx264 -max_muxing_queue_size 9999 "$name".SDR-2160p-x264-10b.no-audio.mkv
-
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -r:v 30 -c:a copy "$name".{BluRay-2160p}.{SDR-x264-10b}.{copy}.mkv
-
-### x265 10b presets
-
-### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
-#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -an -preset superfast -tune fastdecode "$name"-SDR.x265.10b-no.audio.mkv
-
-## -preset ultrafast
-## -preset medium
+## ffmpeg -i "$file" -vf scale=1920x1080:flags=lanczos -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{x264-30}.{ac3-48000-640}.mkv
 
 	error $?
 	
@@ -157,8 +155,7 @@ echo -------------------------========================-------------------------
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
-echo -------------------------========================-------------------------
+	echo
 ## Press enter or auto-quit here.
 	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
 	echo "Press ENTER to terminate."
@@ -168,38 +165,39 @@ echo -------------------------========================-------------------------
 	echo
 
 echo -------------------------========================-------------------------
-## Software lead-out.
-	echo "Finish... with numbers of actions : $part"
-	echo "This script take $(( SECONDS - start )) seconds to complete."
-	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
-	echo "Time needed: $date"
-	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
-	echo "Current time : $now"
-echo -------------------------========================-------------------------
-## Press enter or auto-quit here.
-	echo "If a script takes MORE than 120 seconds to complete it will ask you to"
-	echo "press ENTER to terminate."
-	echo
-	echo "If a script takes LESS than 120 seconds to complete it will auto"
-	echo "terminate after 10 seconds"
-	echo
-
 ## Exit, wait or auto-quit.
-if [ $(( SECONDS - start )) -gt 120 ]
+if [ "$autoquit" -eq "1" ]
 then
-	echo "Script takes more than 120 seconds to complete."
-	echo "Press ENTER key to exit !"
-	echo
-	echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-	read name
-else
-	echo "Script takes less than 120 seconds to complete."
-	echo "Auto-quit in 10 sec. (You can press X)"
-	echo
-	echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-	sleep 10
+		echo "Script will auto quit in 2 seconds."
+		echo
+		echo "${blue}██████████████████████████████ Finish Now ████████████████████████████████${reset}"
+		echo
+		sleep 3
+		exit
+	else
+	{
+	if [ $(( SECONDS - start )) -gt 120 ]
+		then
+			echo "Script takes more than 120 seconds to complete."
+			echo "Press ENTER key to exit !"
+			echo
+			echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			read name
+			exit
+		else
+			echo "Script takes less than 120 seconds to complete."
+			echo "Auto-quit in 10 sec. (You can press X)"
+			echo
+			echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			sleep 9
+			exit
+		fi
+	}
 fi
+	sleep 1
 	exit
+
+
 ## -----===== End of bash =====-----
 
 End-user license agreement (eula)

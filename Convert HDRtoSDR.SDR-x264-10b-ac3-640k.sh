@@ -25,13 +25,13 @@ echo -------------------------========================-------------------------
 
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-09-09_Friday_12:35:10
+	echo 2022-02-25_Friday_12:35:10
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert HDRtoSDR-no-audio"
+	echo "Software name: Convert HDRtoSDR-SDR-x264-10b-ac3-48000hz-640k"
 	echo
 	echo What it does ?
-	echo "Convert HDRtoSDR-SDR-x264-10b-no-audio.sh"
+	echo "Convert ONE video file HDR to SDR Convert HDRtoSDR-SDR-x264-10b-ac3-48000hz-640k"
 	echo
 	echo "Read me for this file (and known bugs) :"
 	echo
@@ -111,9 +111,6 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-echo "Get the last Folder :"
-	INPUT="$(dirname "${VAR}")"
-	echo ${INPUT##*/} 
 ## Variables, for program."
 	part=0
 
@@ -128,45 +125,24 @@ echo "ffmpeg conversion"
 ### x264 8b preset
 
 ### good quality (Low) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$name".{SDR.x264.8b}.{no.audio}.mkv
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$NAME".{SDR.x264.8b}.{no.audio}.mkv
 
 ### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$name".{SDR.x264.8b}.{no.audio}.mkv
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x264.8b}.{no.audio}.mkv
 
 ###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
-
-#ffmpeg -vsync 0 -hwaccel cuda -init_hw_device opencl=ocl -filter_hw_device ocl -extra_hw_frames 3 -threads 16 -c:v hevc_cuvid -i "$file" -vf "format=p010,hwupload,tonemap_opencl=tonemap=mobius:param=0.01:desat=0:r=tv:p=bt709:t=bt709:m=bt709:format=nv12,hwdownload,format=nv12" -an -c:s copy -c:v libx264 -max_muxing_queue_size 9999 "$name".SDR-2160p-x264-10b.no-audio.mkv
-
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -r:v 30 -c:a copy "$name".{BluRay-2160p}.{SDR-x264-10b}.{copy}.mkv
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 20 -preset faster -tune fastdecode -c:a ac3 -ar 48000 -b:a 640k "$name".{BluRay-2160p}.{SDR-x264-10b}.{ac3-640k-5.1}.mkv
 
 ### x265 10b presets
 
 ### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
-#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -an -preset superfast -tune fastdecode "$name"-SDR.x265.10b-no.audio.mkv
+### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
 
 ## -preset ultrafast
 ## -preset medium
 
 	error $?
 	
-echo -------------------------========================-------------------------
-## Software lead-out.
-	echo "Finish... with numbers of actions : $part"
-	echo "This script take $(( SECONDS - start )) seconds to complete."
-	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
-	echo "Time needed: $date"
-	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
-	echo "Current time : $now"
-
-echo -------------------------========================-------------------------
-## Press enter or auto-quit here.
-	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
-	echo "Press ENTER to terminate."
-	echo
-	echo "${green}If a script takes LESS than 120 seconds to complete it will auto-terminate !${reset}"
-	echo "Auto-terminate after 10 seconds"
-	echo
-
 echo -------------------------========================-------------------------
 ## Software lead-out.
 	echo "Finish... with numbers of actions : $part"
