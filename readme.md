@@ -150,11 +150,11 @@ Suggested ram size to convert (hd) video files:
 	
 Bitrate (normal std):
 
-	Cd -> 1.411k 16b 44100khz
-	Ac3 -> 640k 48000khz (Created 1987)
-	Dts -> 768k and 1536k 48000khz (Created 1993)
-	AAC -> 448k 48000 khz (Created 1997)
-	Dts-hd -> 1536k 24b 48000khz
+	Cd -> 1.411k 16b 44100khz 	(Invented in 1979, release in 1982)
+	Ac3 -> 640k 48000khz 		(Created 1987)
+	Dts -> 768k and 1536k 48000khz 	(Created 1993)
+	AAC -> 448k 48000 khz 		(Created 1997)
+	Dts-hd -> 1536k 24b 48000khz 	(2004)
 	
 	Sample rate:
 	AAC: 8 to 192 kHz
@@ -181,6 +181,11 @@ Resolutions:
 	
     Movie.Title.year.Source.Video-Compression.Audio-Compression.ext
     Movie.Title.year.Source.Video-Compression.Audio-Compression.language.srt
+    
+    {BluRay-2160p-5.1}.{SDR-x264-10b}.{dts}
+    {BluRay-1080p-7.1}.{SDR-x264-10b}.{dts-ac3}
+    {BluRay-1080p}.{SDR-x264-10b}.{none}
+    {WebDl-1080p-2.0}.{SDR-x264-10b}.{dts-ac3}
 
     Br.8k-x266-12b-60f.Atmos-12.2
     Br.2160px265.audio
@@ -235,6 +240,8 @@ Resolutions:
     Jurassic.Park.1993.Br1080px264.Ac351.avi
     Jurassic.Park.1993.Br1080px264.Ac351.eng.srt
     Jurassic.Park.1993.Br1080px264.Ac351.chn.srt
+    
+    Jurassic.Park.1993.{BluRay-2160p-7.1}.{SDR-x265-10b}.{dts-ac3}.mkv
     
     VLC will auto load theses srt files; same name of the video file.
 
