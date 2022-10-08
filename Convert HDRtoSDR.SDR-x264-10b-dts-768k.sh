@@ -25,7 +25,7 @@ echo -------------------------========================-------------------------
 echo -------------------------========================-------------------------
 
 	echo Version compiled on : Also serves as a version
-	echo 2022-02-25_Friday_12:35:10
+	echo 2022-10-05_Wednesday_06:31:55
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert HDRtoSDR-{BluRay-2160p}.{SDR-x264-10b}.{dts-5.1}"
@@ -80,22 +80,21 @@ if test -z "$file"
 fi
 echo -------------------------========================-------------------------
 echo Function Debug. Activate via source program debug=1.
-
 debug()
-if [ "$debug" -ge 1 ]; then
+	if [ "$debug" -ge 1 ]; then
 		echo
-		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
+		echo "${yellow}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
 		echo
-		echo debug = $debug 	part = $part 	input = $input
+		echo debug = $debug 	part = $part 	file = $file
 		echo cpu = $cpu 	defv = $defv 	defa = $defa
 		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
 		echo 
-		read -n 1 -s -r -p "Press any key to EXIT"
-		exit
-		fi
+		read -n 1 -s -r -p "Press any key to continue"
+		#exit
+	fi
 
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
-	error()
+error()
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
 		echo
@@ -105,14 +104,14 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 		echo
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-		fi
+	fi
 
 echo Function Auto Quit. If autoquit=1 will automaticly quit.
 	if [ "$autoquit" -eq "1" ]; then
 		echo
 		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
-		fi
+	fi
 
 echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
@@ -132,21 +131,34 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-## Variables, for program."
-	part=0
-	res=0		# automatic resolution detection and naming (720, 1080... etc)
-
 ## The code program.
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 	
 	echo "Get resolution of the video file"
-	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 $file`
+	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
 	res1=${res::-1}
 	echo $res
 	error $?
+	debug $?
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
 	
-	sleep 1
+echo "Numbers of fps to use ?"
+
+	entry=$(zenity --scale --value="30" --min-value="15" --max-value="60" --title "Set the fps for the video" --text "How many fps do you want?\n\n\tDefault suggested value is 30 for video.")
+
+if test -z "$entry"
+	then
+		echo "Default value of fps will be used. Now continue."
+		entry=30
+		echo "You have selected : $entry"
+		#sleep 3
+	else
+		echo "You have selected : $entry"
+fi
 	
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
@@ -161,14 +173,14 @@ echo -------------------------========================-------------------------
 	### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$NAME".{SDR.x264.8b}.{no.audio}.mkv
 
 	### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
-	### ffmpeg -i "$file" -vf 	zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x264.8b}.{no.audio}.mkv
+	### ffmpeg -i "$file" -vf 	zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -an -preset superfast -tune fastdecode "$NAME".{SDR.x264.8b}.{no.audio}.mkv
 
 	###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
-	ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 20 -preset faster -tune fastdecode -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".{BluRay-"$res"p-5.1}.{SDR-x264-10b}.{dts}.mkv
+	ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 20 -r:v $entry -preset faster -tune fastdecode -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".{BluRay-"$res"p-5.1}.{SDR-x264-10b}.{dts}.mkv
 
 	### x265 10b presets
 	### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
-	### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
+	### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
 	## -preset ultrafast
 	## -preset medium
 
@@ -176,6 +188,9 @@ echo -------------------------========================-------------------------
 	
 echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
+	echo
+	echo Processing file of "$name1" finish !
+	echo
 if [ "$autoquit" -eq "1" ]
 then
 		echo "Script will auto quit in 1 seconds."

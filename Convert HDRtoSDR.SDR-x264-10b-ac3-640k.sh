@@ -25,7 +25,7 @@ echo -------------------------========================-------------------------
 echo -------------------------========================-------------------------
 
 	echo Version compiled on : Also serves as a version
-	echo 2022-02-25_Friday_12:35:10
+	echo 2022-10-05_Wednesday_06:31:55
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert HDRtoSDR-SDR-x264-10b-ac3-48000hz-640k"
@@ -63,22 +63,21 @@ if command -v ffmpeg >/dev/null 2>&1
 fi
 echo -------------------------========================-------------------------
 echo Function Debug. Activate via source program debug=1.
-
 debug()
-if [ "$debug" -ge 1 ]; then
+	if [ "$debug" -ge 1 ]; then
 		echo
-		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
+		echo "${yellow}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
 		echo
-		echo debug = $debug 	part = $part 	input = $input
+		echo debug = $debug 	part = $part 	file = $file
 		echo cpu = $cpu 	defv = $defv 	defa = $defa
 		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
 		echo 
-		read -n 1 -s -r -p "Press any key to EXIT"
-		exit
-		fi
+		read -n 1 -s -r -p "Press any key to continue"
+		#exit
+	fi
 
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
-	error()
+error()
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
 		echo
@@ -88,14 +87,14 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 		echo
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-		fi
+	fi
 
 echo Function Auto Quit. If autoquit=1 will automaticly quit.
 	if [ "$autoquit" -eq "1" ]; then
 		echo
 		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
-		fi
+	fi
 
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
@@ -132,10 +131,18 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-## Variables, for program."
-	part=0
-
 ## The code program.
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	
+	echo "Get resolution of the video file"
+	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
+	res1=${res::-1}
+	echo $res
+	error $?
+	debug $?
+	
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 echo "ffmpeg conversion"
@@ -166,6 +173,9 @@ ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,to
 	
 echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
+	echo
+	echo Processing file of "$name1" finish !
+	echo
 if [ "$autoquit" -eq "1" ]
 then
 		echo "Script will auto quit in 1 seconds."
@@ -181,12 +191,16 @@ then
 			echo "Press ENTER key to exit !"
 			echo
 			echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			echo
+			echo -------------------------========================-------------------------
 			read name
 		else
 			echo "Script takes less than 120 seconds to complete."
 			echo "Auto-quit in 10 sec. (You can press X)"
 			echo
 			echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			echo
+			echo -------------------------========================-------------------------
 			sleep 10
 		fi
 	}
@@ -196,9 +210,9 @@ then
 
 ## -----===== End of bash =====-----
 
-End-user license agreement (eula)
+	End-user license agreement (eula)
 
- 	JUST DO WHAT YOU WANT WITH THE PUBLIC LICENSE
+ 	JUST DO WHAT THE F*** YOU WANT WITH THE PUBLIC LICENSE
  	
  	Version 3.1415926532 (January 2022)
  	
@@ -214,6 +228,8 @@ End-user license agreement (eula)
  	warranty, electrocution, drowning, divorce, civil war, the effects of radiation
  	due to atomic fission, unexpected tax recalls or encounters with
  	extraterrestrial beings elsewhere.
+ 	
+ 	YOU MUST ACCEPT THESES TERMS OR NOTHING WILL HAPPEN.
  	
  	LostByteSoft no copyright or copyleft we are in the center.
 

@@ -25,7 +25,7 @@ echo -------------------------========================-------------------------
 echo -------------------------========================-------------------------
 
 	echo Version compiled on : Also serves as a version
-	echo 2022-09-09_Friday_12:35:10
+	echo 2022-10-05_Wednesday_06:31:55
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert HDRtoSDR-no-audio"
@@ -62,22 +62,21 @@ if command -v ffmpeg >/dev/null 2>&1
 fi
 echo -------------------------========================-------------------------
 echo Function Debug. Activate via source program debug=1.
-
 debug()
-if [ "$debug" -ge 1 ]; then
+	if [ "$debug" -ge 1 ]; then
 		echo
-		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
+		echo "${yellow}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
 		echo
-		echo debug = $debug 	part = $part 	input = $input
+		echo debug = $debug 	part = $part 	file = $file
 		echo cpu = $cpu 	defv = $defv 	defa = $defa
 		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
 		echo 
-		read -n 1 -s -r -p "Press any key to EXIT"
-		exit
-		fi
+		read -n 1 -s -r -p "Press any key to continue"
+		#exit
+	fi
 
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
-	error()
+error()
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
 		echo
@@ -87,14 +86,14 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 		echo
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-		fi
+	fi
 
 echo Function Auto Quit. If autoquit=1 will automaticly quit.
 	if [ "$autoquit" -eq "1" ]; then
 		echo
 		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
-		fi
+	fi
 
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
@@ -131,13 +130,18 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-echo "Get the last Folder :"
-	INPUT="$(dirname "${VAR}")"
-	echo ${INPUT##*/} 
-## Variables, for program."
-	part=0
-
 ## The code program.
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	
+	echo "Get resolution of the video file"
+	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
+	res1=${res::-1}
+	echo $res
+	error $?
+	debug $?
+	
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 echo "ffmpeg conversion"
@@ -189,6 +193,9 @@ echo -------------------------========================-------------------------
 
 echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
+	echo
+	echo Processing file of "$name1" finish !
+	echo
 if [ "$autoquit" -eq "1" ]
 then
 		echo "Script will auto quit in 1 seconds."
