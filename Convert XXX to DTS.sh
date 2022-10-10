@@ -24,7 +24,7 @@ echo -------------------------========================-------------------------
 
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-03-09_Wednesday_08:46:39
+	echo 2022-10-10_Monday_06:44:16
 	echo
 ## Software name, what is this, version, informations.
 	echo What it does ?
@@ -46,41 +46,6 @@ echo -------------------------========================-------------------------
 	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
-echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
-
-debug()
-if [ "$debug" -ge 1 ]; then
-		echo
-		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
-		echo
-		echo debug = $debug 	part = $part 	input = $input
-		echo cpu = $cpu 	defv = $defv 	defa = $defa
-		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
-		echo 
-		read -n 1 -s -r -p "Press any key to EXIT"
-		exit
-		fi
-
-echo Function Error detector. If errorlevel is 1 or greater will show error msg.
-	error()
-	if [ "$?" -ge 1 ]; then
-		part=$((part+1))
-		echo
-		echo "${red}█████████████████████████████████ ERROR $part █████████████████████████████████${reset}"
-		echo
-		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
-		echo
-		read -n 1 -s -r -p "Press any key to CONTINUE"
-		echo
-		fi
-
-echo Function Auto Quit. If autoquit=1 will automaticly quit.
-	if [ "$autoquit" -eq "1" ]; then
-		echo
-		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
-		echo
-		fi
 
 echo -------------------------========================-------------------------
 echo "Check installed requirement !"
@@ -96,6 +61,47 @@ if command -v ffmpeg >/dev/null 2>&1
 		sleep 10
 		exit
 fi
+
+echo -------------------------========================-------------------------
+echo Function Debug. Activate via source program debug=1.
+debug()
+	if [ "$debug" -ge 1 ]; then
+		echo
+		echo "${yellow}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
+		echo
+		echo debug = $debug 	part = $part 	file = $file
+		echo cpu = $cpu 	defv = $defv 	defa = $defa
+		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
+		echo 
+		read -n 1 -s -r -p "Press any key to continue"
+		#exit
+	fi
+	
+		if [ "$debug" -eq "1" ]; then
+		echo
+		echo "${yellow}██████████████████████████████ DEBUG ACTIVATED ███████████████████████████${reset}"
+		echo
+	fi
+
+echo Function Error detector. If errorlevel is 1 or greater will show error msg.
+error()
+	if [ "$?" -ge 1 ]; then
+		part=$((part+1))
+		echo
+		echo "${red}█████████████████████████████████ ERROR $part █████████████████████████████████${reset}"
+		echo
+		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
+		echo
+		read -n 1 -s -r -p "Press any key to CONTINUE"
+		echo
+	fi
+
+echo Function Auto Quit. If autoquit=1 will automaticly quit.
+	if [ "$autoquit" -eq "1" ]; then
+		echo
+		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
+		echo
+	fi
 
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
@@ -150,7 +156,30 @@ ffmpeg -i "$file" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b
 	error $?
 	
 echo -------------------------========================-------------------------
+## Software lead-out.
+	echo "Finish... with numbers of actions : $part"
+	echo "This script take $(( SECONDS - start )) seconds to complete."
+	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+	echo "Time needed: $date"
+	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+	echo "Current time : $now"
+
+echo -------------------------========================-------------------------
+## Press enter or auto-quit here.
+	echo "If a script takes MORE than 120 seconds to complete it will ask"
+	echo "you to press ENTER to terminate."
+	echo
+	echo "If a script takes LESS than 120 seconds to complete it will auto"
+	echo "terminate after 10 seconds"
+	echo
+
+echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
+	echo
+	echo Processing file of "$name1" finish !
+	echo
+	debug $?
+
 if [ "$autoquit" -eq "1" ]
 then
 		echo "Script will auto quit in 1 seconds."
@@ -163,15 +192,18 @@ then
 	if [ $(( SECONDS - start )) -gt 120 ]
 		then
 			echo "Script takes more than 120 seconds to complete."
-			echo "Press ENTER key to exit !"
 			echo
 			echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-			read name
+			echo
+			echo -------------------------========================-------------------------
+			read -n 1 -s -r -p "Press ENTER key to exit !"
 		else
 			echo "Script takes less than 120 seconds to complete."
-			echo "Auto-quit in 10 sec. (You can press X)"
 			echo
 			echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			echo
+			echo -------------------------========================-------------------------
+			echo "Auto-quit in 10 sec. (You can press X)"
 			sleep 10
 		fi
 	}
@@ -181,9 +213,9 @@ then
 
 ## -----===== End of bash =====-----
 
-End-user license agreement (eula)
+	End-user license agreement (eula)
 
- 	JUST DO WHAT YOU WANT WITH THE PUBLIC LICENSE
+ 	JUST DO WHAT THE F*** YOU WANT WITH THE PUBLIC LICENSE
  	
  	Version 3.1415926532 (January 2022)
  	
@@ -199,6 +231,8 @@ End-user license agreement (eula)
  	warranty, electrocution, drowning, divorce, civil war, the effects of radiation
  	due to atomic fission, unexpected tax recalls or encounters with
  	extraterrestrial beings elsewhere.
+ 	
+ 	YOU MUST ACCEPT THESES TERMS OR NOTHING WILL HAPPEN.
  	
  	LostByteSoft no copyright or copyleft we are in the center.
 
