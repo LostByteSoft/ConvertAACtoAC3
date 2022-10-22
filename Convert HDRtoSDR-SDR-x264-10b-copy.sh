@@ -161,7 +161,8 @@ echo "ffmpeg conversion"
 
 #ffmpeg -vsync 0 -hwaccel cuda -init_hw_device opencl=ocl -filter_hw_device ocl -extra_hw_frames 3 -threads 16 -c:v hevc_cuvid -i "$file" -vf "format=p010,hwupload,tonemap_opencl=tonemap=mobius:param=0.01:desat=0:r=tv:p=bt709:t=bt709:m=bt709:format=nv12,hwdownload,format=nv12" -an -c:s copy -c:v libx264 -max_muxing_queue_size 9999 "$name".SDR-2160p-x264-10b.no-audio.mkv
 
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -r:v 30 -c:a copy "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{copy}.mkv
+## add -r:v 30 after libx264 to get 30 fps
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -c:a copy "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{copy}.mkv
 
 ### x265 10b presets
 
