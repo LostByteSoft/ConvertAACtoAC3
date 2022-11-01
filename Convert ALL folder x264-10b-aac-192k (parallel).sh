@@ -51,6 +51,7 @@ echo -------------------------========================-------------------------
 	echo -------------------------========================-------------------------
 	#read -n 1 -s -r -p "Press any key to continue"
 
+echo -------------------------========================-------------------------
 echo "Check installed requirement !"
 
 if command -v ffmpeg >/dev/null 2>&1
@@ -170,45 +171,68 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-## Variables, for program."
-	part=0
-	debug=0
-	rm "/dev/shm/findvideo.txt"
 ## The code program.
 
-## find files
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo Finding files...
 
+	rm "/dev/shm/findvideo.txt"
 	## Easy way to add a file format, copy paste a new line.
-	echo "Will find files in sub folders too...."
-	find $file -name '*.*'  >> "/dev/shm/findvideo.txt"
-	#find $file -name '*.mp4'  >> "/dev/shm/findvideo.txt"
-	#find $file -name '*.webm'  >> "/dev/shm/findvideo.txt"
-	#find $file -name '*.mkv'  >> "/dev/shm/findvideo.txt"
-	
-	cat "/dev/shm/findvideo.txt"
+	echo "Will NOT find files in sub folders...."
+	#find $file -iname '*.*'  >> "/dev/shm/findvideo.txt"
+	find $file -iname '*.mp4'  >> "/dev/shm/findvideo.txt"
+	find $file -iname '*.webm'  >> "/dev/shm/findvideo.txt"
+	find $file -iname '*.mkv'  >> "/dev/shm/findvideo.txt"
 
 echo Finding finish.
-
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+	cat "/dev/shm/findvideo.txt"
+	
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo Conversion started...
 
 	echo "Parallel convert"
 
-	## parallel -j $entry ffmpeg -i {} -vf format=yuv420p -c:v libx264 -crf 20 -c:a aac -b:a 192k {.}-x264-8b-30f.aac.mkv ::: "$file"/*.*
+	### x264 8b
+	### parallel -j $entry ffmpeg -i {} -vf format=yuv420p -c:v libx264 -crf 20 -c:a aac -b:a 192k {.}-x264-8b-30f.aac.mkv ::: "$file"/*.*
 	
+	### x264 10b
 	parallel -j $entry ffmpeg -i {} -vf format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 192k {.}-x264-10b.aac-44khz-192k.mkv ::: "$file"/*.*
 	
+	### x265 10b
 	### parallel -j $entry ffmpeg -i {} -vf format=yuv420p10le -c:v libx265 -crf 20 -c:a aac -ac 2 -b:a 192k {.}-x264-10b.aac-44khz-192k.mkv ::: "$file"/*.*
 	
 	error $?
 
 echo Conversion finish...
 echo -------------------------========================-------------------------
+## Software lead-out.
+	echo "Finish... with numbers of actions : $part"
+	echo "This script take $(( SECONDS - start )) seconds to complete."
+	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+	echo "Time needed: $date"
+	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+	echo "Current time : $now"
+
+echo -------------------------========================-------------------------
+## Press enter or auto-quit here.
+	echo "If a script takes MORE than 120 seconds to complete it will ask"
+	echo "you to press ENTER to terminate."
+	echo
+	echo "If a script takes LESS than 120 seconds to complete it will auto"
+	echo "terminate after 10 seconds"
+	echo
+
+echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
+	echo
+	echo Processing file or folder of "$file" finish !
+	echo
+	debug $?
+
 if [ "$autoquit" -eq "1" ]
 then
 		echo "Script will auto quit in 1 seconds."
@@ -221,15 +245,18 @@ then
 	if [ $(( SECONDS - start )) -gt 120 ]
 		then
 			echo "Script takes more than 120 seconds to complete."
-			echo "Press ENTER key to exit !"
 			echo
 			echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-			read name
+			echo
+			echo -------------------------========================-------------------------
+			read -n 1 -s -r -p "Press ENTER key to exit !"
 		else
 			echo "Script takes less than 120 seconds to complete."
-			echo "Auto-quit in 10 sec. (You can press X)"
 			echo
 			echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			echo
+			echo -------------------------========================-------------------------
+			echo "Auto-quit in 10 sec. (You can press X)"
 			sleep 10
 		fi
 	}
@@ -239,9 +266,9 @@ then
 
 ## -----===== End of bash =====-----
 
-End-user license agreement (eula)
+	End-user license agreement (eula)
 
- 	JUST DO WHAT YOU WANT WITH THE PUBLIC LICENSE
+ 	JUST DO WHAT THE F*** YOU WANT WITH THE PUBLIC LICENSE
  	
  	Version 3.1415926532 (January 2022)
  	
@@ -257,6 +284,8 @@ End-user license agreement (eula)
  	warranty, electrocution, drowning, divorce, civil war, the effects of radiation
  	due to atomic fission, unexpected tax recalls or encounters with
  	extraterrestrial beings elsewhere.
+ 	
+ 	YOU MUST ACCEPT THESES TERMS OR NOTHING WILL HAPPEN.
  	
  	LostByteSoft no copyright or copyleft we are in the center.
 

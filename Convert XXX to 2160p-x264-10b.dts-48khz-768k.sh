@@ -139,8 +139,24 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-## The code program.
+	echo The program start here.
+	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	audio=0		# get numbers of channels
 
+## The code program.
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	
+	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
+	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
+	#res1=${res::-1}	#somes video are detected with an X after the resution, this remove the X
+	echo Resolution of the video : $res
+	error $?
+	
+	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
+	echo Numbers of audio channel : $audio
+	error $?	
+	
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 echo "ffmpeg conversion"
@@ -157,24 +173,6 @@ ffmpeg -i "$file" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -r:v 30 -
 
 	error $?
 	
-echo -------------------------========================-------------------------
-## Software lead-out.
-	echo "Finish... with numbers of actions : $part"
-	echo "This script take $(( SECONDS - start )) seconds to complete."
-	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
-	echo "Time needed: $date"
-	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
-	echo "Current time : $now"
-
-echo -------------------------========================-------------------------
-## Press enter or auto-quit here.
-	echo "If a script takes MORE than 120 seconds to complete it will ask you to"
-	echo "press ENTER to terminate."
-	echo
-	echo "If a script takes LESS than 120 seconds to complete it will auto"
-	echo "terminate after 10 seconds"
-	echo
-
 echo -------------------------========================-------------------------
 ## Software lead-out.
 	echo "Finish... with numbers of actions : $part"

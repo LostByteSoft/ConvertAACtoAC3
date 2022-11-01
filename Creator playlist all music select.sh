@@ -136,8 +136,9 @@ echo "The code program."
 	echo "Finding files..."
 	echo file = "$file"
 	echo "(basename "${VAR}")" = "$(basename "${VAR}")"
-#find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "$file"/"$(basename "${VAR}")".m3u
-find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "/dev/shm/m3u.tmp"
+
+	#find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "$file"/"$(basename "${VAR}")".m3u
+	find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "/dev/shm/m3u.tmp"
 	error $?
 
 	part=$((part+1))

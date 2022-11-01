@@ -19,7 +19,7 @@ echo -------------------------========================-------------------------
 
 ## Common variables, you can changes theses variables as you wish to test (0 or 1)
 	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
-	debug=0		# test debug
+	debug=1		# test debug
 	error=0		# test error
 	part=0		# don't change this value
 	
@@ -89,10 +89,10 @@ echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
 	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	subdir=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
 	## --file-filter="*.jpg *.gif"
 
-if test -z "$file"
+if test -z "$subdir"
 	then
 		echo "You don't have selected a file, now exit in 3 seconds."
 		echo -------------------------========================-------------------------
@@ -100,7 +100,7 @@ if test -z "$file"
 		exit
 	else
 		echo "You have selected :"
-		echo "$file"
+		echo "$subdir"
 fi
 echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
@@ -122,7 +122,6 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name ext : "$name""
 	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
 	echo "Output name bis : "$name1""
-	debug $?
 	
 echo -------------------------========================-------------------------
 
@@ -140,8 +139,8 @@ while read subdir
 do
   #rm -f "$subdir"/*.m3u
 
-	echo "$subdir"/*"
-  for filename in "$subdir"/*"
+	echo "$subdir"/*""
+  for filename in "$subdir"/*""
   do
     if [ ${filename: -4} == ".mp3" ] || [ ${filename: -5} == ".flac" ] || [ ${filename: -5} == ".loss" ] || [ ${filename: -5} == ".aiff" ] || [ ${filename: -4} == ".aif" ]
     then
@@ -152,7 +151,7 @@ do
 
 done
 
-error $?
+	error $?
 	
 echo -------------------------========================-------------------------
 ## Software lead-out.

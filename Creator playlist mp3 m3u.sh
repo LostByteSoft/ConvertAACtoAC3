@@ -80,19 +80,20 @@ echo Function Auto Quit. If autoquit=1 will automaticly quit.
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"
+	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
+	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	## --file-filter="*.jpg *.gif"
 
-if test -z "$FILE"
+if test -z "$file"
 	then
-		echo "You don't have selected a file, now exit."
-		echo Press ENTER to continue.
-		read name
+		echo "You don't have selected a file, now exit in 3 seconds."
+		echo -------------------------========================-------------------------
+		sleep 3
 		exit
 	else
 		echo "You have selected :"
-		echo "$FILE"
+		echo "$file"
 fi
-
 echo -------------------------========================-------------------------
 echo "Input name and output name"
 

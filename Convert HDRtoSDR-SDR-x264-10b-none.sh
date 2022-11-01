@@ -130,17 +130,23 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
+	echo The program start here.
+	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	audio=0		# get numbers of channels
+
 ## The code program.
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 	
-	echo "Get resolution of the video file"
-	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
 	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
-	res1=${res::-1}
-	echo $res
+	#res1=${res::-1}	#somes video are detected with an X after the resution, this remove the X
+	echo Resolution of the video : $res
 	error $?
-	debug $?
+	
+	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
+	echo Numbers of audio channel : $audio
+	error $?	
 	
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
@@ -157,9 +163,9 @@ echo "ffmpeg conversion"
 ### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
 ### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$name".{SDR.x264.8b}.{no.audio}.mkv
 
-###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
+###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}" -r:v 30
 
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -an "$name".{BluRay-2160p}.{SDR-x264-10b}.{none}.mkv
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -r:v 30 -an "$name".{BluRay-2160p}.{SDR-x264-10b}.{none}.mkv
 
 ### ,scale=3840x2160
 
@@ -175,6 +181,24 @@ ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,to
 
 	error $?
 	
+echo -------------------------========================-------------------------
+## Software lead-out.
+	echo "Finish... with numbers of actions : $part"
+	echo "This script take $(( SECONDS - start )) seconds to complete."
+	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+	echo "Time needed: $date"
+	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+	echo "Current time : $now"
+
+echo -------------------------========================-------------------------
+## Press enter or auto-quit here.
+	echo "${yellow}If a script takes MORE than 120 seconds to complete it will ask you to take action !${reset}"
+	echo "Press ENTER to terminate."
+	echo
+	echo "${green}If a script takes LESS than 120 seconds to complete it will auto-terminate !${reset}"
+	echo "Auto-terminate after 10 seconds"
+	echo
+
 echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
 	echo

@@ -135,12 +135,27 @@ echo "Input name, directory and output name : (Debug helper)"
 	echo "Output name bis : "$name1""
 	
 echo -------------------------========================-------------------------
-## Variables, for program."
-	part=0
+	echo The program start here.
+	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	audio=0		# get numbers of channels
 
-	## The code program.
+## The code program.
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
+	
+	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
+	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
+	#res1=${res::-1}	#somes video are detected with an X after the resution, this remove the X
+	echo Resolution of the video : $res
+	error $?
+	
+	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
+	echo Numbers of audio channel : $audio
+	error $?	
+	
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+echo "ffmpeg conversion"
 
 ffmpeg -i "$file" -vf scale=1280x720:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ar 44100 -ac 2 -b:a 192k "$name".{Yt-720p-2.0}.{SDR-x264-10b}.{aac}.mkv
 
