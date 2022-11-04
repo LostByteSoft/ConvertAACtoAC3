@@ -140,13 +140,16 @@ echo -------------------------========================-------------------------
 	
 	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
 	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
-	#res1=${res::-1}	#somes video are detected with an X after the resution, this remove the X
-	echo Resolution of the video : $res
+	#res1=${res::-1}	#somes videos are detected with an X after the resution, this remove the X
 	error $?
+	echo Resolution of the video : $res
 	
 	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
+	error $?
 	echo Numbers of audio channel : $audio
-	error $?	
+
+	echo Wait 3 sec
+	sleep 3	
 	
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
@@ -168,7 +171,7 @@ echo "ffmpeg conversion"
 #ffmpeg -vsync 0 -hwaccel cuda -init_hw_device opencl=ocl -filter_hw_device ocl -extra_hw_frames 3 -threads 16 -c:v hevc_cuvid -i "$file" -vf "format=p010,hwupload,tonemap_opencl=tonemap=mobius:param=0.01:desat=0:r=tv:p=bt709:t=bt709:m=bt709:format=nv12,hwdownload,format=nv12" -an -c:s copy -c:v libx264 -max_muxing_queue_size 9999 "$name".SDR-2160p-x264-10b.no-audio.mkv
 
 ## add -r:v 30 after libx264 to get 30 fps -r:v 30
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -r:v 30 -c:a copy "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{copy}.mkv
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 20 -preset faster -tune fastdecode -c:a copy  "$name".{BluRay-"$res"p-"$audio"}.{SDR-x264-10b}.{copy}.mkv
 
 ### x265 10b presets
 
