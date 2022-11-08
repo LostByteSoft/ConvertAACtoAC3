@@ -154,7 +154,37 @@ for i in "$file"/*.$ext;
 error $?
 
 echo -------------------------========================-------------------------
+## Software lead-out.
+	echo "Finish... with numbers of actions : $part"
+	echo "This script take $(( SECONDS - start )) seconds to complete."
+	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+	echo "Time needed: $date"
+	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+	echo "Current time : $now"
+
+echo -------------------------========================-------------------------
+## Press enter or auto-quit here.
+	echo "If a script takes MORE than 120 seconds to complete it will ask"
+	echo "you to press ENTER to terminate."
+	echo
+	echo "If a script takes LESS than 120 seconds to complete it will auto"
+	echo "terminate after 10 seconds"
+	echo
+
+echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
+	echo
+	echo Processing file or folder of "$name1" finish !
+	echo
+	debug $?
+
+if [ "$NOquit" -eq "1" ]
+	then
+	echo "${green}████████████████████████████████ NO exit activated ██████████████████████████████████${reset}"
+	read -n 1 -s -r -p "Press ENTER key to exit !"
+	exit
+	fi
+
 if [ "$autoquit" -eq "1" ]
 then
 		echo "Script will auto quit in 1 seconds."
@@ -167,15 +197,18 @@ then
 	if [ $(( SECONDS - start )) -gt 120 ]
 		then
 			echo "Script takes more than 120 seconds to complete."
-			echo "Press ENTER key to exit !"
 			echo
 			echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-			read name
+			echo
+			echo -------------------------========================-------------------------
+			read -n 1 -s -r -p "Press ENTER key to exit !"
 		else
 			echo "Script takes less than 120 seconds to complete."
-			echo "Auto-quit in 10 sec. (You can press X)"
 			echo
 			echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
+			echo
+			echo -------------------------========================-------------------------
+			echo "Auto-quit in 10 sec. (You can press X)"
 			sleep 10
 		fi
 	}
@@ -185,9 +218,9 @@ then
 
 ## -----===== End of bash =====-----
 
-End-user license agreement (eula)
+	End-user license agreement (eula)
 
- 	JUST DO WHAT YOU WANT WITH THE PUBLIC LICENSE
+ 	JUST DO WHAT THE F*** YOU WANT WITH THE PUBLIC LICENSE
  	
  	Version 3.1415926532 (January 2022)
  	
@@ -203,6 +236,8 @@ End-user license agreement (eula)
  	warranty, electrocution, drowning, divorce, civil war, the effects of radiation
  	due to atomic fission, unexpected tax recalls or encounters with
  	extraterrestrial beings elsewhere.
+ 	
+ 	YOU MUST ACCEPT THESES TERMS OR NOTHING WILL HAPPEN.
  	
  	LostByteSoft no copyright or copyleft we are in the center.
 

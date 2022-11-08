@@ -227,11 +227,12 @@ echo -------------------------========================-------------------------
 	find $file -maxdepth 1 -iname '*.mp3'  >> "/dev/shm/findaudio.txt"
 	find $file -maxdepth 1 -iname '*.aiff'  >> "/dev/shm/findaudio.txt"
 	find $file -maxdepth 1 -iname '*.aac'  >> "/dev/shm/findaudio.txt"
-	find $file -maxdepth 1 -iname '*flac'  >> "/dev/shm/findaudio.txt"
+	find $file -maxdepth 1 -iname '*.flac'  >> "/dev/shm/findaudio.txt"
 	find $file -maxdepth 1 -iname '*.wav'  >> "/dev/shm/findaudio.txt"
 	find $file -maxdepth 1 -iname '*.mp4'  >> "/dev/shm/findaudio.txt"
 	find $file -maxdepth 1 -iname '*.mkv'  >> "/dev/shm/findaudio.txt"
 	find $file -maxdepth 1 -iname '*.avi'  >> "/dev/shm/findaudio.txt"
+	find $file -maxdepth 1 -iname '*.wav'  >> "/dev/shm/findaudio.txt"
 
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
@@ -269,6 +270,13 @@ echo -------------------------========================-------------------------
 	echo Processing file or folder of "$name1" finish !
 	echo
 	debug $?
+
+if [ "$NOquit" -eq "1" ]
+	then
+	echo "${green}████████████████████████████████ NO exit activated ██████████████████████████████████${reset}"
+	read -n 1 -s -r -p "Press ENTER key to exit !"
+	exit
+	fi
 
 if [ "$autoquit" -eq "1" ]
 then

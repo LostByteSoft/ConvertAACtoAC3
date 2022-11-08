@@ -204,6 +204,13 @@ echo -------------------------========================-------------------------
 	echo
 	debug $?
 
+if [ "$NOquit" -eq "1" ]
+	then
+	echo "${green}████████████████████████████████ NO exit activated ██████████████████████████████████${reset}"
+	read -n 1 -s -r -p "Press ENTER key to exit !"
+	exit
+	fi
+
 if [ "$autoquit" -eq "1" ]
 then
 		echo "Script will auto quit in 1 seconds."

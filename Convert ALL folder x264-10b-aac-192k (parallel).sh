@@ -184,6 +184,7 @@ echo Finding files...
 	find $file -iname '*.mp4'  >> "/dev/shm/findvideo.txt"
 	find $file -iname '*.webm'  >> "/dev/shm/findvideo.txt"
 	find $file -iname '*.mkv'  >> "/dev/shm/findvideo.txt"
+	find $file -iname '*.avi'  >> "/dev/shm/findvideo.txt"
 
 echo Finding finish.
 part=$((part+1))

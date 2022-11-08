@@ -76,6 +76,10 @@ Converters files:
 		
 -Parallel ffmpeg (Uses all cores or select the numbers of cores you want)
 
+	You nedd GNU Parallel on your system, found here : https://www.gnu.org/software/parallel/
+	
+	Parallel only use the local cpu.
+
 	Convert ALL folder 720p-x264-8b-30f.aac (parallel).sh
 	Convert ALL folder AC3 (parallel).sh
 	Convert ALL folder MP3 320 (parallel).sh
