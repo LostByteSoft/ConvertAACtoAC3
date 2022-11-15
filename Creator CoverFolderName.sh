@@ -136,8 +136,7 @@ echo "Input name, directory and output name : (Debug helper)"
 	
 echo -------------------------========================-------------------------
 ## Variables, for program."
-	part=0
-	debug=0
+
 echo "Get the last Folder :"
 	INPUT="$(dirname "${VAR}")"
 	echo ${INPUT##*/} 

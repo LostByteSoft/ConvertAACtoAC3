@@ -2,14 +2,12 @@
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	printf '\033[8;40;100t'		# will resize the window, if needed.
-	#printf '\033[8;40;150t'	# will resize the window, if needed.
+	printf '\033[8;40;125t'		# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
 	sleep 0.50
 	
 echo -------------------------========================-------------------------
-echo "Software lead-in."
-
+## Software lead-in
 	start=$SECONDS
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
@@ -18,43 +16,30 @@ echo "Software lead-in."
 	yellow=`tput setaf 11`
 	blue=`tput setaf 12`
 	reset=`tput sgr0`
-
-echo -------------------------========================-------------------------
-echo "Common variables, you can changes theses variables as you wish to test (0 or 1)."
-
+## COmmon variables, you can changes theses variables as you wish to test (0 or 1)
 	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
-	NOquit=0	# No quit after all operations.
-
-	echo autoquit=$autoquit debug=$debug error=$error part=$part NOquit=$NOquit
+	NOquit=0
 
 echo -------------------------========================-------------------------
-	echo Version compiled on : Also serves as a version
-	echo 2022-11-09_Wednesday_05:37:15
-	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Auto-compiler software"
-	echo "File name : file name.sh"
+	echo "Software name: Convert MANY files to video Convert ALL folder 720p-x264-8b-30f.aac (parallel)"
 	echo
-	echo "What it does ? Make an program of all contents with sources."
+	echo What it does ?
+	echo "Convert MANY video file to Convert ALL folder 720p-x264-8b-30f.aac (parallel).sh"
 	echo
-	echo "Read me for this file (and known bugs) :"
-	echo
-	echo "Use 7z https://www.7-zip.org/download.html"
-	echo "Use https://imagemagick.org/index.php"
-	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
-	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
-	echo
-	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
-	echo "4k demo HDR https://www.demolandia.net"
-	echo
-	echo "Informations : (EULA at the end of file, open in text.)"
-	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
+	echo Informations :
+	echo "By LostByteSoft, no copyright or copyleft"
+	echo "https://github.com/LostByteSoft"
+	echo "Use ffmpeg only"
+	echo "https://ffmpeg.org/ffmpeg.html"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
-
+echo -------------------------========================-------------------------
+	echo Version compiled on : Also serves as a version
+	echo 2022-02-14_Monday_08:05:14
 echo -------------------------========================-------------------------
 echo "Check installed requirements !"
 
@@ -86,37 +71,20 @@ echo -------------------------========================-------------------------
 echo Function Debug. Activate via source program debug=1.
 
 debug()
-	if [ "$debug" -ge 1 ]; then
+if [ "$debug" -ge 1 ]; then
 		echo
-		echo "${yellow}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
+		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
 		echo
-		echo debug = $debug 	part = $part 	autoquit = $autoquit file = $file
-		echo
-		echo entry = $entry	entry2 = $entry2 	
-		echo
-		echo file = $file
-		echo
-		echo cpu = $cpu
-		echo defv = $defv
-		echo defs = $defx
-		echo defa = $defa
-		echo defi = $defi
-		echo defz = $defz
+		echo debug = $debug 	part = $part 	input = $input
+		echo cpu = $cpu 	defv = $defv 	defa = $defa
+		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
 		echo 
-		read -n 1 -s -r -p "Press any key to continue"
-		#exit
-	fi
-	
-		if [ "$debug" -eq "1" ]; then
-		echo
-		echo "${yellow}██████████████████████████████ DEBUG ACTIVATED ███████████████████████████${reset}"
-		echo
-		echo Continue in 3 seconds...
-		sleep 3
-	fi
+		read -n 1 -s -r -p "Press any key to EXIT"
+		exit
+		fi
 
 echo Function Error detector. If errorlevel is 1 or greater will show error msg.
-error()
+	error()
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
 		echo
@@ -126,21 +94,43 @@ error()
 		echo
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-	fi
+		fi
 
 echo Function Auto Quit. If autoquit=1 will automaticly quit.
 	if [ "$autoquit" -eq "1" ]; then
 		echo
 		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
-	fi
+		fi
+
+echo -------------------------========================-------------------------
+echo "Numbers of parallel multi-cores to use ?"
+	cpu=$(nproc)
+	defv=$(( cpu / 4 ))	## for video files
+	defa=$(nproc)		## for audio files
+	defi=$(( cpu * 2 ))	## for images files
+	#echo cpu = $cpu
+	#echo defv = $defv
+	#echo defa = $defa
+	#echo defi = $defi
+	#entry=$(zenity --scale --value="$defa" --min-value="1" --max-value="32" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defa" for audio.\n\n\tDefault suggested value is "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
+
+if test -z "$entry"
+	then
+		echo "Default value of $defv will be used. Now continue in 3 seconds."
+		entry=$defv
+		echo "You have selected : $entry"
+		#sleep 3
+	else
+		echo "You have selected : $entry"
+fi
 
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
-	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
-	#file="/$HOME/Downloads"
+	#file="$(zenity --file-selection --filename=$HOME/Videos --title="Select a file, all format supported")"
+	file=$(zenity  --file-selection --filename=$HOME/Videos --title="Choose a directory to convert all file" --directory)
+	#file="/$HOME/Videos"
 	## --file-filter="*.jpg *.gif"
 
 if test -z "$file"
@@ -153,19 +143,14 @@ if test -z "$file"
 		echo "You have selected :"
 		echo "$file"
 fi
-
 echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
 ## Set working path.
 	dir=$(pwd)
-## file or folder selected
 	echo "Working dir : "$dir""
 	echo Input file : "$file"
 	export VAR="$file"
 	echo
-## directory section
-	INPUT="$(dirname "${VAR}")"	
-	echo "Get the last Folder : ${INPUT##*/}"
 	echo Base directory : "$(dirname "${VAR}")"
 	echo Base name: "$(basename "${VAR}")"
 	echo
@@ -175,107 +160,18 @@ echo "Input name, directory and output name : (Debug helper)"
 	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
 	echo "Output name bis : "$name1""
 	
-	debug $?
-	
 echo -------------------------========================-------------------------
-echo "Number of jobs processed concurrently at the same time ? (Refer as parallel CPU cores)"
-	cpu=$(nproc)
-	defx=$(( cpu / 2 ))	## for audio files
-	defv=$(( cpu / 4 ))	## for video files
-	defi=$(( cpu * 2 ))	## for images files
-	defy=$(( cpu * 4 ))	## for images files
-	defz=$(( cpu * 8 ))	## for images files
+## Variables, for program."
+	part=0
 
-	### Put an # in front of entry to do an automatic choice.
-
-	#entry=$(zenity --scale --value="$(nproc)" --min-value="1" --max-value="32" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defx" for audio.\n\n\tDefault suggested value is ("$(nproc)" xbrzscale) "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
-
-if test -z "$entry"
-	then
-		echo "Default value of "$cpu" (Safe value) will be used. Now continue."
-		entry=$defx
-		echo "You have selected : $entry"
-		#sleep 3
-	else
-		echo "You have selected : $entry"
-fi
-
-if [ "$entry" -ge $defi ]; then
-	part=$((part+1))
-	echo
-	echo "${yellow}█████████████████████████████████ WARNING █████████████████████████████████${reset}"
-	echo
-	echo "!!! You have chosen a very high parallel work value, this may slow down the calculation rather than speed it up !!!"
-	echo
-	read -n 1 -s -r -p "Press any key to CONTINUE"
-	echo
-fi
-
-echo -------------------------========================-------------------------
 ## The code program.
-
-	echo Delete /dev/shm/findaudio.txt
-	rm "/dev/shm/findaudio.txt" 2> /dev/null
-
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
-	echo Finding files...
+	parallel -j 1 ffmpeg -i {} -vf scale=1280x720:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 22 -c:a aac -ac 2 -b:a 160k {.}.{720p-2.0}.{FaceBook}.mkv ::: "$file"/*.*
 
-	## Easy way to add a file format, copy paste a new line.
-	echo "Will NOT find files in sub folders... Remove -maxdepth 1 to search subfolders."
-	find "$file" -maxdepth 1 -iname '*.mp3'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.aiff'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.aac'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.flac'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.wav'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.mp4'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.mkv'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.avi'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.wav'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.ac3'  >> "/dev/shm/findaudio.txt"
-	find "$file" -maxdepth 1 -iname '*.dts'  >> "/dev/shm/findaudio.txt"
-
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
-	cat "/dev/shm/findaudio.txt"
-
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
-	echo Finding finish, with file count :
-	wc -l < "/dev/shm/findaudio.txt"
-
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
-
-	echo parallel -a "/dev/shm/findaudio.txt" -j $entry ffmpeg -i {} -codec:a libmp3lame -b:a 320k {.}.320k.mp3
-	parallel -a "/dev/shm/findaudio.txt" -j $entry ffmpeg -i {} -codec:a libmp3lame -b:a 320k {.}.320k.mp3
+## Error detector.
 	error $?
 	
-echo -------------------------========================-------------------------
-echo Move files to new folder?
-
-	## Variable
-	subfolder=320mp3
-	
-	if zenity --question --text="Do you want to move files to (Suggest yes) :\n\n ""$file"/"$subfolder"" ?"
-	then
-		part=$((part+1))
-		echo "-------------------------===== Section $part =====-------------------------"
-		echo Create folder...
-			echo mkdir -p """$file""/"$subfolder""
-			mkdir -p """$file""/"$subfolder""
-		echo Move files...
-			echo ""$file"/*320k.mp3" ""$file"/"$subfolder""
-			mv """$file""/"*320k.mp3"" """$file""/"$subfolder""
-			## YES all of these fu**** QUOTES are required !!
-	else
-		part=$((part+1))
-		echo "-------------------------===== Section $part =====-------------------------"
-		echo "Files not moved."	
-	fi
-	echo "Don't forget to move associated files! (*.srt *.jpg *.m3u etc)"
-	error $?
-
 echo -------------------------========================-------------------------
 ## Software lead-out.
 	echo "Finish... with numbers of actions : $part"

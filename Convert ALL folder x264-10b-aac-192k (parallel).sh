@@ -181,10 +181,10 @@ echo Finding files...
 	## Easy way to add a file format, copy paste a new line.
 	echo "Will NOT find files in sub folders...."
 	#find $file -iname '*.*'  >> "/dev/shm/findvideo.txt"
-	find $file -iname '*.mp4'  >> "/dev/shm/findvideo.txt"
-	find $file -iname '*.webm'  >> "/dev/shm/findvideo.txt"
-	find $file -iname '*.mkv'  >> "/dev/shm/findvideo.txt"
-	find $file -iname '*.avi'  >> "/dev/shm/findvideo.txt"
+	find $file -maxdepth 1 -iname '*.mp4'  >> "/dev/shm/findvideo.txt"
+	find $file -maxdepth 1 -iname '*.webm'  >> "/dev/shm/findvideo.txt"
+	find $file -maxdepth 1 -iname '*.mkv'  >> "/dev/shm/findvideo.txt"
+	find $file -maxdepth 1 -iname '*.avi'  >> "/dev/shm/findvideo.txt"
 
 echo Finding finish.
 part=$((part+1))
@@ -201,7 +201,7 @@ echo Conversion started...
 	### parallel -j $entry ffmpeg -i {} -vf format=yuv420p -c:v libx264 -crf 20 -c:a aac -b:a 192k {.}-x264-8b-30f.aac.mkv ::: "$file"/*.*
 	
 	### x264 10b
-	parallel -j $entry ffmpeg -i {} -vf format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 192k {.}-x264-10b.aac-44khz-192k.mkv ::: "$file"/*.*
+	parallel -j 1 ffmpeg -i {} -vf format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 192k {.}-x264-10b.aac-44khz-192k.mkv ::: "$file"/*.*
 	
 	### x265 10b
 	### parallel -j $entry ffmpeg -i {} -vf format=yuv420p10le -c:v libx265 -crf 20 -c:a aac -ac 2 -b:a 192k {.}-x264-10b.aac-44khz-192k.mkv ::: "$file"/*.*

@@ -2,8 +2,8 @@
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
 	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	#printf '\033[8;40;125t'	# will resize the window, if needed.
-	printf '\033[8;40;150t'		# will resize the window, if needed.
+	printf '\033[8;40;100t'		# will resize the window, if needed.
+	#printf '\033[8;40;150t'	# will resize the window, if needed.
 	#printf '\033[8;50;200t'	# will resize the window, if needed.
 	sleep 0.50
 	
@@ -26,12 +26,13 @@ echo "Common variables, you can changes theses variables as you wish to test (0 
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
+	NOquit=1	# No quit after all operations.
 
-	echo autoquit=$autoquit debug=$debug error=$error part=$part
+	echo autoquit=$autoquit debug=$debug error=$error part=$part NOquit=$NOquit
 
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-01_Tuesday_08:56:51
+	echo 2022-11-09_Wednesday_05:37:15
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Auto-compiler software"
@@ -167,14 +168,14 @@ echo "Input name, directory and output name : (Debug helper)"
 echo -------------------------========================-------------------------
 ## The code program.
 
-for i in "$file"/*.*;
+for i in ""$file"/*.*";
 	do name=`echo "$i" | rev | cut -f 2- -d '.' | rev`
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 	echo "$name"
 	echo "$i"
 	export VAR="$i"
-	ffmpeg -i "$i" -codec:a libmp3lame -b:a 320k "${name}".mp3-320.mp3
+	ffmpeg -i "$i" -codec:a libmp3lame -b:a 320k "${name}".320k.mp3
 	done
 
 	error $?

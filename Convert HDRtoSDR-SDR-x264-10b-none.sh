@@ -96,22 +96,45 @@ echo Function Auto Quit. If autoquit=1 will automaticly quit.
 	fi
 
 echo -------------------------========================-------------------------
-echo "Select filename using dialog !"
+## 030_zenity_file.sh
+echo "Select folder or filename using dialog !"
 
-	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	#file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+	file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"
+	#file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)
+	#file="/$HOME/Pictures/"
+	#file="/$HOME/Downloads/"
 	## --file-filter="*.jpg *.gif"
 
-if test -z "$file"
-	then
-		echo "You don't have selected a file, now exit in 3 seconds."
-		echo -------------------------========================-------------------------
-		sleep 3
-		exit
-	else
-		echo "You have selected :"
-		echo "$file"
-fi
+	echo
+	count=`ls -1 "$file" 2>/dev/null | wc -l`
+	echo Count : $count
+	echo "You have selected :"
+	echo "$file"
+	echo
+
+### file or folder
+	if test -z "$file"	## for cancel on zenity
+		then
+			echo "You click CANCEL !"
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			exit
+		fi
+
+	if [ "$count" -eq 0 ]	## for n files in directory
+		then
+			echo "You don't have selected a file or folder !"
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			exit
+		fi
+
 echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
 ## Set working path.
@@ -138,6 +161,8 @@ echo -------------------------========================-------------------------
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 	
+	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	audio=0		# get numbers of channels
 	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
 	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
 	#res1=${res::-1}	#somes videos are detected with an X after the resution, this remove the X
@@ -147,9 +172,8 @@ echo -------------------------========================-------------------------
 	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
 	error $?
 	echo Numbers of audio channel : $audio
-
-	echo Wait 3 sec
-	sleep 3	
+	
+	echo $resp-$audio
 	
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
