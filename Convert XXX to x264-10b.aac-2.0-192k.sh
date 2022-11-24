@@ -1,31 +1,36 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	printf '\033[8;40;125t'	# will resize the window, if needed.
-	#printf '\033[8;50;200t'	# will resize the window, if needed.
+	#printf '\033[8;50;80t'		# will resize the window, if needed.
+	printf '\033[8;40;125t'		# will resize the window, if needed.
 	sleep 0.50
-	
+	## "NEVER remove dual ## in front of lines. Theses are code annotations."
+	## "You can test / remove single # for testing purpose."
+echo
 echo -------------------------========================-------------------------
-## Software lead-in
 	start=$SECONDS
-	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
-	echo "Current time : $now"
+	now=$(date +"%Y-%m-%d_%A_%H:%M:%S")
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
 	blue=`tput setaf 12`
 	reset=`tput sgr0`
-## COmmon variables, you can changes theses variables as you wish to test (0 or 1)
-	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
+	## All variables 0 or 1
+	autoquit=0	# autoquit anyway to script takes LESS than 2 min to complete.
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
-
+	noquit=0	# No quit after all operations.
+	random=$RANDOM	# Used for temp folders
+	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
+	echo
+	echo "Current time : $now"
+	echo "Common variables, you can changes theses variables as you wish to test."
+	echo
+	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
 echo -------------------------========================-------------------------
-
 	echo Version compiled on : Also serves as a version
-	echo 2022-03-09_Wednesday_08:46:39
+	echo 2022-11-23_Wednesday_06:57:45
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert XXX to x264-10b.aac-2.0-192k.sh"
@@ -146,40 +151,77 @@ ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:
 	error $?
 	
 echo -------------------------========================-------------------------
+## Software lead out
+	echo "Finish... with numbers of actions : $part"
+	echo "This script take $(( SECONDS - start )) seconds to complete."
+	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
+	echo "Time needed: $date"
+	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+	echo "Current time : $now"
+	echo
+echo -------------------------========================-------------------------
+	echo "If a script takes MORE than 120 seconds to complete it will ask"
+	echo "you to press ENTER to terminate."
+	echo
+	echo "If a script takes LESS than 120 seconds to complete it will auto"
+	echo "terminate after 10 seconds"
+echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
-if [ "$autoquit" -eq "1" ]
-then
-		echo "Script will auto quit in 1 seconds."
+	if [ "$noquit" -eq "1" ]; then
 		echo
-		echo "${blue}██████████████████████████████ Finish Now ████████████████████████████████${reset}"
+		echo "${blue}	█████████████████ NO exit activated ███████████████████${reset}"
 		echo
-		sleep 1
-	else
-	{
-	if [ $(( SECONDS - start )) -gt 120 ]
-		then
-			echo "Script takes more than 120 seconds to complete."
-			echo "Press ENTER key to exit !"
-			echo
-			echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-			read name
-		else
-			echo "Script takes less than 120 seconds to complete."
-			echo "Auto-quit in 10 sec. (You can press X)"
-			echo
-			echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-			sleep 10
+		#read -n 1 -s -r -p "Press ENTER key to exit !"
+		#exit
 		fi
-	}
-	fi
 
+	if [ "$autoquit" -eq "1" ]
+		then
+			echo
+			echo "${green}	███████████████ Finish, quit in 3 seconds █████████████████${reset}"
+			echo
+			sleep 2
+			echo
+		else
+		{
+			if [ "$debug" -eq "1" ]; then
+				echo
+				echo "${blue}		█████ DEBUG WAIT | Program finish. █████${reset}"
+				echo
+				echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+				echo
+				read -n 1 -s -r -p "Press ENTER key to continue !"
+				echo
+			fi
+		if [ $(( SECONDS - start )) -gt 120 ]
+			then
+				echo
+				echo "Script takes more than 120 seconds to complete."
+				echo
+				echo "${blue}	█████████████████████ Finish ███████████████████████${reset}"
+				echo
+				read -n 1 -s -r -p "Press ENTER key to exit !"
+				echo
+			else
+				echo
+				echo "Script takes less than 120 seconds to complete."
+				echo
+				echo "${green}	█████████████████████ Finish ███████████████████████${reset}"
+				echo
+				echo "Auto-quit in 5 sec. (You can press X)"
+				echo
+				sleep 5
+				exit
+			fi
+		}
+		fi
 	exit
 
 ## -----===== End of bash =====-----
 
-End-user license agreement (eula)
+	End-user license agreement (eula)
 
- 	JUST DO WHAT YOU WANT WITH THE PUBLIC LICENSE
+ 	JUST DO WHAT THE F*** YOU WANT WITH THE PUBLIC LICENSE
  	
  	Version 3.1415926532 (January 2022)
  	
@@ -196,6 +238,16 @@ End-user license agreement (eula)
  	due to atomic fission, unexpected tax recalls or encounters with
  	extraterrestrial beings elsewhere.
  	
+ 	YOU MUST ACCEPT THESES TERMS OR NOTHING WILL HAPPEN.
+ 	
  	LostByteSoft no copyright or copyleft we are in the center.
+ 	
+ 	You can send your request and your Christmas wishes to this address:
+ 	
+ 		Père Noël
+ 		Pôle Nord
+ 		H0H 0H0
+ 		Canada
 
 ## -----===== End of file =====-----
+

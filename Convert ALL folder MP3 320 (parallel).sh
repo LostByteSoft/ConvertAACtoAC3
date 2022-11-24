@@ -1,38 +1,36 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-	#printf '\033[8;40;80t'		# will resize the window, if needed.
-	printf '\033[8;40;100t'		# will resize the window, if needed.
-	#printf '\033[8;40;150t'	# will resize the window, if needed.
-	#printf '\033[8;50;200t'	# will resize the window, if needed.
+	#printf '\033[8;50;80t'		# will resize the window, if needed.
+	printf '\033[8;40;125t'		# will resize the window, if needed.
 	sleep 0.50
-	
+	## "NEVER remove dual ## in front of lines. Theses are code annotations."
+	## "You can test / remove single # for testing purpose."
+echo
 echo -------------------------========================-------------------------
-echo "Software lead-in."
-
 	start=$SECONDS
-	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
-	echo "Current time : $now"
+	now=$(date +"%Y-%m-%d_%A_%H:%M:%S")
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
 	blue=`tput setaf 12`
 	reset=`tput sgr0`
-
-echo -------------------------========================-------------------------
-echo "Common variables, you can changes theses variables as you wish to test (0 or 1)."
-
-	autoquit=0	# autoquit anyway to script takes more than 2 min to complete
+	## All variables 0 or 1
+	autoquit=0	# autoquit anyway to script takes LESS than 2 min to complete.
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
-	NOquit=0	# No quit after all operations.
-
-	echo autoquit=$autoquit debug=$debug error=$error part=$part NOquit=$NOquit
-
+	noquit=0	# No quit after all operations.
+	random=$RANDOM	# Used for temp folders
+	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
+	echo
+	echo "Current time : $now"
+	echo "Common variables, you can changes theses variables as you wish to test."
+	echo
+	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-09_Wednesday_05:37:15
+	echo 2022-11-23_Wednesday_06:57:45
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Auto-compiler software"
@@ -277,66 +275,70 @@ echo Move files to new folder?
 	error $?
 
 echo -------------------------========================-------------------------
-## Software lead-out.
+## Software lead out
 	echo "Finish... with numbers of actions : $part"
 	echo "This script take $(( SECONDS - start )) seconds to complete."
 	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
 	echo "Time needed: $date"
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
-
+	echo
 echo -------------------------========================-------------------------
-## Press enter or auto-quit here.
 	echo "If a script takes MORE than 120 seconds to complete it will ask"
 	echo "you to press ENTER to terminate."
 	echo
 	echo "If a script takes LESS than 120 seconds to complete it will auto"
 	echo "terminate after 10 seconds"
-	echo
-
 echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
-	echo
-	echo Processing file or folder of "$name1" finish !
-	echo
-	debug $?
-
-if [ "$NOquit" -eq "1" ]
-	then
-	echo "${green}████████████████████████████████ NO exit activated ██████████████████████████████████${reset}"
-	read -n 1 -s -r -p "Press ENTER key to exit !"
-	exit
-	fi
-
-if [ "$autoquit" -eq "1" ]
-then
-		echo "Script will auto quit in 1 seconds."
+	if [ "$noquit" -eq "1" ]; then
 		echo
-		echo "${blue}██████████████████████████████ Finish Now ████████████████████████████████${reset}"
+		echo "${blue}	█████████████████ NO exit activated ███████████████████${reset}"
 		echo
-		sleep 1
-	else
-	{
-	if [ $(( SECONDS - start )) -gt 120 ]
-		then
-			echo "Script takes more than 120 seconds to complete."
-			echo
-			echo "${yellow}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-			echo
-			echo -------------------------========================-------------------------
-			read -n 1 -s -r -p "Press ENTER key to exit !"
-		else
-			echo "Script takes less than 120 seconds to complete."
-			echo
-			echo "${green}████████████████████████████████ Finish ██████████████████████████████████${reset}"
-			echo
-			echo -------------------------========================-------------------------
-			echo "Auto-quit in 10 sec. (You can press X)"
-			sleep 10
+		#read -n 1 -s -r -p "Press ENTER key to exit !"
+		#exit
 		fi
-	}
-	fi
 
+	if [ "$autoquit" -eq "1" ]
+		then
+			echo
+			echo "${green}	███████████████ Finish, quit in 3 seconds █████████████████${reset}"
+			echo
+			sleep 2
+			echo
+		else
+		{
+			if [ "$debug" -eq "1" ]; then
+				echo
+				echo "${blue}		█████ DEBUG WAIT | Program finish. █████${reset}"
+				echo
+				echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+				echo
+				read -n 1 -s -r -p "Press ENTER key to continue !"
+				echo
+			fi
+		if [ $(( SECONDS - start )) -gt 120 ]
+			then
+				echo
+				echo "Script takes more than 120 seconds to complete."
+				echo
+				echo "${blue}	█████████████████████ Finish ███████████████████████${reset}"
+				echo
+				read -n 1 -s -r -p "Press ENTER key to exit !"
+				echo
+			else
+				echo
+				echo "Script takes less than 120 seconds to complete."
+				echo
+				echo "${green}	█████████████████████ Finish ███████████████████████${reset}"
+				echo
+				echo "Auto-quit in 5 sec. (You can press X)"
+				echo
+				sleep 5
+				exit
+			fi
+		}
+		fi
 	exit
 
 ## -----===== End of bash =====-----
@@ -363,5 +365,13 @@ then
  	YOU MUST ACCEPT THESES TERMS OR NOTHING WILL HAPPEN.
  	
  	LostByteSoft no copyright or copyleft we are in the center.
+ 	
+ 	You can send your request and your Christmas wishes to this address:
+ 	
+ 		Père Noël
+ 		Pôle Nord
+ 		H0H 0H0
+ 		Canada
 
 ## -----===== End of file =====-----
+
