@@ -2,7 +2,7 @@
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
 	#printf '\033[8;50;80t'		# will resize the window, if needed.
-	printf '\033[8;40;125t'		# will resize the window, if needed.
+	printf '\033[8;50;100t'		# will resize the window, if needed.
 	sleep 0.50
 	## "NEVER remove dual ## in front of lines. Theses are code annotations."
 	## "You can test / remove single # for testing purpose."
@@ -20,7 +20,7 @@ echo -------------------------========================-------------------------
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
-	noquit=0	# No quit after all operations.
+	noquit=1	# No quit after all operations.
 	random=$RANDOM	# Used for temp folders
 	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
 	echo
@@ -29,8 +29,16 @@ echo -------------------------========================-------------------------
 	echo
 	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
 echo -------------------------========================-------------------------
+	echo "Color codes / Informations."
+	echo
+	echo  "${green}	████████████████     ALL OK / ACTIVE      ████████████████ ${reset}"
+	echo   "${blue}	████████████████      INFORMATION(S)      ████████████████ ${reset}"
+	echo "${yellow}	████████████████   ATTENTION / INACTIVE   ████████████████ ${reset}"
+	echo    "${red}	████████████████   FATAL ERROR / OFFLINE  ████████████████ ${reset}"
+	echo
+echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-23_Wednesday_06:57:45
+	echo 2022-11-29_Tuesday_07:58:24
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert ALL folder to AC3"
@@ -49,47 +57,35 @@ echo -------------------------========================-------------------------
 echo -------------------------========================-------------------------
 echo "Check installed requirements !"
 
-if command -v ffmpeg >/dev/null 2>&1
-	then
-		echo "Ffmpeg installed continue."
-		dpkg -s ffmpeg | grep Version
-	else
-		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
-		echo "Add with : sudo apt-get install ffmpeg"
-		echo -------------------------========================-------------------------
-		sleep 10
-		exit
-fi
+echo Function ${blue}█████${reset} Debug. Activate via source program debug=1.
 
-if command -v parallel >/dev/null 2>&1
-	then
-		echo "Parallel installed continue."
-		dpkg -s parallel | grep Version
-	else
-		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
-		echo "Add with : sudo apt-get install parallel"
-		echo -------------------------========================-------------------------
-		sleep 10
-		exit
-fi
-
-echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
-
-debug()
-if [ "$debug" -ge 1 ]; then
+	debug()
+	if [ "$debug" -ge 1 ]; then
 		echo
-		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
+		echo "${blue}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
 		echo
-		echo debug = $debug 	part = $part 	input = $input
-		echo cpu = $cpu 	defv = $defv 	defa = $defa
-		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
+		echo autoquit=$autoquit debug=$debug error=$error noquit=$quit count=$count part=$part random=$random
+		echo
+		echo cpu = $cpu defa = $defa defi = $defi defv = $defv defs = $defx defz = $defz
+		echo
+		echo file = $file
+		echo
+		echo Basedir = "$BASEDIR"
 		echo 
-		read -n 1 -s -r -p "Press any key to EXIT"
-		exit
-		fi
+		read -n 1 -s -r -p "Press any key to continue"
+		echo
+	fi
+	
+	if [ "$debug" -eq "1" ]; then
+		echo
+		echo "${blue}██████████████████████████████ DEBUG ACTIVATED ███████████████████████████${reset}"
+		echo
+		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+		echo
+	fi
 
-echo Function Error detector. If errorlevel is 1 or greater will show error msg.
+echo Function ${red}█████${reset} Error detector. Errorlevel show error msg.
+
 	error()
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
@@ -100,62 +96,136 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 		echo
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-		fi
+	fi
 
-echo Function Auto Quit. If autoquit=1 will automaticly quit.
+echo Function ${green}█████${reset} Auto Quit. If autoquit=1 will automaticly quit.
 	if [ "$autoquit" -eq "1" ]; then
 		echo
-		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
+		echo "${green}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
-		fi
+	fi
+	echo
+echo -------------------------========================-------------------------
+if command -v ffmpeg >/dev/null 2>&1
+	then
+		echo "Ffmpeg installed continue."
+		dpkg -s ffmpeg | grep Version
+	else
+		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install ffmpeg"
+		echo
+		echo "${red}████████████████ Dependency error ████████████████${reset}"
+		echo
+		read -n 1 -s -r -p "Press ENTER key to exit !"
+		echo
+		exit
+	fi
+## -------------------------========================-------------------------
+if command -v parallel >/dev/null 2>&1
+	then
+		echo "Parallel installed continue."
+		dpkg -s parallel | grep Version
+	else
+		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install parallel"
+		echo
+		echo "${red}████████████████ Dependency error ████████████████${reset}"
+		echo
+		read -n 1 -s -r -p "Press ENTER key to exit !"
+		echo
+		exit
+	fi
 
 echo -------------------------========================-------------------------
-echo "Numbers of parallel multi-cores to use ?"
+echo "Number of jobs processed concurrently at the same time ? (Refer as parallel CPU cores)"
 	cpu=$(nproc)
+	defx=$(( cpu / 2 ))	## for audio files
 	defv=$(( cpu / 4 ))	## for video files
-	defa=$(nproc)		## for audio files
 	defi=$(( cpu * 2 ))	## for images files
-	#echo cpu = $cpu
-	#echo defv = $defv
-	#echo defa = $defa
-	#echo defi = $defi
-	entry=$(zenity --scale --value="$defa" --min-value="1" --max-value="32" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defa" for audio.\n\n\tDefault suggested value is "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
+	defy=$(( cpu * 4 ))	## for images files
+	defz=$(( cpu * 8 ))	## for images files
+
+	## Put an # in front of entry to do an automatic choice.
+
+	entry=$(zenity --scale --value="$cpu" --min-value="1" --max-value="$defz" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defx" for audio.\n\n\tDefault suggested value is ("$cpu" xbrzscale) "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
 
 if test -z "$entry"
 	then
-		echo "Default value of $cpu will be used. Now continue in 3 seconds."
-		entry=$(nproc)
+		echo "Default value of "$cpu" (Safe value) will be used. Now continue."
+		entry=$cpu
 		echo "You have selected : $entry"
 		#sleep 3
 	else
 		echo "You have selected : $entry"
-fi
+	fi
+
+if [ "$entry" -ge $defi ]; then
+	part=$((part+1))
+	echo
+	echo "${yellow}█████████████████████████████ WARNING █████████████████████████████${reset}"
+	echo
+	echo "!!! You have chosen a very high parallel work value, this may slow down the calculation rather than speed it up !!!"
+	echo
+	read -n 1 -s -r -p "Press any key to CONTINUE"
+	echo
+	fi
 
 echo -------------------------========================-------------------------
-echo "Select filename using dialog !"
-
-	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+echo "Select folder or filename using dialog !"
+	echo
+	#file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"			## File select.
+	file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)		## Directory select.
+	#file="/$HOME/Pictures/"
+	#file="/$HOME/Downloads/"
 	## --file-filter="*.jpg *.gif"
 
-if test -z "$file"
-	then
-		echo "You don't have selected a file, now exit in 3 seconds."
-		echo -------------------------========================-------------------------
-		sleep 3
-		exit
-	else
-		echo "You have selected :"
-		echo "$file"
-fi
+	count=`ls -1 "$file" 2>/dev/null | wc -l`
+	echo Count : $count
+	echo "You have selected :"
+	echo "$file"
+	echo
+
+### file or folder
+	if test -z "$file"	## for cancel on zenity
+		then
+			echo "You click CANCEL !"
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			echo
+			exit
+		fi
+
+	if [ "$count" -eq 0 ]	## for n files in directory
+		then
+			echo "You don't have selected a folder including files !"
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			echo
+			exit
+		fi
+
 echo -------------------------========================-------------------------
-echo "Input name, directory and output name : (Debug helper)"
+## Input_Directory_Output
+	echo "Input name, directory and output name : (Debug helper)"
+	echo
 ## Set working path.
+	BASEDIR=$(dirname "$0")
+	echo Basedir : "$BASEDIR"
 	dir=$(pwd)
+## file or folder selected
 	echo "Working dir : "$dir""
 	echo Input file : "$file"
 	export VAR="$file"
 	echo
+## directory section
+	INPUT="$(dirname "${VAR}")"	
+	echo "Get the last Folder : ${INPUT##*/}"
 	echo Base directory : "$(dirname "${VAR}")"
 	echo Base name: "$(basename "${VAR}")"
 	echo
@@ -165,36 +235,28 @@ echo "Input name, directory and output name : (Debug helper)"
 	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
 	echo "Output name bis : "$name1""
 	
+	if [ "$debug" -eq "1" ]; then
+		echo
+		echo "${yellow}█████ DEBUG SLEEP (5 sec) █████${reset}"
+		echo
+		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+		sleep 5
+		echo
+	fi
+echo	
 echo -------------------------========================-------------------------
-## Variables, for program."
-	part=0
+echo "All lowercase for convert... (NOT activated, remove both # to activate)"
+	## This line put all lowercase FROM selected folder to the files names.
+	#echo "cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;"
+	#cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;
 
+echo -------------------------========================-------------------------
 ## The code program.
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
+
 	parallel -j $entry ffmpeg -i {} -c:a ac3 -ar 48000 -b:a 640k {.}.ac3-40000hz-640k.ac3 ::: "$file"/*.*
 
-## Error detector.
 	error $?
 	
-echo -------------------------========================-------------------------
-## Software lead-out.
-	echo "Finish... with numbers of actions : $part"
-	echo "This script take $(( SECONDS - start )) seconds to complete."
-	date=$(date -d@$(( SECONDS - start )) -u +%H:%M:%S)
-	echo "Time needed: $date"
-	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
-	echo "Current time : $now"
-
-echo -------------------------========================-------------------------
-## Press enter or auto-quit here.
-	echo "If a script takes MORE than 120 seconds to complete it will ask"
-	echo "you to press ENTER to terminate."
-	echo
-	echo "If a script takes LESS than 120 seconds to complete it will auto"
-	echo "terminate after 10 seconds"
-	echo
-
 echo -------------------------========================-------------------------
 ## Software lead out
 	echo "Finish... with numbers of actions : $part"
@@ -216,8 +278,8 @@ echo -------------------------========================-------------------------
 		echo
 		echo "${blue}	█████████████████ NO exit activated ███████████████████${reset}"
 		echo
-		#read -n 1 -s -r -p "Press ENTER key to exit !"
-		#exit
+		read -n 1 -s -r -p "Press ENTER key to exit !"
+		exit
 		fi
 
 	if [ "$autoquit" -eq "1" ]
@@ -253,10 +315,9 @@ echo -------------------------========================-------------------------
 				echo
 				echo "${green}	█████████████████████ Finish ███████████████████████${reset}"
 				echo
-				echo "Auto-quit in 5 sec. (You can press X)"
+				echo "Auto-quit in 3 sec. (You can press X)"
 				echo
-				sleep 5
-				exit
+				sleep 3
 			fi
 		}
 		fi

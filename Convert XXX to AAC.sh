@@ -2,7 +2,7 @@
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
 	#printf '\033[8;50;80t'		# will resize the window, if needed.
-	printf '\033[8;40;125t'		# will resize the window, if needed.
+	printf '\033[8;50;100t'		# will resize the window, if needed.
 	sleep 0.50
 	## "NEVER remove dual ## in front of lines. Theses are code annotations."
 	## "You can test / remove single # for testing purpose."
@@ -20,7 +20,7 @@ echo -------------------------========================-------------------------
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
-	noquit=0	# No quit after all operations.
+	noquit=1	# No quit after all operations.
 	random=$RANDOM	# Used for temp folders
 	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
 	echo
@@ -29,8 +29,16 @@ echo -------------------------========================-------------------------
 	echo
 	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
 echo -------------------------========================-------------------------
+	echo "Color codes / Informations."
+	echo
+	echo  "${green}	████████████████     ALL OK / ACTIVE      ████████████████ ${reset}"
+	echo   "${blue}	████████████████      INFORMATION(S)      ████████████████ ${reset}"
+	echo "${yellow}	████████████████   ATTENTION / INACTIVE   ████████████████ ${reset}"
+	echo    "${red}	████████████████   FATAL ERROR / OFFLINE  ████████████████ ${reset}"
+	echo
+echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-23_Wednesday_06:57:45
+	echo 2022-11-29_Tuesday_07:39:41
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert XXX to AAC"
@@ -55,44 +63,36 @@ echo -------------------------========================-------------------------
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
+echo Function ${blue}█████${reset} Debug. Activate via source program debug=1.
 
-echo "Check installed requirement !"
-
-if command -v ffmpeg >/dev/null 2>&1
-	then
-		echo "Ffmpeg installed continue."
-		dpkg -s ffmpeg | grep Version
-	else
-		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
-		echo "Add with : sudo apt-get install ffmpeg"
-		echo -------------------------========================-------------------------
-		sleep 10
-		exit
-fi
-
-echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
-debug()
+	debug()
 	if [ "$debug" -ge 1 ]; then
 		echo
-		echo "${yellow}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
+		echo "${blue}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
 		echo
-		echo debug = $debug 	part = $part 	file = $file
-		echo cpu = $cpu 	defv = $defv 	defa = $defa
-		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
+		echo autoquit=$autoquit debug=$debug error=$error noquit=$quit count=$count part=$part random=$random
+		echo
+		echo cpu = $cpu defa = $defa defi = $defi defv = $defv defs = $defx defz = $defz
+		echo
+		echo file = $file
+		echo
+		echo Basedir = "$BASEDIR"
 		echo 
 		read -n 1 -s -r -p "Press any key to continue"
-		#exit
+		echo
 	fi
 	
-		if [ "$debug" -eq "1" ]; then
+	if [ "$debug" -eq "1" ]; then
 		echo
-		echo "${yellow}██████████████████████████████ DEBUG ACTIVATED ███████████████████████████${reset}"
+		echo "${blue}██████████████████████████████ DEBUG ACTIVATED ███████████████████████████${reset}"
+		echo
+		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
 		echo
 	fi
 
-echo Function Error detector. If errorlevel is 1 or greater will show error msg.
-error()
+echo Function ${red}█████${reset} Error detector. Errorlevel show error msg.
+
+	error()
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
 		echo
@@ -104,33 +104,78 @@ error()
 		echo
 	fi
 
-echo Function Auto Quit. If autoquit=1 will automaticly quit.
+echo Function ${green}█████${reset} Auto Quit. If autoquit=1 will automaticly quit.
 	if [ "$autoquit" -eq "1" ]; then
 		echo
-		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
+		echo "${green}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
+	fi
+	echo
+echo -------------------------========================-------------------------
+	echo Check installed requirements !
+	echo
+if command -v ffmpeg >/dev/null 2>&1
+	then
+		echo "Ffmpeg installed continue."
+		dpkg -s ffmpeg | grep Version
+	else
+		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install ffmpeg"
+		echo
+		echo "${red}████████████████ Dependency error ████████████████${reset}"
+		echo
+		read -n 1 -s -r -p "Press ENTER key to exit !"
+		echo
+		exit
 	fi
 
 echo -------------------------========================-------------------------
-echo "Select filename using dialog !"
-
-	file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	#file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
+echo "Select folder or filename using dialog !"
+	echo
+	file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"			## File select.
+	#file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)	## Directory select.
+	#file="/$HOME/Pictures/"
+	#file="/$HOME/Downloads/"
 	## --file-filter="*.jpg *.gif"
 
-if test -z "$file"
-	then
-		echo "You don't have selected a file, now exit in 3 seconds."
-		echo -------------------------========================-------------------------
-		sleep 3
-		exit
-	else
-		echo "You have selected :"
-		echo "$file"
-fi
+	count=`ls -1 "$file" 2>/dev/null | wc -l`
+	echo Count : $count
+	echo "You have selected :"
+	echo "$file"
+	echo
+
+### file or folder
+	if test -z "$file"	## for cancel on zenity
+		then
+			echo "You click CANCEL !"
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			echo
+			exit
+		fi
+
+	if [ "$count" -eq 0 ]	## for n files in directory
+		then
+			echo "You don't have selected a folder including files !"
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			echo
+			exit
+		fi
+
 echo -------------------------========================-------------------------
-echo "Input name, directory and output name : (Debug helper)"
+## Input_Directory_Output
+	echo "Input name, directory and output name : (Debug helper)"
+	echo
 ## Set working path.
+	BASEDIR=$(dirname "$0")
+	echo Basedir : "$BASEDIR"
 	dir=$(pwd)
 ## file or folder selected
 	echo "Working dir : "$dir""
@@ -149,16 +194,25 @@ echo "Input name, directory and output name : (Debug helper)"
 	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
 	echo "Output name bis : "$name1""
 	
+	if [ "$debug" -eq "1" ]; then
+		echo
+		echo "${yellow}█████ DEBUG SLEEP (5 sec) █████${reset}"
+		echo
+		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+		sleep 5
+		echo
+	fi
+	
 echo -------------------------========================-------------------------
-## Variables, for program."
-	part=0
+echo "All lowercase for convert... (NOT activated, remove both # to activate)"
+	## This line put all lowercase FROM selected folder to the files names.
+	#echo "cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;"
+	#cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;
 
+echo -------------------------========================-------------------------
 ## The code program.
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
 
-ffmpeg -i "$file" -c:s copy -c:v copy -c:a aac -ar 44100 -b:a 320k "$name".aac-44100hz-320k.aac
-
+	ffmpeg -i "$file" -c:s copy -c:v copy -c:a aac -ar 44100 -b:a 320k "$name".aac-44100hz-320k.aac
 	error $?
 	
 echo -------------------------========================-------------------------
@@ -182,8 +236,8 @@ echo -------------------------========================-------------------------
 		echo
 		echo "${blue}	█████████████████ NO exit activated ███████████████████${reset}"
 		echo
-		#read -n 1 -s -r -p "Press ENTER key to exit !"
-		#exit
+		read -n 1 -s -r -p "Press ENTER key to exit !"
+		exit
 		fi
 
 	if [ "$autoquit" -eq "1" ]
@@ -219,10 +273,9 @@ echo -------------------------========================-------------------------
 				echo
 				echo "${green}	█████████████████████ Finish ███████████████████████${reset}"
 				echo
-				echo "Auto-quit in 5 sec. (You can press X)"
+				echo "Auto-quit in 3 sec. (You can press X)"
 				echo
-				sleep 5
-				exit
+				sleep 3
 			fi
 		}
 		fi

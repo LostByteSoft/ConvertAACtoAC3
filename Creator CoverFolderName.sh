@@ -190,7 +190,7 @@ echo -------------------------========================-------------------------
 		echo
 		echo "${blue}	█████████████████ NO exit activated ███████████████████${reset}"
 		echo
-		#read -n 1 -s -r -p "Press ENTER key to exit !"
+		read -n 1 -s -r -p "Press ENTER key to exit !"
 		#exit
 		fi
 

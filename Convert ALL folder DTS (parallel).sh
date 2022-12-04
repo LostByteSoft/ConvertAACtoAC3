@@ -1,20 +1,20 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-	#printf '\033[8;50;80t'		# will resize the window, if needed.
-	printf '\033[8;50;100t'		# will resize the window, if needed.
-	sleep 0.50
+	start=$SECONDS
 	## "NEVER remove dual ## in front of lines. Theses are code annotations."
 	## "You can test / remove single # for testing purpose."
-echo
-echo -------------------------========================-------------------------
-	start=$SECONDS
+	#printf '\033[8;50;80t'		# will resize the window, if needed.
+	printf '\033[8;50;110t'		# will resize the window, if needed.
+	sleep 0.50
 	now=$(date +"%Y-%m-%d_%A_%H:%M:%S")
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
 	blue=`tput setaf 12`
 	reset=`tput sgr0`
+	echo
+echo -------------------------========================-------------------------
 	## All variables 0 or 1
 	autoquit=0	# autoquit anyway to script takes LESS than 2 min to complete.
 	debug=0		# test debug
@@ -38,20 +38,28 @@ echo -------------------------========================-------------------------
 	echo
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-29_Tuesday_07:39:41
+	echo 2022-12-02_Friday_07:51:43
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert XXX to x264-10b.aac-2.0-192k.sh"
+	echo "Software name: Convert ALL folder to DTS"
 	echo
 	echo What it does ?
-	echo "Convert ONE video file to x264-10b.aac-2.0-192k.mkv"
-	echo "Perfect format for facebook."
+	echo "Convert ALL audio/video file in folder to audio DTS dts-48000hz-768k"
 	echo
-	echo Informations :
-	echo "Use ffmpeg only"
+	echo "This is a single core conversion"
+	echo
+	echo "Read me for this file (and known bugs) :"
+	echo
+	echo "Use 7z https://www.7-zip.org/download.html"
+	echo "Use https://imagemagick.org/index.php"
+	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
+	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
+	echo
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://www.demolandia.net"
+	echo
 	echo "Informations : (EULA at the end of file, open in text.)"
-	echo "By LostByteSoft, no copyright or copyleft."
-	echo "https://github.com/LostByteSoft"
+	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
@@ -120,12 +128,27 @@ if command -v ffmpeg >/dev/null 2>&1
 		echo
 		exit
 	fi
-
+## -------------------------========================-------------------------
+if command -v parallel >/dev/null 2>&1
+	then
+		echo "Parallel installed continue."
+		dpkg -s parallel | grep Version
+	else
+		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install parallel"
+		echo
+		echo "${red}████████████████ Dependency error ████████████████${reset}"
+		echo
+		read -n 1 -s -r -p "Press ENTER key to exit !"
+		echo
+		exit
+	fi
+## -------------------------========================-------------------------
 echo -------------------------========================-------------------------
 echo "Select folder or filename using dialog !"
 	echo
-	file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"			## File select.
-	#file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)	## Directory select.
+	#file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"			## File select.
+	file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)		## Directory select.
 	#file="/$HOME/Pictures/"
 	#file="/$HOME/Downloads/"
 	## --file-filter="*.jpg *.gif"
@@ -162,6 +185,40 @@ echo "Select folder or filename using dialog !"
 		fi
 
 echo -------------------------========================-------------------------
+echo "Number of jobs processed concurrently at the same time ? (Refer as parallel CPU cores)"
+	cpu=$(nproc)
+	defx=$(( cpu / 2 ))	## for audio files
+	defv=$(( cpu / 4 ))	## for video files
+	defi=$(( cpu * 2 ))	## for images files
+	defy=$(( cpu * 4 ))	## for images files
+	defz=$(( cpu * 8 ))	## for images files
+
+	## Put an # in front of entry to do an automatic choice.
+
+	entry=$(zenity --scale --value="$defx" --min-value="1" --max-value="$cpu" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defx" for audio.\n\n\tDefault suggested value is ("$cpu" xbrzscale) "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
+
+if test -z "$entry"
+	then
+		echo "Default value of "$cpu" (Safe value) will be used. Now continue."
+		entry=$cpu
+		echo "You have selected : $entry"
+		#sleep 3
+	else
+		echo "You have selected : $entry"
+	fi
+
+if [ "$entry" -ge $defi ]; then
+	part=$((part+1))
+	echo
+	echo "${yellow}█████████████████████████████ WARNING █████████████████████████████${reset}"
+	echo
+	echo "!!! You have chosen a very high parallel work value, this may slow down the calculation rather than speed it up !!!"
+	echo
+	read -n 1 -s -r -p "Press any key to CONTINUE"
+	echo
+	fi
+
+echo -------------------------========================-------------------------
 ## Input_Directory_Output
 	echo "Input name, directory and output name : (Debug helper)"
 	echo
@@ -194,7 +251,7 @@ echo -------------------------========================-------------------------
 		sleep 5
 		echo
 	fi
-	
+echo	
 echo -------------------------========================-------------------------
 echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 	## This line put all lowercase FROM selected folder to the files names.
@@ -204,10 +261,59 @@ echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 echo -------------------------========================-------------------------
 ## The code program.
 
-	## ffmpeg -i "$file" -vf format=yuv420p -c:v libx264 -crf 20 -r:v 30 -c:a aac -ar 44100 -ac 2 -b:a 192k "$name"-x264-8b.aac-2.0-44khz-192k.mkv
-	ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 192k "$name".{SDR-x264-10b}.{aac-2.0}.mkv
+	echo Delete /dev/shm/findaudio.txt
+	rm "/dev/shm/findaudio.txt" 2> /dev/null
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	echo Finding files...
+
+	## Easy way to add a file format, copy paste a new line.
+	echo "Will NOT find files in sub folders... Remove -maxdepth 1 to search subfolders."
+	find "$file" -maxdepth 1 -iname '*.mp3'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.aiff'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.aac'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.flac'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.wav'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.mp4'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.mkv'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.avi'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.wav'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.ac3'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.dts'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.mka'  >> "/dev/shm/findaudio.txt"
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	cat "/dev/shm/findaudio.txt"
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+
+	count1=$(wc -l < "/dev/shm/findaudio.txt")
+	echo Finding finish, with file count : $count1
+	
+		if [ "$count1" -eq 0 ]	## for n files in directory
+		then
+			echo "You don't have selected a folder including files !"
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}███████████████ NO AUDIO DATA TO PROCESS ███████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key"
+			echo
+			#exit
+		else
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+
+	echo parallel -a "/dev/shm/findaudio.txt" -j $entry ffmpeg -i {} -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k {.}.dts-48000hz-768k.dts
+	parallel -a "/dev/shm/findaudio.txt" -j $entry ffmpeg -i {} -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k {.}.dts-48000hz-768k.dts
 	error $?
 	
+		fi
+
 echo -------------------------========================-------------------------
 ## Software lead out
 	echo "Finish... with numbers of actions : $part"
@@ -302,9 +408,7 @@ echo -------------------------========================-------------------------
  	You can send your request and your Christmas wishes to this address:
  	
  		Père Noël
- 		Pôle Nord
+ 		Pôle Nord, Canada
  		H0H 0H0
- 		Canada
 
 ## -----===== End of file =====-----
-

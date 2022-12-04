@@ -38,23 +38,28 @@ echo -------------------------========================-------------------------
 	echo
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-29_Tuesday_07:39:41
+	echo 2022-11-29_Tuesday_07:40:36
 	echo
-## Software name, what is this, version, informations.
-	echo "Software name: Convert XXX to x264-10b.aac-2.0-192k.sh"
+	echo "Software name: Convert HDRtoSDR-SDR-x264-10b-DTS-48000hz-768k"
 	echo
 	echo What it does ?
-	echo "Convert ONE video file to x264-10b.aac-2.0-192k.mkv"
-	echo "Perfect format for facebook."
+	echo "Convert ONE video file HDR to SDR Convert HDRtoSDR-SDR-x264-10b-DTS-48000hz-768k"
 	echo
-	echo Informations :
-	echo "Use ffmpeg only"
+	echo "Read me for this file (and known bugs) :"
+	echo
+	echo "Use 7z https://www.7-zip.org/download.html"
+	echo "Use https://imagemagick.org/index.php"
+	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
+	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
+	echo
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://www.demolandia.net"
+	echo
 	echo "Informations : (EULA at the end of file, open in text.)"
-	echo "By LostByteSoft, no copyright or copyleft."
-	echo "https://github.com/LostByteSoft"
+	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
-echo -------------------------========================-------------------------
+	echo -------------------------========================-------------------------
 echo Function ${blue}█████${reset} Debug. Activate via source program debug=1.
 
 	debug()
@@ -120,7 +125,8 @@ if command -v ffmpeg >/dev/null 2>&1
 		echo
 		exit
 	fi
-
+## -------------------------========================-------------------------
+	echo
 echo -------------------------========================-------------------------
 echo "Select folder or filename using dialog !"
 	echo
@@ -194,7 +200,7 @@ echo -------------------------========================-------------------------
 		sleep 5
 		echo
 	fi
-	
+echo	
 echo -------------------------========================-------------------------
 echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 	## This line put all lowercase FROM selected folder to the files names.
@@ -203,11 +209,56 @@ echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 
 echo -------------------------========================-------------------------
 ## The code program.
-
-	## ffmpeg -i "$file" -vf format=yuv420p -c:v libx264 -crf 20 -r:v 30 -c:a aac -ar 44100 -ac 2 -b:a 192k "$name"-x264-8b.aac-2.0-44khz-192k.mkv
-	ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 192k "$name".{SDR-x264-10b}.{aac-2.0}.mkv
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	
+	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	audio=0		# get numbers of channels
+	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
+	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
+	#res1=${res::-1}	#somes videos are detected with an X after the resution, this remove the X
+	echo Resolution of the video : $res
+	
+	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
+	echo Numbers of audio channel : $audio
+	echo
+	echo "$res"progressive-"$audio"channels
+	echo "$res" p- "$audio" c
+	echo
 	error $?
 	
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+echo "ffmpeg conversion, x265 options." DEACTIVATED
+
+	### better compression and x265 {SDR.x265.10b}
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 18 -preset superfast -tune fastdecode -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".{BluRay-"$res"p-5,1}.{SDR-x265-10b}.{dts}.mkv
+error $?
+	
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+echo "ffmpeg conversion, x264 options." ACTIVATED
+
+	###Good quality and x264 {SDR.x264.10b} ## -r:v 30 ## crf 0=lossless 51=verybad
+
+##Convert HDRtoSDR.SDR-x264-10b-ac3-640k
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 18 -preset faster -tune fastdecode -c:a ac3 -ar 48000 -b:a 640k "$name".{BluRay-"$res"p-5,1}.{SDR-x264-10b}.{ac3}.mkv
+error $?
+
+##Convert HDRtoSDR.SDR-x264-10b-dts-768k
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 18 -preset faster -tune fastdecode -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{dts}.mkv
+error $?
+
+##Convert HDRtoSDR-SDR-x264-10b-copy
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 18 -preset faster -tune fastdecode -c:a copy "$name".{BluRay-"$res"p-5,1}.{SDR-x264-10b}.{copy}.mkv
+error $?
+
+##Convert HDRtoSDR-SDR-x264-10b-none
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 18 -preset faster -tune fastdecode -an "$name".{BluRay-"$res"p-5,1}.{SDR-x264-10b}.{none}.mkv
+error $?
+	
+echo Reconversion finish...
+
 echo -------------------------========================-------------------------
 ## Software lead out
 	echo "Finish... with numbers of actions : $part"
