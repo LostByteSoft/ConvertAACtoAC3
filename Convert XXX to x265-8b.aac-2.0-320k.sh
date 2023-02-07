@@ -41,10 +41,13 @@ echo -------------------------========================-------------------------
 	echo 2022-11-29_Tuesday_07:39:41
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert x265-10b-30f.dts.sh"
+	echo "Software name: Convert XXX to x265-8b.aac-2.0-320k"
+	echo "File name : Convert XXX to x265-8b.aac-2.0-320k"
 	echo
 	echo What it does ?
-	echo "Convert ONE video file to {SDR-x265-10b}.{dts}.mkv"
+	echo "Convert ONE video file to x265-8b.aac-2.0-320k"
+	echo
+	echo "This is a single core conversion"
 	echo
 	echo "Read me for this file (and known bugs) :"
 	echo
@@ -53,7 +56,7 @@ echo -------------------------========================-------------------------
 	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
 	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
 	echo
-	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.265"
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
 	echo "4k demo HDR https://www.demolandia.net"
 	echo
 	echo "Informations : (EULA at the end of file, open in text.)"
@@ -210,28 +213,20 @@ echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 echo -------------------------========================-------------------------
 ## The code program.
 
-	res=0		# automatic resolution detection and naming (720, 1080... etc)
+	#INPUT="$(dirname "${VAR}")"
+	#echo ${INPUT##*/}
 
-	echo "Get resolution of the video file"
-	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 $file`
-	#res1=${res::-1}
-	echo $res
-	error $?
-	
-part=$((part+1))
-echo "-------------------------===== Section $part =====-------------------------"
 echo "ffmpeg conversion"
 
-	### debug pixel info
-	### ffmpeg -h encoder=libx265 | grep pixel
-	###Better quality and x265 (Need a bigger PC) (medium) {SDR.x265.10b}.{dts}"
+## Multiples choice here.
 
-	ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx265 -crf 20 -preset faster -tune fastdecode -strict experimental -c:a dts "$name".{"$res"p-5.1}.{SDR-x264-10b}.{dts}.mkv
+## ffmpeg -i "$file" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{x264-10b-30f}.{ac3-48000hz-640k}.mkv
 
-	### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
-	### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
-	## -preset ultrafast
-	## -preset medium
+## ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a copy "$name".copy-x264-10b-30f-copy.mkv
+
+ffmpeg -i "$file" -vf format=yuv420p -c:v libx265 -crf 20 -c:a aac -ac 2 -b:a 320k "$name".{SDR-x265-8b}.{aac-2.0-320}.mkv
+
+## ffmpeg -i "$file" -vf scale=1920x1080:flags=lanczos -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{x264-30}.{ac3-48000-640}.mkv
 
 	error $?
 	

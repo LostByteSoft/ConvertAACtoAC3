@@ -1,20 +1,20 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-	#printf '\033[8;50;80t'		# will resize the window, if needed.
-	printf '\033[8;50;100t'		# will resize the window, if needed.
-	sleep 0.50
+	start=$SECONDS
 	## "NEVER remove dual ## in front of lines. Theses are code annotations."
 	## "You can test / remove single # for testing purpose."
-echo
-echo -------------------------========================-------------------------
-	start=$SECONDS
+	#printf '\033[8;50;80t'		# will resize the window, if needed.
+	printf '\033[8;50;110t'		# will resize the window, if needed.
+	sleep 0.50
 	now=$(date +"%Y-%m-%d_%A_%H:%M:%S")
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
 	blue=`tput setaf 12`
 	reset=`tput sgr0`
+	echo
+echo -------------------------========================-------------------------
 	## All variables 0 or 1
 	autoquit=0	# autoquit anyway to script takes LESS than 2 min to complete.
 	debug=0		# test debug
@@ -38,13 +38,12 @@ echo -------------------------========================-------------------------
 	echo
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-29_Tuesday_07:39:41
+	echo 2023-01-15_Sunday_05:13:41
 	echo
-## Software name, what is this, version, informations.
-	echo "Software name: Convert x265-10b-30f.dts.sh"
+	echo "Software name: Convert HDRtoSDR-SDR-x264-10b-DTS-48000hz-768k"
 	echo
 	echo What it does ?
-	echo "Convert ONE video file to {SDR-x265-10b}.{dts}.mkv"
+	echo "Convert ONE video file HDR to SDR Convert HDRtoSDR-SDR-x264-10b-DTS-48000hz-768k"
 	echo
 	echo "Read me for this file (and known bugs) :"
 	echo
@@ -53,14 +52,14 @@ echo -------------------------========================-------------------------
 	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
 	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
 	echo
-	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.265"
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
 	echo "4k demo HDR https://www.demolandia.net"
 	echo
 	echo "Informations : (EULA at the end of file, open in text.)"
 	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
-echo -------------------------========================-------------------------
+	echo -------------------------========================-------------------------
 echo Function ${blue}█████${reset} Debug. Activate via source program debug=1.
 
 	debug()
@@ -98,6 +97,7 @@ echo Function ${red}█████${reset} Error detector. Errorlevel show erro
 		echo
 		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
 		echo
+		debug=1
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
 	fi
@@ -126,11 +126,12 @@ if command -v ffmpeg >/dev/null 2>&1
 		echo
 		exit
 	fi
-
+## -------------------------========================-------------------------
+	echo
 echo -------------------------========================-------------------------
 echo "Select folder or filename using dialog !"
 	echo
-	file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"			## File select.
+	file="$(zenity --file-selection --file-filter="*.gif" --filename=$HOME/ --title="Select a file, all format supported")"	## File select.
 	#file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)	## Directory select.
 	#file="/$HOME/Pictures/"
 	#file="/$HOME/Downloads/"
@@ -200,7 +201,7 @@ echo -------------------------========================-------------------------
 		sleep 5
 		echo
 	fi
-	
+echo	
 echo -------------------------========================-------------------------
 echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 	## This line put all lowercase FROM selected folder to the files names.
@@ -210,31 +211,55 @@ echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 echo -------------------------========================-------------------------
 ## The code program.
 
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	
 	res=0		# automatic resolution detection and naming (720, 1080... etc)
-
-	echo "Get resolution of the video file"
-	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 $file`
-	#res1=${res::-1}
-	echo $res
+	audio=0		# get numbers of channels
+	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
+	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
+	#res1=${res::-1}	#somes videos are detected with an X after the resution, this remove the X
+	echo Resolution of the video : $res
+	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
+	echo Numbers of audio channel : $audio
+	echo
+	echo "$res"progressive-"$audio"channels
+	echo "$res" p- "$audio" c
+	echo
 	error $?
 	
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
-echo "ffmpeg conversion"
+echo "ffmpeg conversion, x265 options." DEACTIVATED
 
-	### debug pixel info
-	### ffmpeg -h encoder=libx265 | grep pixel
-	###Better quality and x265 (Need a bigger PC) (medium) {SDR.x265.10b}.{dts}"
-
-	ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx265 -crf 20 -preset faster -tune fastdecode -strict experimental -c:a dts "$name".{"$res"p-5.1}.{SDR-x264-10b}.{dts}.mkv
-
-	### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
-	### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
-	## -preset ultrafast
-	## -preset medium
-
-	error $?
+	### better compression and x265 {SDR.x265.10b}
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 18 -preset superfast -tune fastdecode -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".{BluRay-"$res"p-5,1}.{SDR-x265-10b}.{dts}.mkv
+error $?
 	
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+echo "ffmpeg conversion, x264 options." ACTIVATED
+
+	###Good quality and x264 {SDR.x264.10b} ## -r:v 30 ## crf 0=lossless 51=verybad
+
+##Convert HDRtoSDR.SDR-x264-10b-ac3-640k
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 18 -preset faster -tune fastdecode -c:a ac3 -ar 48000 -b:a 640k "$name".{BluRay-"$res"p-5,1}.{SDR-x264-10b}.{ac3}.mkv
+error $?
+
+##Convert HDRtoSDR.SDR-x264-10b-dts-768k
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 18 -preset faster -tune fastdecode -strict experimental -c:a dts -ac 6 -ar 48000 -b:a 768k "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{dts}.mkv
+error $?
+
+##Convert HDRtoSDR-SDR-x264-10b-copy
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 18 -preset faster -tune fastdecode -c:a copy "$name".{BluRay-"$res"p-5,1}.{SDR-x264-10b}.{copy}.mkv
+error $?
+
+##Convert HDRtoSDR-SDR-x264-10b-none
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 18 -preset faster -tune fastdecode -an "$name".{BluRay-"$res"p-5,1}.{SDR-x264-10b}.{none}.mkv
+error $?
+	
+echo Reconversion finish...
+
 echo -------------------------========================-------------------------
 ## Software lead out
 	echo "Finish... with numbers of actions : $part"
@@ -329,9 +354,7 @@ echo -------------------------========================-------------------------
  	You can send your request and your Christmas wishes to this address:
  	
  		Père Noël
- 		Pôle Nord
+ 		Pôle Nord, Canada
  		H0H 0H0
- 		Canada
 
 ## -----===== End of file =====-----
-

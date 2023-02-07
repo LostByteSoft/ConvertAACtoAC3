@@ -41,23 +41,17 @@ echo -------------------------========================-------------------------
 	echo 2022-11-29_Tuesday_07:39:41
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert x265-10b-30f.dts.sh"
+	echo "Software name: Convert XXX to x264-10b.aac-2.0-320k.sh"
 	echo
 	echo What it does ?
-	echo "Convert ONE video file to {SDR-x265-10b}.{dts}.mkv"
+	echo "Convert ONE video file to x264-10b.aac-2.0-320k.mkv"
+	echo "Perfect format for facebook."
 	echo
-	echo "Read me for this file (and known bugs) :"
-	echo
-	echo "Use 7z https://www.7-zip.org/download.html"
-	echo "Use https://imagemagick.org/index.php"
-	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
-	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
-	echo
-	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.265"
-	echo "4k demo HDR https://www.demolandia.net"
-	echo
+	echo Informations :
+	echo "Use ffmpeg only"
 	echo "Informations : (EULA at the end of file, open in text.)"
-	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
+	echo "By LostByteSoft, no copyright or copyleft."
+	echo "https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 echo -------------------------========================-------------------------
@@ -210,29 +204,8 @@ echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 echo -------------------------========================-------------------------
 ## The code program.
 
-	res=0		# automatic resolution detection and naming (720, 1080... etc)
-
-	echo "Get resolution of the video file"
-	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 $file`
-	#res1=${res::-1}
-	echo $res
-	error $?
-	
-part=$((part+1))
-echo "-------------------------===== Section $part =====-------------------------"
-echo "ffmpeg conversion"
-
-	### debug pixel info
-	### ffmpeg -h encoder=libx265 | grep pixel
-	###Better quality and x265 (Need a bigger PC) (medium) {SDR.x265.10b}.{dts}"
-
-	ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx265 -crf 20 -preset faster -tune fastdecode -strict experimental -c:a dts "$name".{"$res"p-5.1}.{SDR-x264-10b}.{dts}.mkv
-
-	### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
-	### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
-	## -preset ultrafast
-	## -preset medium
-
+	## ffmpeg -i "$file" -vf format=yuv420p -c:v libx264 -crf 20 -r:v 30 -c:a aac -ar 44100 -ac 2 -b:a 320k "$name"-x264-8b.aac-2.0-44khz-320k.mkv
+	ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 320k "$name".{SDR-x264-10b}.{aac-2.0-320k}.mkv
 	error $?
 	
 echo -------------------------========================-------------------------

@@ -42,7 +42,7 @@ fi
 
 echo -------------------------========================-------------------------
 
-ffmpeg -i "$FILE" -vf "transpose=2" ""$FILE"-turn-out.mp4"
+ffmpeg -i "$FILE" -vf "transpose=2" -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 192k ""$FILE".{SDR-x264-8b}.{aac-2.0-192k}.mkv"
 
 echo -------------------------========================-------------------------
 ## Software lead out

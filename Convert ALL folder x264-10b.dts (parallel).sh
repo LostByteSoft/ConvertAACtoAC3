@@ -20,7 +20,7 @@ echo -------------------------========================-------------------------
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
-	noquit=1	# No quit after all operations.
+	noquit=0	# No quit after all operations.
 	random=$RANDOM	# Used for temp folders
 	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
 	echo

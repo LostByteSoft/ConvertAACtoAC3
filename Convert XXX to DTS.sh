@@ -20,7 +20,7 @@ echo -------------------------========================-------------------------
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
-	noquit=1	# No quit after all operations.
+	noquit=0	# No quit after all operations.
 	random=$RANDOM	# Used for temp folders
 	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
 	echo
@@ -211,7 +211,12 @@ echo -------------------------========================-------------------------
 ## The code program.
 
 	#ffmpeg -i "$file" -c:s copy -c:v copy -strict experimental -c:a dts "$name"-dts.dts
-	ffmpeg -i "$file" -c:s copy -c:v copy -strict experimental -c:a dts -ar 48000 -b:a 768k "$name".dts-48000hz-768k.dts
+	#ffmpeg -i "$file" -c:s copy -c:v copy -strict experimental -c:a dts -b:a 768k "$name".dts-768k.dts
+	
+	echo
+	echo "VIDEO: -c:v copy (-r:v 30) ; AUDIO: -c:a dts -ac 6 -b:a 768k -ar 48000"
+	echo
+	ffmpeg -i "$file" -c:s copy -c:v copy -strict experimental -c:a dts -ac 6 -b:a 768k -ar 48000 "$name".dts-6ch-48000hz-768kbps.dts
 	error $?
 	
 echo -------------------------========================-------------------------

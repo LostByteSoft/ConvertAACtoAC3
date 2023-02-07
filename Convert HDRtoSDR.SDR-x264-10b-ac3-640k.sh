@@ -20,7 +20,7 @@ echo -------------------------========================-------------------------
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
-	noquit=1	# No quit after all operations.
+	noquit=0	# No quit after all operations.
 	random=$RANDOM	# Used for temp folders
 	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
 	echo
@@ -243,7 +243,7 @@ echo "ffmpeg conversion"
 ### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x264.8b}.{no.audio}.mkv
 
 ###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}"
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 20 -preset faster -tune fastdecode -c:a ac3 -ar 48000 -b:a 640k "$name".{BluRay-"$res"p-"$audio"}.{SDR-x264-10b}.{ac3}.mkv
+ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 18 -preset faster -tune fastdecode -c:a ac3 -ar 48000 -b:a 640k "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{ac3}.mkv
 
 ###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}" -r:v 30
 #ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -r:v 30 -crf 20 -preset faster -tune fastdecode -c:a ac3 -ar 48000 -b:a 640k "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{ac3}.mkv

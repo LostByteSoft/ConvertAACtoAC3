@@ -41,18 +41,29 @@ echo -------------------------========================-------------------------
 	echo 2022-11-29_Tuesday_07:58:24
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert MANY files to video Convert ALL folder 720p-x264-8b-30f.aac (parallel)"
+	echo
+## Software name, what is this, version, informations.
+	echo "Software name: Convert ALL folder files to x264 aac (parallel)"
+	echo "File name: Convert ALL folder sdr-x264-8b-aac-320k (parallel).sh"
 	echo
 	echo What it does ?
-	echo "Convert MANY video file to Convert ALL folder 720p-x264-8b-30f.aac (parallel).sh"
+	echo "Convert ONE video file to sdr-x264-8b.aac-2.0-320k.mkv"
+	echo "Perfect format for facebook."
 	echo
 	echo Informations :
-	echo "By LostByteSoft, no copyright or copyleft"
-	echo "https://github.com/LostByteSoft"
 	echo "Use ffmpeg only"
-	echo "https://ffmpeg.org/ffmpeg.html"
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft."
+	echo "https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
+#echo -------------------------========================-------------------------
+#	echo "${red}		███████████████████████████████████████████████${reset}"
+#	echo "		SPACES ARE NOT SUPPORTED IN PARALLEL CONVERSION"
+#	echo "${red}		███████████████████████████████████████████████${reset}"
+#	echo -------------------------========================-------------------------
+	#read -n 1 -s -r -p "Press any key to continue"
+
 echo -------------------------========================-------------------------
 echo "Check installed requirements !"
 
@@ -134,8 +145,7 @@ if command -v parallel >/dev/null 2>&1
 		echo
 		exit
 	fi
-## -------------------------========================-------------------------
-	echo
+
 echo -------------------------========================-------------------------
 echo "Number of jobs processed concurrently at the same time ? (Refer as parallel CPU cores)"
 	cpu=$(nproc)
@@ -147,12 +157,12 @@ echo "Number of jobs processed concurrently at the same time ? (Refer as paralle
 
 	## Put an # in front of entry to do an automatic choice.
 
-	entry=$(zenity --scale --value="$cpu" --min-value="1" --max-value="$defz" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defx" for audio.\n\n\tDefault suggested value is ("$cpu" xbrzscale) "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
+	entry=$(zenity --scale --value="2" --min-value="1" --max-value="$cpu" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defx" for audio.\n\n\tDefault suggested value is ("$cpu" xbrzscale) "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
 
 if test -z "$entry"
 	then
 		echo "Default value of "$cpu" (Safe value) will be used. Now continue."
-		entry=$cpu
+		entry=$defv
 		echo "You have selected : $entry"
 		#sleep 3
 	else
@@ -253,9 +263,226 @@ echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 echo -------------------------========================-------------------------
 ## The code program.
 
-	parallel -j 1 ffmpeg -i {} -vf scale=1280x720:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 22 -c:a aac -ac 2 -b:a 160k {.}.{720p-2.0}.{FaceBook}.mkv ::: "$file"/*.*
-	error $?
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+echo Finding files...
+
+	rm "/dev/shm/findvideo.txt" 2> /dev/null
+	## Easy way to add a file format, copy paste a new line.
+	echo "Will NOT find files in sub folders...."
+	#find $file -iname '*.*'  >> "/dev/shm/findvideo.txt"
+	find $file -maxdepth 1 -iname '*.mp4'  >> "/dev/shm/findvideo.txt"
+	find $file -maxdepth 1 -iname '*.webm'  >> "/dev/shm/findvideo.txt"
+	find $file -maxdepth 1 -iname '*.mkv'  >> "/dev/shm/findvideo.txt"
+	find $file -maxdepth 1 -iname '*.avi'  >> "/dev/shm/findvideo.txt"
+
+echo Finding finish.
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+	cat "/dev/shm/findvideo.txt"
 	
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+	echo Finding finish, with file count :
+	lines=$(wc -l < "/dev/shm/findvideo.txt")
+	echo $lines
+	if [ "$lines" -eq "0" ]; then
+		echo "You don't have selected a folder with files, now exit in 3 seconds."
+		echo -------------------------========================-------------------------
+		sleep 3
+		exit
+	fi
+
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+echo Conversion started...
+
+	echo "Parallel convert"
+
+	### x264 8b
+	
+	
+parallel -a "/dev/shm/findvideo.txt" -j $entry ffmpeg -i {}-vf format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 320k {.}.{SDR-x264-10b}.{aac-2.0-320k}.mkv
+
+#parallel -a "/dev/shm/findvideo.txt" -j $entry ffmpeg -i {} -vf scale=1280x720:flags=lanczos,format=yuv420p -c:v libx264 -crf 22 -c:a aac -ac 2 -b:a 320k {.}.{SDR-x264-8b}.{aac-2.0-320k}.mkv
+	
+#parallel -j $entry ffmpeg -i {} -vf scale=1280x720:flags=lanczos,format=yuv420p -c:v libx264 -crf 22 -c:a aac -ac 2 -b:a 320k {.}.{SDR-x264-8b}.{aac-2.0-320k}.mkv ::: "$file"/*.*
+	
+	#parallel -j $entry ffmpeg -i {} -vf format=yuv420p -c:v libx264 -crf 20 -c:a aac -b:a 320k {.}.{sdr-x264-8b}.{aac-2.0-320k}.mkv ::: "$file"/*.*
+	
+	### x264 10b
+	#parallel -j 1 ffmpeg -i {} -vf format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 192k {.}-x264-10b.aac-192k.mkv ::: "$file"/*.*
+	
+	### x265 10b
+	#parallel -j $entry ffmpeg -i {} -vf format=yuv420p10le -c:v libx265 -crf 20 -c:a aac -ac 2 -b:a 192k {.}-x264-10b.aac-44khz-192k.mkv ::: "$file"/*.*
+	
+	error $?
+
+	echo "Conversion finish..."
+
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+echo Make folders sub...
+	## Variable
+	subfolder=x264mkv
+	ext=*-320k}.mkv
+	finaldir="$file"/"$subfolder"
+	echo "Final dir : $finaldir"
+
+	echo Make dir...
+	echo mkdir -p """$file""/$subfolder"
+		mkdir -p """$file""/$subfolder"
+		sleep 1
+		echo
+		
+	echo "mv "$file"/$ext """$file""/$subfolder""
+		
+	mv "$file"/$ext """$file""/$subfolder"
+	
+	if [ "$debug" -eq "1" ]; then
+		echo
+		echo "${blue}		█████ DEBUG WAIT █████${reset}"
+		echo
+		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+		echo
+		read -n 1 -s -r -p "Press ENTER key to continue !"
+		echo
+	fi
+
+## -------------------------========================-------------------------
+## first folder
+	echo Origin : $file
+	#file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)
+	count1=`find "$file" -maxdepth 1 -type f | wc -l`
+	echo Count 1 = $count1
+
+## -------------------------========================-------------------------
+## second folder
+	file2="""$file"/"$subfolder"
+	#file2=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)
+	echo Save : """$file"/"$subfolder"
+	count2=`find $file2 -maxdepth 1 -type f | wc -l`
+	echo Count 2 = $count2
+	
+## -------------------------========================-------------------------
+echo Total numbers of files in folders :
+	echo
+	echo "Origin folder : $count1 | Modified or results : $count2"
+	echo
+	echo "The answer is .... :"
+	
+	if [ "$debug" -eq "1" ]; then
+		echo
+		echo "${blue}		█████ DEBUG WAIT █████${reset}"
+		echo
+		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+		echo
+		echo Count1 = $count1 Count2 = $count2
+		echo
+		read -n 1 -s -r -p "Press ENTER key to continue !"
+		echo
+	fi
+	
+	if [ "$count2" -eq 0 ]; then
+			echo
+			echo "		${red}████████████████████████████████████████████${reset}"
+			echo "		${red}██                                        ██${reset}"
+			echo "		${red}██     Numbers of files are NOT EQUAL     ██${reset}"
+			echo "		${red}██                                        ██${reset}"
+			echo "		${red}████████████████████████████████████████████${reset}"
+			echo
+			noquit=1	# No quit after detecting an error.
+		fi
+	
+	if [ "$count2" -ne 0 ]; then
+		if [ "$count1" = "$count2" ]; then
+			echo
+			echo "		${green}████████████████████████████████████████${reset}"
+			echo "		${green}██                                    ██${reset}"
+			echo "		${green}██     Numbers of files are EQUAL     ██${reset}"
+			echo "		${green}██                                    ██${reset}"
+			echo "		${green}████████████████████████████████████████${reset}"
+		else
+			echo
+			echo "		${red}████████████████████████████████████████████${reset}"
+			echo "		${red}██                                        ██${reset}"
+			echo "		${red}██     Numbers of files are NOT EQUAL     ██${reset}"
+			echo "		${red}██                                        ██${reset}"
+			echo "		${red}████████████████████████████████████████████${reset}"
+			echo
+			
+			noquit=1	# No quit after detecting an error.
+			
+			rm "/dev/shm/file1.txt" 2> /dev/null
+			rm "/dev/shm/file2.txt" 2> /dev/null
+			rm "/dev/shm/file11.txt" 2> /dev/null
+			rm "/dev/shm/file22.txt" 2> /dev/null
+
+		## fi after files check if numbers are not equal
+## -------------------------========================-------------------------
+## Finding files... if not equal
+	#echo "Will NOT find files in sub folders..."
+	cd "$file" && find -maxdepth 1 -name "*.*" | rev | cut -f 2- -d '.' | rev >> "/dev/shm/file1.txt"
+	#cat "/dev/shm/file1.txt"
+	## Finding files... 2
+	#echo "Will NOT find files in sub folders..."
+	cd "$file2" && find -maxdepth 1 -name "*.*" | rev | cut -f 2- -d '_' | rev >> "/dev/shm/file2.txt"
+	#cat "/dev/shm/file2.txt"
+	sort /dev/shm/file1.txt > /dev/shm/file11.txt
+	sort /dev/shm/file2.txt > /dev/shm/file22.txt
+	sed -i '1d' "/dev/shm/file11.txt"	## remove first line
+	sed -i '1d' "/dev/shm/file22.txt"
+	
+echo -------------------------========================-------------------------
+echo Verify 2 files for differences.
+	echo
+	echo diff -s -q "/dev/shm/file11.txt" "/dev/shm/file22.txt"
+	echo
+	diff -s -q "/dev/shm/file11.txt" "/dev/shm/file22.txt"
+	active=$(echo $?)
+	#echo $active
+		if [ "$active" -ge "1" ]
+			then
+			echo
+			echo "${red} ███████████████ VERIFY FILES ███████████████ ${reset}"
+			fi
+		if [ "$active" -eq "0" ]
+			then
+			echo
+			echo "${green} ██████████████████████████████ ${reset}"
+			fi
+
+	echo
+echo -------------------------========================-------------------------
+echo Comparaison of files :
+	echo
+	echo diff --side-by-side --suppress-common-lines "/dev/shm/file11.txt" "/dev/shm/file22.txt"
+	echo
+	diff --side-by-side --suppress-common-lines "/dev/shm/file11.txt" "/dev/shm/file22.txt"
+
+	active=$(echo $?)
+	#echo $active
+		if [ "$active" -ge "1" ]
+			then
+			echo
+			echo "${red} ███████████████ VERIFY FILES ███████████████ ${reset}"
+			fi
+		if [ "$active" -eq "0" ]
+			then
+			echo
+			echo "${green} ██████████████████████████████ ${reset}"
+			fi
+		#echo Remove temp files...
+		rm "/dev/shm/file1.txt" 2> /dev/null
+		rm "/dev/shm/file2.txt" 2> /dev/null
+		rm "/dev/shm/file11.txt" 2> /dev/null
+		rm "/dev/shm/file22.txt" 2> /dev/null		
+	## ending of if
+	fi
+	fi
+	echo
+echo -------------------------========================-------------------------
+
 echo -------------------------========================-------------------------
 ## Software lead out
 	echo "Finish... with numbers of actions : $part"

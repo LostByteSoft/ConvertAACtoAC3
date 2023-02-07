@@ -1,20 +1,20 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-	#printf '\033[8;50;80t'		# will resize the window, if needed.
-	printf '\033[8;40;125t'		# will resize the window, if needed.
-	sleep 0.50
+	start=$SECONDS
 	## "NEVER remove dual ## in front of lines. Theses are code annotations."
 	## "You can test / remove single # for testing purpose."
-echo
-echo -------------------------========================-------------------------
-	start=$SECONDS
+	#printf '\033[8;50;80t'		# will resize the window, if needed.
+	printf '\033[8;50;110t'		# will resize the window, if needed.
+	sleep 0.50
 	now=$(date +"%Y-%m-%d_%A_%H:%M:%S")
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
 	blue=`tput setaf 12`
 	reset=`tput sgr0`
+	echo
+echo -------------------------========================-------------------------
 	## All variables 0 or 1
 	autoquit=0	# autoquit anyway to script takes LESS than 2 min to complete.
 	debug=0		# test debug
@@ -29,8 +29,16 @@ echo -------------------------========================-------------------------
 	echo
 	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
 echo -------------------------========================-------------------------
+	echo "Color codes / Informations."
+	echo
+	echo  "${green}	████████████████     ALL OK / ACTIVE      ████████████████ ${reset}"
+	echo   "${blue}	████████████████      INFORMATION(S)      ████████████████ ${reset}"
+	echo "${yellow}	████████████████   ATTENTION / INACTIVE   ████████████████ ${reset}"
+	echo    "${red}	████████████████   FATAL ERROR / OFFLINE  ████████████████ ${reset}"
+	echo
+echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-23_Wednesday_06:57:45
+	echo 2022-12-16_Friday_08:10:17
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Creator playlist all music"
@@ -53,28 +61,36 @@ echo -------------------------========================-------------------------
 	echo "Don't hack paid software, free software exists and does the job better."
 
 echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
-debug()
+echo Function ${blue}█████${reset} Debug. Activate via source program debug=1.
+
+	debug()
 	if [ "$debug" -ge 1 ]; then
 		echo
-		echo "${yellow}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
+		echo "${blue}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
 		echo
-		echo debug = $debug 	part = $part 	file = $file
-		echo cpu = $cpu 	defv = $defv 	defa = $defa
-		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
+		echo autoquit=$autoquit debug=$debug error=$error noquit=$quit count=$count part=$part random=$random
+		echo
+		echo cpu = $cpu defa = $defa defi = $defi defv = $defv defs = $defx defz = $defz
+		echo
+		echo file = $file
+		echo
+		echo Basedir = "$BASEDIR"
 		echo 
 		read -n 1 -s -r -p "Press any key to continue"
-		#exit
+		echo
 	fi
 	
-		if [ "$debug" -eq "1" ]; then
+	if [ "$debug" -eq "1" ]; then
 		echo
-		echo "${yellow}██████████████████████████████ DEBUG ACTIVATED ███████████████████████████${reset}"
+		echo "${blue}██████████████████████████████ DEBUG ACTIVATED ███████████████████████████${reset}"
+		echo
+		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
 		echo
 	fi
 
-echo Function Error detector. If errorlevel is 1 or greater will show error msg.
-error()
+echo Function ${red}█████${reset} Error detector. Errorlevel show error msg.
+
+	error()
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
 		echo
@@ -82,17 +98,18 @@ error()
 		echo
 		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
 		echo
+		debug=1
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
 	fi
 
-echo Function Auto Quit. If autoquit=1 will automaticly quit.
+echo Function ${green}█████${reset} Auto Quit. If autoquit=1 will automaticly quit.
 	if [ "$autoquit" -eq "1" ]; then
 		echo
-		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
+		echo "${green}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
 	fi
-
+	echo
 echo -------------------------========================-------------------------
 echo "Select filename using dialog !"
 
@@ -109,7 +126,10 @@ if test -z "$file"
 	else
 		echo "You have selected :"
 		echo "$file"
-fi
+	fi
+
+	rm "$file"/VideoClips.m3u 2> /dev/null
+
 echo -------------------------========================-------------------------
 echo "Input name, directory and output name : (Debug helper)"
 ## Set working path.
@@ -134,6 +154,10 @@ echo "Input name, directory and output name : (Debug helper)"
 echo -------------------------========================-------------------------
 echo "The code program."
 
+	echo Delete temp files...
+	rm "/dev/shm/m3u.srt" 2> /dev/null
+	rm "/dev/shm/m3u.tmp" 2> /dev/null
+
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 	echo "Finding files..."
@@ -141,7 +165,8 @@ echo "The code program."
 	echo "(basename "${VAR}")" = "$(basename "${VAR}")"
 
 	#find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "$file"/"$(basename "${VAR}")".m3u
-	find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.dts' \) -printf "%P\n" > "/dev/shm/m3u.tmp"
+	cd "$name" && find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.mkv' \) -printf "%P\n" > "/dev/shm/m3u.tmp"
+	#find "$file" . -type f \( -name '*.mp3' -o -name '*.flac' -o -name '*.ac3' -o -name '*.mkv' \) -printf "%P\n" > "/dev/shm/m3u.tmp"	
 	error $?
 
 	part=$((part+1))
@@ -155,12 +180,12 @@ echo "The code program."
 	part=$((part+1))
 	echo "-------------------------===== Section $part =====-------------------------"
 	echo "Name sort (Yes or No (Suggest Yes))"
-	if zenity --question --text="Do you want to sort by file name ? (Yes or No (Suggest Yes))"
+	if zenity --question --no-wrap --text="Do you want to sort by file name ? (Yes or No (Suggest Yes))"
 	then
 		part=$((part+1))
 		echo "-------------------------===== Section $part =====-------------------------"
 		#sort "$file"/"$(basename "${VAR}")".m3u > "$file"/"$(basename "${VAR}")".m3v
-		sort "/dev/shm/m3u.tmp" > "/dev/shm/m3u.srt"
+		sort -u "/dev/shm/m3u.tmp" > "/dev/shm/m3u.srt" 	## -u remove duplicate lines
 		cp "/dev/shm/m3u.srt" "$file"/"$(basename "${VAR}")".m3u
 		cat "$file"/"$(basename "${VAR}")".m3u
 		echo
@@ -170,8 +195,10 @@ echo "The code program."
 	else
 		part=$((part+1))
 		echo "-------------------------===== Section $part =====-------------------------"
-		cp "/dev/shm/m3u.srt" "$file"/"$(basename "${VAR}")".m3u
+		awk -i inplace '!seen[$0]++' "/dev/shm/m3u.tmp"		## remove duplicate lines
+		cp "/dev/shm/m3u.tmp" "$file"/"$(basename "${VAR}")".m3u
 		cat "$file"/"$(basename "${VAR}")".m3u
+		echo
 		part=$((part+1))
 		echo "-------------------------===== Section $part =====-------------------------"
 		echo "Files are NOT sorted and m3u is in $file"
@@ -200,7 +227,7 @@ echo -------------------------========================-------------------------
 		echo "${blue}	█████████████████ NO exit activated ███████████████████${reset}"
 		echo
 		read -n 1 -s -r -p "Press ENTER key to exit !"
-		#exit
+		exit
 		fi
 
 	if [ "$autoquit" -eq "1" ]
@@ -236,10 +263,9 @@ echo -------------------------========================-------------------------
 				echo
 				echo "${green}	█████████████████████ Finish ███████████████████████${reset}"
 				echo
-				echo "Auto-quit in 5 sec. (You can press X)"
+				echo "Auto-quit in 3 sec. (You can press X)"
 				echo
-				sleep 5
-				exit
+				sleep 3
 			fi
 		}
 		fi
@@ -273,9 +299,7 @@ echo -------------------------========================-------------------------
  	You can send your request and your Christmas wishes to this address:
  	
  		Père Noël
- 		Pôle Nord
+ 		Pôle Nord, Canada
  		H0H 0H0
- 		Canada
 
 ## -----===== End of file =====-----
-
