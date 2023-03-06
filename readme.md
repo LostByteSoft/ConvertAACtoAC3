@@ -190,6 +190,8 @@ Resolutions:
     {BluRay-1080p-7.1}.{SDR-x264-10b}.{dts-ac3}
     {BluRay-1080p}.{SDR-x264-10b}.{none}
     {WebDl-1080p-2.0}.{SDR-x264-10b}.{dts-ac3}
+    
+    {BR-1080p-5.1}.{sdr-x265-10b}.{dts}.mkv
 
     Br.8k-x266-12b-60f.Atmos-12.2
     Br.2160px265.audio

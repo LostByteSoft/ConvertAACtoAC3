@@ -41,10 +41,13 @@ echo -------------------------========================-------------------------
 	echo 2022-11-29_Tuesday_07:39:41
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert HDRtoSDR.SDR-x264-10b-no-audio"
+	echo "Software name: Convert XXX to x265-8b.aac-2.0-320k"
+	echo "File name : Convert XXX to x265-8b.aac-2.0-320k"
 	echo
 	echo What it does ?
-	echo "Convert HDRtoSDR.SDR-x264-10b.no-audio.sh"
+	echo "Convert ONE video file to x265-8b.aac-2.0-320k"
+	echo
+	echo "This is a single core conversion"
 	echo
 	echo "Read me for this file (and known bugs) :"
 	echo
@@ -209,50 +212,21 @@ echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 
 echo -------------------------========================-------------------------
 ## The code program.
-	
-	res=0		# automatic resolution detection and naming (720, 1080... etc)
-	audio=0		# get numbers of channels
-	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
-	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
-	#res1=${res::-1}	#somes videos are detected with an X after the resution, this remove the X
-	error $?
-	echo Resolution of the video : $res
-	
-	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
-	error $?
-	echo Numbers of audio channel : $audio
-	
-	echo $resp-$audio
-	
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
+
+	#INPUT="$(dirname "${VAR}")"
+	#echo ${INPUT##*/}
+
 echo "ffmpeg conversion"
 
-### debug pixel info
-### ffmpeg -h encoder=libx265 | grep pixel
+## Multiples choice here.
 
-### x264 8b preset
+## ffmpeg -i "$file" -vf scale=3840x2160:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{x264-10b-30f}.{ac3-48000hz-640k}.mkv
 
-### good quality (Low) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$name".{SDR.x264.8b}.{no.audio}.mkv
+## ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -r:v 30 -c:a copy "$name".copy-x264-10b-30f-copy.mkv
 
-### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$name".{SDR.x264.8b}.{no.audio}.mkv
+ffmpeg -i "$file" -vf format=yuv420p -c:v libx265 -crf 20 -c:a aac -ac 2 -b:a 320k "$name".{sdr-x265-8b}.{aac-2.0-320}.mkv
 
-###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}" -r:v 30
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 22 -preset faster -tune fastdecode -an "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{none}.mkv
-
-### ,scale=3840x2160
-
-#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -r:v 30 -an "$name"SDR.2160p.x264.10b-noaudio.mkv
-
-### x265 10b presets
-
-### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
-#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$name"-SDR.x265.10b-no.audio.mkv
-
-## -preset ultrafast
-## -preset medium
+## ffmpeg -i "$file" -vf scale=1920x1080:flags=lanczos -c:v libx264 -crf 20 -r:v 30 -c:a ac3 -ar 48000 -b:a 640k "$name".{x264-30}.{ac3-48000-640}.mkv
 
 	error $?
 	

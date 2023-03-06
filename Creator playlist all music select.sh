@@ -204,6 +204,10 @@ echo "The code program."
 		echo "Files are NOT sorted and m3u is in $file"
 	fi
 	error $?
+	
+	echo Delete temp files...
+	rm "/dev/shm/m3u.srt" 2> /dev/null
+	rm "/dev/shm/m3u.tmp" 2> /dev/null
 
 echo -------------------------========================-------------------------
 ## Software lead out

@@ -1,26 +1,28 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
 ## -----===== Start of bash =====-----
-	#printf '\033[8;50;80t'		# will resize the window, if needed.
-	printf '\033[8;50;100t'		# will resize the window, if needed.
-	sleep 0.50
+	start=$SECONDS
 	## "NEVER remove dual ## in front of lines. Theses are code annotations."
 	## "You can test / remove single # for testing purpose."
-echo
-echo -------------------------========================-------------------------
-	start=$SECONDS
+	#printf '\033[8;40;90t'		# will resize the window, if needed.
+	printf '\033[8;40;100t'		# will resize the window, if needed.
+	#printf '\033[8;40;130t'		# will resize the window, if needed.
+	#sleep 0.50
 	now=$(date +"%Y-%m-%d_%A_%H:%M:%S")
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
 	blue=`tput setaf 12`
 	reset=`tput sgr0`
+	echo
+
+echo -------------------------========================-------------------------
 	## All variables 0 or 1
 	autoquit=0	# autoquit anyway to script takes LESS than 2 min to complete.
 	debug=0		# test debug
 	error=0		# test error
 	part=0		# don't change this value
-	noquit=0	# No quit after all operations.
+	noquit=1	# No quit after all operations.
 	random=$RANDOM	# Used for temp folders
 	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
 	echo
@@ -28,23 +30,24 @@ echo -------------------------========================-------------------------
 	echo "Common variables, you can changes theses variables as you wish to test."
 	echo
 	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+
 echo -------------------------========================-------------------------
-	echo "Color codes / Informations."
+echo "Color codes / Informations."
 	echo
 	echo  "${green}	████████████████     ALL OK / ACTIVE      ████████████████ ${reset}"
 	echo   "${blue}	████████████████      INFORMATION(S)      ████████████████ ${reset}"
 	echo "${yellow}	████████████████   ATTENTION / INACTIVE   ████████████████ ${reset}"
 	echo    "${red}	████████████████   FATAL ERROR / OFFLINE  ████████████████ ${reset}"
 	echo
+
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-29_Tuesday_07:39:41
+	echo 2023-03-05_Sunday_07:16:46
 	echo
-## Software name, what is this, version, informations.
-	echo "Software name: Convert HDRtoSDR.SDR-x264-10b-no-audio"
+	echo "Software name: Convert HDRtoSDR-SDR-x264-10b-DTS-48000hz-768k"
 	echo
 	echo What it does ?
-	echo "Convert HDRtoSDR.SDR-x264-10b.no-audio.sh"
+	echo "Convert ONE video file HDR to SDR Convert HDRtoSDR-SDR-x264-10b-DTS-48000hz-768k"
 	echo
 	echo "Read me for this file (and known bugs) :"
 	echo
@@ -60,8 +63,10 @@ echo -------------------------========================-------------------------
 	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
-echo -------------------------========================-------------------------
-echo Function ${blue}█████${reset} Debug. Activate via source program debug=1.
+	echo -------------------------========================-------------------------
+echo "Functions codes and color"
+echo
+	echo 	"Function ${blue}█████${reset} Debug. Activate via source program debug=1."
 
 	debug()
 	if [ "$debug" -ge 1 ]; then
@@ -88,7 +93,7 @@ echo Function ${blue}█████${reset} Debug. Activate via source program 
 		echo
 	fi
 
-echo Function ${red}█████${reset} Error detector. Errorlevel show error msg.
+	echo 	"Function ${red}█████${reset} Error detector. Errorlevel show error msg."
 
 	error()
 	if [ "$?" -ge 1 ]; then
@@ -98,17 +103,20 @@ echo Function ${red}█████${reset} Error detector. Errorlevel show erro
 		echo
 		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
 		echo
+		debug=1
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
 	fi
 
-echo Function ${green}█████${reset} Auto Quit. If autoquit=1 will automaticly quit.
+	echo 	"Function ${green}█████${reset} Auto Quit. If autoquit=1 will automaticly quit."
+
 	if [ "$autoquit" -eq "1" ]; then
 		echo
 		echo "${green}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
 	fi
 	echo
+
 echo -------------------------========================-------------------------
 	echo Check installed requirements !
 	echo
@@ -116,25 +124,28 @@ if command -v ffmpeg >/dev/null 2>&1
 	then
 		echo "Ffmpeg installed continue."
 		dpkg -s ffmpeg | grep Version
+		echo "${green} ████████████████ OK ████████████████ ${reset}"
 	else
 		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
 		echo "Add with : sudo apt-get install ffmpeg"
 		echo
 		echo "${red}████████████████ Dependency error ████████████████${reset}"
 		echo
-		read -n 1 -s -r -p "Press ENTER key to exit !"
+		read -n 1 -s -r -p "Press ENTER key to continue anyway (NOT a good idea) !"
 		echo
-		exit
 	fi
 
+## -------------------------========================-------------------------
+	echo
 echo -------------------------========================-------------------------
 echo "Select folder or filename using dialog !"
 	echo
-	file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"			## File select.
-	#file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)	## Directory select.
-	#file="/$HOME/Pictures/"
-	#file="/$HOME/Downloads/"
-	## --file-filter="*.jpg *.gif"
+	file="$(zenity --file-selection --file-filter='**[WwEeBbPp] | *[JjPpGg]| *[JjPpEeGg]'  --filename=$HOME/ --title="Select a file, all format supported")"	## File select.
+	## file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)	## Directory select.
+	## file="/$HOME/Pictures/"
+	## file="/$HOME/Downloads/"
+	## --file-filter="*.jpg *.gif *.jpeg"
+	## --file-filter='**[WwEeBbPp] | *[JjPpGg]' 
 
 	count=`ls -1 "$file" 2>/dev/null | wc -l`
 	echo Count : $count
@@ -146,24 +157,24 @@ echo "Select folder or filename using dialog !"
 	if test -z "$file"	## for cancel on zenity
 		then
 			echo "You click CANCEL !"
+			echo
 			echo -------------------------========================-------------------------
 			echo
 			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
 			echo
 			read -n 1 -s -r -p "Press any key to EXIT"
-			echo
 			exit
 		fi
 
 	if [ "$count" -eq 0 ]	## for n files in directory
 		then
 			echo "You don't have selected a folder including files !"
+			echo
 			echo -------------------------========================-------------------------
 			echo
 			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
 			echo
 			read -n 1 -s -r -p "Press any key to EXIT"
-			echo
 			exit
 		fi
 
@@ -191,71 +202,60 @@ echo -------------------------========================-------------------------
 	echo "Output name ext : "$name""
 	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
 	echo "Output name bis : "$name1""
-	
-	if [ "$debug" -eq "1" ]; then
+	echo
+
+	if [ "$debug" -eq 1 ]; then
+		part=$((part+1))
+		echo "-------------------------===== Section $part =====-------------------------"
 		echo
-		echo "${yellow}█████ DEBUG SLEEP (5 sec) █████${reset}"
+		echo "${yellow}███████████████ DEBUG SLEEP ███████████████${reset}"
 		echo
 		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
-		sleep 5
+		echo
+		read -n 1 -s -r -p "Press any key to continue"
+		echo
 		echo
 	fi
-	
+
 echo -------------------------========================-------------------------
 echo "All lowercase for convert... (NOT activated, remove both # to activate)"
+	echo
 	## This line put all lowercase FROM selected folder to the files names.
 	#echo "cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;"
 	#cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;
 
 echo -------------------------========================-------------------------
-## The code program.
+	echo The code program.
+	echo
+	debug
 	
-	res=0		# automatic resolution detection and naming (720, 1080... etc)
-	audio=0		# get numbers of channels
-	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
-	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
-	#res1=${res::-1}	#somes videos are detected with an X after the resution, this remove the X
+	###Good quality and x264 {SDR.x264.10b} ## -r:v 30 ## crf 0=lossless 22=good 51=verybad
+	
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+	echo "ffmpeg conversion, x264 options."
+	echo
+
+##Convert HDRtoSDR.SDR-x264-10b-ac3-640k
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 22 -preset faster -tune fastdecode -c:a ac3 -ar 48000 -b:a 640k "$name".{BluRay-2160p-5,1}.{SDR-x264-10b}.{ac3}.mkv
+	#error $?
+
+##Convert HDRtoSDR.SDR-x264-10b-dts-768k
+##ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 22 -preset faster -tune fastdecode -strict experimental -c:a dts -ac 6 -ar 48000 -b:a 768k "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{dts}.mkv
+	#error $?
+
+##Convert HDRtoSDR-SDR-x264-10b-copy
+#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 22 -preset faster -tune fastdecode -c:a copy "$name".{BluRay-2160p-5,1}.{SDR-x264-10b}.{copy}.mkv
+	#error $?
+
+##Convert HDRtoSDR-SDR-x264-10b-none
+fmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 22 -preset faster -tune fastdecode -an "$name".{BluRay-2160p-5,1}.{SDR-x264-10b}.{none}.mkv
 	error $?
-	echo Resolution of the video : $res
-	
-	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
-	error $?
-	echo Numbers of audio channel : $audio
-	
-	echo $resp-$audio
-	
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
-echo "ffmpeg conversion"
 
-### debug pixel info
-### ffmpeg -h encoder=libx265 | grep pixel
+	echo
+	echo Reconversion finish...
+	echo
 
-### x264 8b preset
-
-### good quality (Low) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 25 -r:v 30 -an -preset superfast -tune fastdecode -max_muxing_queue_size 1024 "$name".{SDR.x264.8b}.{no.audio}.mkv
-
-### compromis x264 (normal pc will do the job) (Medium) (x264 8bit)
-### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx264 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$name".{SDR.x264.8b}.{no.audio}.mkv
-
-###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}" -r:v 30
-ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -crf 22 -preset faster -tune fastdecode -an "$name".{BluRay-2160p-5.1}.{SDR-x264-10b}.{none}.mkv
-
-### ,scale=3840x2160
-
-#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx264 -r:v 30 -an "$name"SDR.2160p.x264.10b-noaudio.mkv
-
-### x265 10b presets
-
-### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
-#ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$name"-SDR.x265.10b-no.audio.mkv
-
-## -preset ultrafast
-## -preset medium
-
-	error $?
-	
 echo -------------------------========================-------------------------
 ## Software lead out
 	echo "Finish... with numbers of actions : $part"
@@ -265,12 +265,14 @@ echo -------------------------========================-------------------------
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
 	echo
+
 echo -------------------------========================-------------------------
 	echo "If a script takes MORE than 120 seconds to complete it will ask"
 	echo "you to press ENTER to terminate."
 	echo
 	echo "If a script takes LESS than 120 seconds to complete it will auto"
 	echo "terminate after 10 seconds"
+
 echo -------------------------========================-------------------------
 ## Exit, wait or auto-quit.
 	if [ "$noquit" -eq "1" ]; then
@@ -350,9 +352,7 @@ echo -------------------------========================-------------------------
  	You can send your request and your Christmas wishes to this address:
  	
  		Père Noël
- 		Pôle Nord
+ 		Pôle Nord, Canada
  		H0H 0H0
- 		Canada
 
 ## -----===== End of file =====-----
-

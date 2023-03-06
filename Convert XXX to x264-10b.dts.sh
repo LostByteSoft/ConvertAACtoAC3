@@ -229,7 +229,7 @@ echo "ffmpeg conversion"
 	### ffmpeg -h encoder=libx265 | grep pixel
 	###Better quality and x264 (Need a bigger PC) (medium) {SDR.x264.10b}.{dts}"
 
-	ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -preset faster -tune fastdecode -strict experimental -c:a dts "$name".{"$res"p-5.1}.{SDR-x264-10b}.{dts}.mkv
+	ffmpeg -i "$file" -vf format=yuv420p10le -c:v libx264 -crf 20 -preset faster -tune fastdecode -strict experimental -c:a dts "$name".{sdr-x264-10b}.{dts}.mkv
 
 	### better quality and x265 (Need a bigger PC) (Hi) (x265 10bit)
 	### ffmpeg -i "$file" -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p10le -c:v libx265 -crf 20 -r:v 30 -an -preset superfast -tune fastdecode "$NAME".{SDR.x265.10b}.{no.audio}.mkv
