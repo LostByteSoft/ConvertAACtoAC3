@@ -57,12 +57,12 @@ echo -------------------------========================-------------------------
 	echo "https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
-#echo -------------------------========================-------------------------
-#	echo "${red}		███████████████████████████████████████████████${reset}"
-#	echo "		SPACES ARE NOT SUPPORTED IN PARALLEL CONVERSION"
-#	echo "${red}		███████████████████████████████████████████████${reset}"
-#	echo -------------------------========================-------------------------
-	#read -n 1 -s -r -p "Press any key to continue"
+echo -------------------------========================-------------------------
+	echo "${red}		███████████████████████████████████████████████${reset}"
+	echo "		SPACES ARE NOT SUPPORTED IN PARALLEL CONVERSION"
+	echo "${red}		███████████████████████████████████████████████${reset}"
+	echo -------------------------========================-------------------------
+	read -n 1 -s -r -p "Press any key to continue"
 
 echo -------------------------========================-------------------------
 echo "Check installed requirements !"
