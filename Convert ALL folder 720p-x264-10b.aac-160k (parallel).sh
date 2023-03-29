@@ -1,44 +1,44 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
-## -----===== Start of bash =====-----
-	#printf '\033[8;50;80t'		# will resize the window, if needed.
-	printf '\033[8;50;100t'		# will resize the window, if needed.
-	sleep 0.50
-	## "NEVER remove dual ## in front of lines. Theses are code annotations."
-	## "You can test / remove single # for testing purpose."
-echo
-echo -------------------------========================-------------------------
 	start=$SECONDS
 	now=$(date +"%Y-%m-%d_%A_%H:%M:%S")
+
+echo -------------------------===== Start of bash ====-------------------------
+	#printf '\033[8;40;90t'		# will resize the window, if needed.
+	printf '\033[8;40;100t'		# will resize the window, if needed.
+	#printf '\033[8;40;130t'	# will resize the window, if needed.
+	
 	red=`tput setaf 1`
 	green=`tput setaf 2`
 	yellow=`tput setaf 11`
 	blue=`tput setaf 12`
 	reset=`tput sgr0`
+
 	## All variables 0 or 1
-	autoquit=0	# autoquit anyway to script takes LESS than 2 min to complete.
-	debug=0		# test debug
-	error=0		# test error
-	part=0		# don't change this value
-	noquit=0	# No quit after all operations.
-	random=$RANDOM	# Used for temp folders
+	autoquit=1	# autoquit anyway to script takes LESS than 2 min to complete. (0 or 1, change in conjoncture noquit=0)
+	debug=0		# test debug. (0 or 1 debug mode)
+	error=0		# test error. (0 or 1 make error)
+	part=0		# don't change this value. (0)
+	noquit=0	# No quit after all operations. (0 or 1 noquit)
+	wol=1		# Wake on lan skip. (0 or 1 skip)
+	random=$(shuf -i 4096-131072 -n 1)	# Used for temp folders. A big number hard to guess for security reasons.
+	## random=$RANDOM	# Normal random number.
+	
+	echo
 	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
 	echo
+	echo "NEVER remove dual ## in front of lines. Theses are code annotations."
+	echo "You can test / remove single # for testing purpose."
+	echo
 	echo "Current time : $now"
+	echo
 	echo "Common variables, you can changes theses variables as you wish to test."
+	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit wol=$wol random=$random"
 	echo
-	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
-echo -------------------------========================-------------------------
-	echo "Color codes / Informations."
-	echo
-	echo  "${green}	████████████████     ALL OK / ACTIVE      ████████████████ ${reset}"
-	echo   "${blue}	████████████████      INFORMATION(S)      ████████████████ ${reset}"
-	echo "${yellow}	████████████████   ATTENTION / INACTIVE   ████████████████ ${reset}"
-	echo    "${red}	████████████████   FATAL ERROR / OFFLINE  ████████████████ ${reset}"
-	echo
+
 echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2022-11-29_Tuesday_07:58:24
+	echo 2023-03-28_Tuesday_07:26:12
 	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Convert MANY files to video Convert ALL folder 720p-x264-8b-30f.aac (parallel)"
@@ -53,6 +53,15 @@ echo -------------------------========================-------------------------
 	echo "https://ffmpeg.org/ffmpeg.html"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
+echo -------------------------========================-------------------------
+echo "Color codes / Informations."
+	echo
+	echo  "${green}	████████████████     ALL OK / ACTIVE      ████████████████ ${reset}"
+	echo   "${blue}	████████████████      INFORMATION(S)      ████████████████ ${reset}"
+	echo "${yellow}	████████████████   ATTENTION / INACTIVE   ████████████████ ${reset}"
+	echo    "${red}	████████████████   FATAL ERROR / OFFLINE  ████████████████ ${reset}"
+	echo
+
 echo -------------------------========================-------------------------
 echo "Check installed requirements !"
 
@@ -169,6 +178,16 @@ if [ "$entry" -ge $defi ]; then
 	read -n 1 -s -r -p "Press any key to CONTINUE"
 	echo
 	fi
+
+echo -------------------------========================-------------------------
+echo "Names not supported / Informations."
+	echo
+	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
+	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
+	echo "	!!! NAMES starting with - . , or symbols are NOT SUPPORTED !!!"
+	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
+	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
+	echo
 
 echo -------------------------========================-------------------------
 echo "Select folder or filename using dialog !"

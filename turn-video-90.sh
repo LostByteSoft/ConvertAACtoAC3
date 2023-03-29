@@ -1,30 +1,89 @@
 #!/bin/bash
 #!/usr/bin/ffmpeg
-## -----===== Start of bash =====-----
-	#printf '\033[8;30;80t'		# will resize the window, if needed.
-	printf '\033[8;40;130t'		# will resize the window, if needed.
-	#printf '\033[8;40;125t'	# will resize the window, if needed.
-	#printf '\033[8;50;200t'	# will resize the window, if needed.
-echo -------------------------========================-------------------------
-## Software lead-in
+	start=$SECONDS
+	now=$(date +"%Y-%m-%d_%A_%H:%M:%S")
+
+echo -------------------------===== Start of bash ====-------------------------
+	#printf '\033[8;40;90t'		# will resize the window, if needed.
+	printf '\033[8;40;100t'		# will resize the window, if needed.
+	#printf '\033[8;40;130t'	# will resize the window, if needed.
+	
 	red=`tput setaf 1`
 	green=`tput setaf 2`
-	yellow=`tput setaf 3`
+	yellow=`tput setaf 11`
+	blue=`tput setaf 12`
 	reset=`tput sgr0`
-	start=$SECONDS
-	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
+
+	## All variables 0 or 1
+	autoquit=1	# autoquit anyway to script takes LESS than 2 min to complete. (0 or 1, change in conjoncture noquit=0)
+	debug=0		# test debug. (0 or 1 debug mode)
+	error=0		# test error. (0 or 1 make error)
+	part=0		# don't change this value. (0)
+	noquit=0	# No quit after all operations. (0 or 1 noquit)
+	wol=1		# Wake on lan skip. (0 or 1 skip)
+	random=$(shuf -i 4096-131072 -n 1)	# Used for temp folders. A big number hard to guess for security reasons.
+	## random=$RANDOM	# Normal random number.
+	
+	echo
+	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
+	echo
+	echo "NEVER remove dual ## in front of lines. Theses are code annotations."
+	echo "You can test / remove single # for testing purpose."
+	echo
 	echo "Current time : $now"
 	echo
-	echo Version compiled on : Also serves as a version
-	echo 2022-02-03_Thursday_04:43:34
+	echo "Common variables, you can changes theses variables as you wish to test."
+	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit wol=$wol random=$random"
+	echo
+
 echo -------------------------========================-------------------------
+	echo Version compiled on : Also serves as a version
+	echo 2023-03-28_Tuesday_07:26:12
+	echo
 ## Software name, what is this, version, informations.
 	echo "Software name: Turn a video 90 deg"
-echo "By LostByteSoft"
-echo "Version 2021-07-17"
-echo "Use ffmpeg only"
+	echo
+	echo "What it does ?"
+	echo "Turn a video 90 deg"
+	echo
+	echo "This is a single file conversion"
+	echo
+	echo "Read me for this file (and known bugs) :"
+	echo
+	echo "This software could use theses softwares:"
+	echo
+	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
+	echo "Use ImageMagik https://imagemagick.org/index.php"
+	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
+	echo
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://www.demolandia.net"
+	echo
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
+	echo
+	echo "Don't hack paid software, free software exists and does the job better."
+	echo
+echo -------------------------========================-------------------------
+echo "Color codes / Informations."
+	echo
+	echo  "${green}	████████████████     ALL OK / ACTIVE      ████████████████ ${reset}"
+	echo   "${blue}	████████████████      INFORMATION(S)      ████████████████ ${reset}"
+	echo "${yellow}	████████████████   ATTENTION / INACTIVE   ████████████████ ${reset}"
+	echo    "${red}	████████████████   FATAL ERROR / OFFLINE  ████████████████ ${reset}"
+	echo
 
-echo -----------------------------------------------------------------------------
+echo -------------------------========================-------------------------
+echo "Names not supported / Informations."
+	echo
+	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
+	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
+	echo "	!!! NAMES starting with - . , or symbols are NOT SUPPORTED !!!"
+	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
+	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
+	echo
+
+echo -------------------------========================-------------------------
 
 echo "Select filename using dialog"
 FILE="$(zenity --file-selection --filename=$HOME/$USER --title="Select a File")"

@@ -41,12 +41,10 @@ echo -------------------------========================-------------------------
 	echo 2023-03-28_Tuesday_07:26:12
 	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Convert XXX to 720p-x264-8b-30f.aac-2.0-44100hz-160k.sh"
+	echo "Software name: Auto-compiler software"
+	echo "File name : file name.sh"
 	echo
-	echo What it does ?
-	echo "Convert ONE video file to 720p-x264-8b-30f.aac-2.0-44100hz-160k.mkv"
-	echo
-	echo "Perfect format for FACEBOOK."
+	echo "What it does ? Make an program of all contents with sources."
 	echo
 	echo "Read me for this file (and known bugs) :"
 	echo
@@ -54,6 +52,9 @@ echo -------------------------========================-------------------------
 	echo "Use https://imagemagick.org/index.php"
 	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
 	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
+	echo
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://www.demolandia.net"
 	echo
 	echo "Informations : (EULA at the end of file, open in text.)"
 	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
@@ -69,6 +70,8 @@ echo "Color codes / Informations."
 	echo
 
 echo -------------------------========================-------------------------
+echo "Check installed requirements !"
+
 echo Function ${blue}█████${reset} Debug. Activate via source program debug=1.
 
 	debug()
@@ -118,8 +121,6 @@ echo Function ${green}█████${reset} Auto Quit. If autoquit=1 will auto
 	fi
 	echo
 echo -------------------------========================-------------------------
-	echo Check installed requirements !
-	echo
 if command -v ffmpeg >/dev/null 2>&1
 	then
 		echo "Ffmpeg installed continue."
@@ -133,6 +134,55 @@ if command -v ffmpeg >/dev/null 2>&1
 		read -n 1 -s -r -p "Press ENTER key to exit !"
 		echo
 		exit
+	fi
+## -------------------------========================-------------------------
+if command -v parallel >/dev/null 2>&1
+	then
+		echo "Parallel installed continue."
+		dpkg -s parallel | grep Version
+	else
+		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install parallel"
+		echo
+		echo "${red}████████████████ Dependency error ████████████████${reset}"
+		echo
+		read -n 1 -s -r -p "Press ENTER key to exit !"
+		echo
+		exit
+	fi
+
+echo -------------------------========================-------------------------
+echo "Number of jobs processed concurrently at the same time ? (Refer as parallel CPU cores)"
+	cpu=$(nproc)
+	defx=$(( cpu / 2 ))	## for audio files
+	defv=$(( cpu / 4 ))	## for video files
+	defi=$(( cpu * 2 ))	## for images files
+	defy=$(( cpu * 4 ))	## for images files
+	defz=$(( cpu * 8 ))	## for images files
+
+	## Put an # in front of entry to do an automatic choice.
+
+	#entry=$(zenity --scale --value="$cpu" --min-value="1" --max-value="$defz" --title "Convert files with Multi Cores Cpu" --text "How many cores do you want to use ? You have "$cpu" total cores !\n\n\tDefault suggested value is "$defv" for video.\n\n\tDefault suggested value is "$defx" for audio.\n\n\tDefault suggested value is ("$cpu" xbrzscale) "$defi" for images.\n\n(1 to whatever core you want to use will work anyway !)")
+
+if test -z "$entry"
+	then
+		echo "Default value of "$cpu" (Safe value) will be used. Now continue."
+		entry=$cpu
+		echo "You have selected : $entry"
+		#sleep 3
+	else
+		echo "You have selected : $entry"
+	fi
+
+if [ "$entry" -ge $defi ]; then
+	part=$((part+1))
+	echo
+	echo "${yellow}█████████████████████████████ WARNING █████████████████████████████${reset}"
+	echo
+	echo "!!! You have chosen a very high parallel work value, this may slow down the calculation rather than speed it up !!!"
+	echo
+	read -n 1 -s -r -p "Press any key to CONTINUE"
+	echo
 	fi
 
 echo -------------------------========================-------------------------
@@ -148,8 +198,8 @@ echo "Names not supported / Informations."
 echo -------------------------========================-------------------------
 echo "Select folder or filename using dialog !"
 	echo
-	file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"			## File select.
-	#file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)	## Directory select.
+	#file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"			## File select.
+	file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)		## Directory select.
 	#file="/$HOME/Pictures/"
 	#file="/$HOME/Downloads/"
 	## --file-filter="*.jpg *.gif"
@@ -218,7 +268,7 @@ echo -------------------------========================-------------------------
 		sleep 5
 		echo
 	fi
-	
+echo	
 echo -------------------------========================-------------------------
 echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 	## This line put all lowercase FROM selected folder to the files names.
@@ -228,27 +278,87 @@ echo "All lowercase for convert... (NOT activated, remove both # to activate)"
 echo -------------------------========================-------------------------
 ## The code program.
 
-	res=0		# automatic resolution detection and naming (720, 1080... etc)
-	audio=0		# get numbers of channels
-	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
-	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
-	#res1=${res::-1}	#somes video are detected with an X after the resution, this remove the X
-	echo Resolution of the video : $res
+	echo Delete /dev/shm/findaudio.txt
+	rm "/dev/shm/findaudio.txt" 2> /dev/null
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	echo Finding files...
+
+	## Easy way to add a file format, copy paste a new line.
+	echo "Will NOT find files in sub folders... Remove -maxdepth 1 to search subfolders."
+
+	find "$file" -maxdepth 1 -iname '*.mp3'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.aiff'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.aac'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.flac'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.wav'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.mp4'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.mkv'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.avi'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.wav'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.ac3'  >> "/dev/shm/findaudio.txt"
+	find "$file" -maxdepth 1 -iname '*.dts'  >> "/dev/shm/findaudio.txt"
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	cat "/dev/shm/findaudio.txt"
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+	echo Finding finish, with file count :
+	wc -l < "/dev/shm/findaudio.txt"
+
+	part=$((part+1))
+	echo "-------------------------===== Section $part =====-------------------------"
+
+	echo parallel -a "/dev/shm/findaudio.txt" -j $entry ffmpeg -i {} -codec:a flac -sample_fmt s16 -ar 48000 {.}.16-48k.flac
+	parallel -a "/dev/shm/findaudio.txt" -j $entry ffmpeg -i {} -codec:a flac -sample_fmt s16 -ar 48000 {.}.16-48k.flac
 	error $?
+
+echo -------------------------========================-------------------------
+echo Move files to new folder?
+	echo
+	## Variable
+	subfolder=16-48k
 	
-	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
-	echo Numbers of audio channel : $audio
-	error $?	
+	echo ""$file"/*.16-48k.flac"
+	echo ""$file"/"$subfolder""
+	echo
+
+	## Variable
+	subfolder=16-48k
 	
+	#ls "$file"/*16-48k.flac
+	
+	if zenity --question --text="Do you want to move files to (Suggest yes) :\n\n ""$file"/"$subfolder"" ?"
+	then
+		part=$((part+1))
+		echo "-------------------------===== Section $part =====-------------------------"
+		echo Create folder...
+			echo
+			echo mkdir -p """$file""/"$subfolder""
+			mkdir -p """$file""/"$subfolder""
+	
+		echo Move files...
+			echo
+			echo ""$file"/*48k.flac" ""$file"/"$subfolder""
+			mv ""$file"/"*48k.flac"" ""$file"/"$subfolder""
+			## YES all of these fu**** QUOTES are required !!
+			echo
+
+	else
+		part=$((part+1))
+		echo "-------------------------===== Section $part =====-------------------------"
+		echo "Files not moved."	
+	fi
+	echo "Don't forget to move associated files! (*.srt *.jpg *.m3u etc)"
+	echo
+	
+	rm "/dev/shm/findaudio.txt" 2> /dev/null
+
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
-echo "ffmpeg conversion"
-
-ffmpeg -i "$file" -vf scale=1280x720:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 20 -c:a aac -ac 2 -b:a 160k "$name".{FaceB-720p-2.0}.{SDR-x264-8b}.{aac}.mkv
-
-	error $?
-	
-echo -------------------------========================-------------------------
 ## Software lead out
 	echo "Finish... with numbers of actions : $part"
 	echo "This script take $(( SECONDS - start )) seconds to complete."
@@ -257,13 +367,15 @@ echo -------------------------========================-------------------------
 	now=$(date +"%Y-%m-%d_%A_%I:%M:%S")
 	echo "Current time : $now"
 	echo
+
 echo -------------------------========================-------------------------
 	echo "If a script takes MORE than 120 seconds to complete it will ask"
 	echo "you to press ENTER to terminate."
 	echo
 	echo "If a script takes LESS than 120 seconds to complete it will auto"
 	echo "terminate after 10 seconds"
-echo -------------------------========================-------------------------
+
+echo -------------------------===== End of Bash ======-------------------------
 ## Exit, wait or auto-quit.
 	if [ "$noquit" -eq "1" ]; then
 		echo
@@ -314,7 +426,7 @@ echo -------------------------========================-------------------------
 		fi
 	exit
 
-## -----===== End of bash =====-----
+## -----===== Start of eula =====-----
 
 	End-user license agreement (eula)
 
@@ -342,9 +454,7 @@ echo -------------------------========================-------------------------
  	You can send your request and your Christmas wishes to this address:
  	
  		Père Noël
- 		Pôle Nord
+ 		Pôle Nord, Canada
  		H0H 0H0
- 		Canada
 
 ## -----===== End of file =====-----
-

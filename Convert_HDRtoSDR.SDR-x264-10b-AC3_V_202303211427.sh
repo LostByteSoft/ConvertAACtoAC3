@@ -15,13 +15,14 @@ echo -------------------------===== Start of bash ====-------------------------
 	reset=`tput sgr0`
 
 	## All variables 0 or 1
-	autoquit=0	# autoquit anyway to script takes LESS than 2 min to complete. (0 or 1, change in conjoncture noquit=0)
+	autoquit=1	# autoquit anyway to script takes LESS than 2 min to complete. (0 or 1, change in conjoncture noquit=0)
 	debug=0		# test debug. (0 or 1 debug mode)
 	error=0		# test error. (0 or 1 make error)
 	part=0		# don't change this value. (0)
-	noquit=1	# No quit after all operations. (0 or 1 noquit)
+	noquit=0	# No quit after all operations. (0 or 1 noquit)
 	wol=1		# Wake on lan skip. (0 or 1 skip)
-	random=$RANDOM	# Used for temp folders.
+	random=$(shuf -i 4096-131072 -n 1)	# Used for temp folders. A big number hard to guess for security reasons.
+	## random=$RANDOM	# Normal random number.
 	
 	echo
 	echo "Software lead-in. LostByteSoft ; https://github.com/LostByteSoft"
@@ -30,24 +31,16 @@ echo -------------------------===== Start of bash ====-------------------------
 	echo "You can test / remove single # for testing purpose."
 	echo
 	echo "Current time : $now"
-	echo "Common variables, you can changes theses variables as you wish to test."
 	echo
+	echo "Common variables, you can changes theses variables as you wish to test."
 	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit wol=$wol random=$random"
 	echo
 
 echo -------------------------========================-------------------------
-echo "Color codes / Informations."
-	echo
-	echo  "${green}	████████████████     ALL OK / ACTIVE      ████████████████ ${reset}"
-	echo   "${blue}	████████████████      INFORMATION(S)      ████████████████ ${reset}"
-	echo "${yellow}	████████████████   ATTENTION / INACTIVE   ████████████████ ${reset}"
-	echo    "${red}	████████████████   FATAL ERROR / OFFLINE  ████████████████ ${reset}"
-	echo
-
-echo -------------------------========================-------------------------
 	echo Version compiled on : Also serves as a version
-	echo 2023-03-21_Tuesday_02:27:31
+	echo 2023-03-28_Tuesday_07:26:12
 	echo
+## Software name, what is this, version, informations.
 	echo "Software name: Convert HDRtoSDR-SDR-x264-10b-DTS-48000hz-768k"
 	echo
 	echo What it does ?
@@ -68,6 +61,15 @@ echo -------------------------========================-------------------------
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
 	echo
+echo -------------------------========================-------------------------
+echo "Color codes / Informations."
+	echo
+	echo  "${green}	████████████████     ALL OK / ACTIVE      ████████████████ ${reset}"
+	echo   "${blue}	████████████████      INFORMATION(S)      ████████████████ ${reset}"
+	echo "${yellow}	████████████████   ATTENTION / INACTIVE   ████████████████ ${reset}"
+	echo    "${red}	████████████████   FATAL ERROR / OFFLINE  ████████████████ ${reset}"
+	echo
+
 echo -------------------------========================-------------------------
 echo "Functions codes and color"
 	echo
@@ -141,6 +143,16 @@ if command -v ffmpeg >/dev/null 2>&1
 	fi
 
 	echo
+echo -------------------------========================-------------------------
+echo "Names not supported / Informations."
+	echo
+	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
+	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
+	echo "	!!! NAMES starting with - . , or symbols are NOT SUPPORTED !!!"
+	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
+	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
+	echo
+
 echo -------------------------========================-------------------------
 echo "Select folder or filename using dialog !"
 	echo
