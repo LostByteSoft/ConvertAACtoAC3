@@ -47,22 +47,33 @@ echo -------------------------===== Start of bash ====-------------------------
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
-	echo Version compiled on : Also serves as a version
-	echo 2023-03-28_Tuesday_07:26:12
-	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: extract SRTfromMKV_choosefile"
+	echo "Software name: Convert XXX (file) to"
 	echo
-	echo What it does ?
-	echo "Extract subtitles from MKV file MKV IDX SUB for a specified file"
+	echo "What it does ?"
+	echo "Convert XXX file to audio/video"
 	echo
-	echo Informations :
-	echo "By LostByteSoft, no copyright or copyleft"
-	echo "https://github.com/LostByteSoft"
-	echo "https://askubuntu.com/questions/452268/extract-subtitle-from-mkv-files"
-	echo "Author: https://askubuntu.com/users/230052/nux"
+	echo "This is a SIMPLE file conversion"
+	echo
+	echo "Read me for this file (and known bugs) :"
+	echo
+	echo "This software use theses softwares:"
+	echo
+	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
+	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
+	echo
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://www.demolandia.net"
+	echo
+	echo "Informations : (EULA at the end of file, open in text.)"
+	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
+	echo
+
+echo -------------------------========================-------------------------
+	echo Version compiled on : Also serves as a version
+	echo 2024-02-10_Saturday_19:44:11
 echo -------------------------========================-------------------------
 echo "Color codes / Informations."
 	echo
@@ -73,22 +84,33 @@ echo "Color codes / Informations."
 	echo
 
 echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
+echo "Functions codes and color"
+	echo
+	echo 	"Function ${blue}█████${reset} Debug. Activate via source program debug=1."
 
-debug()
-if [ "$debug" -ge 1 ]; then
+	debug()
+	if [ "$debug" -ge 1 ]; then
 		echo
-		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
+		echo "${blue}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
 		echo
-		echo debug = $debug 	part = $part 	input = $input
-		echo cpu = $cpu 	defv = $defv 	defa = $defa
-		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
+		echo autoquit=$autoquit debug=$debug error=$error noquit=$quit count=$count part=$part random=$random
+		echo
+		echo file = $file
 		echo 
-		read -n 1 -s -r -p "Press any key to EXIT"
-		exit
-		fi
+		read -n 1 -s -r -p "Press any key to continue"
+		echo
+	fi
+	
+	if [ "$debug" -eq "1" ]; then
+		echo
+		echo "${blue}██████████████████████████████ DEBUG ACTIVATED ███████████████████████████${reset}"
+		echo
+		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+		echo
+	fi
 
-echo Function Error detector. If errorlevel is 1 or greater will show error msg.
+	echo 	"Function ${red}█████${reset} Error detector. Errorlevel show error msg."
+
 	error()
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
@@ -97,81 +119,149 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 		echo
 		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
 		echo
+		debug=1
+		noquit=1
+		autoquit=0
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-		fi
+	fi
 
-echo Function Auto Quit. If autoquit=1 will automaticly quit.
+	echo 	"Function ${green}█████${reset} Auto Quit. If autoquit=1 will automaticly quit."
 	if [ "$autoquit" -eq "1" ]; then
 		echo
-		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
+		echo "${green}█████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
-		fi
+	fi
+
+	if [ "$automatic" -eq "1" ]; then
+		echo
+		echo "${yellow}███████████████████████████ AUTOMATIC ACTIVATED ████████████████████████${reset}"
+		echo
+	fi
+	echo
+
+echo -------------------------========================-------------------------
+	echo Check installed requirements !
+	echo
+if command -v ffmpeg >/dev/null 2>&1
+	then
+		echo "Ffmpeg installed continue."
+		dpkg -s ffmpeg | grep Version
+		echo "${green} ████████████████ OK ████████████████ ${reset}"
+		echo
+	else
+		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install ffmpeg"
+		echo
+		echo "${red}████████████████ Dependency error ████████████████${reset}"
+		echo
+		read -n 1 -s -r -p "Press ENTER key to continue anyway (NOT a good idea) !"
+		echo
+	fi
+
+echo -------------------------========================-------------------------
+echo "All lowercase for convert... (NOT activated, remove both # to activate)"
+	echo
+	## This line put all lowercase FROM selected folder to the files names.
+	#echo "cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;"
+	#cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;
 
 echo -------------------------========================-------------------------
 echo "Names not supported / Informations."
 	echo
-	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
-	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
-	echo "	!!! NAMES starting with - . , or symbols are NOT SUPPORTED !!!"
-	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
-	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
+	echo "${blue}	████████████████████████████████████████████████████████████████${reset}"
+	echo "	!!! NAMES starting with - . _ , or symbols are NOT SUPPORTED !!!"
+	echo "${blue}	████████████████████████████████████████████████████████████████${reset}"
 	echo
 
 echo -------------------------========================-------------------------
-
-#DIR="$(zenity --file-selection --filename=$HOME/$USER --file-filter=*.mkv --title="Select a file *.mkv")"
-DIR="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file *.*")"
-
-echo -----------------------------------------------------------------------------
-
-if test -z "$DIR"
-	then
-		echo "\$DIR is empty and now exit. You don't have selected a file."
-		echo Press ENTER to continue.
-		read name
-		exit
-	else
-		echo "\$DIR is NOT empty."
-		echo "You have selected "$DIR""
-fi
-
-echo -----------------------------------------------------------------------------
-
-	echo "Please wait..."
-	#echo DIR = "$DIR"
-	#echo Press ENTER to continue.
-	#read name
-
-echo -----------------------------------------------------------------------------
-
-# Get all the MKV files in this dir and its subdirs
-find "$DIR" -type f -name '*.m2ts' | while read filename
-do
-  # Find out which tracks contain the subtitles
-  mkvmerge -i "$filename" | grep 'subtitles' | while read subline
-  do
-    # Grep the number of the subtitle track
-    tracknumber=`echo $subline | egrep -o "[0-9]{1,2}" | head -1`
-
-    # Get base name for subtitle
-    subtitlename=${filename%.*}
-
-    # Extract the track to a .tmp file
-    `mkvextract tracks "$filename" $tracknumber:"$subtitlename.srt" > /dev/null 2>&1`
-    `chmod g+rw "$subtitlename.srt"`
-  done
-done
-
-## Error detector.
-if [ "$?" -ge 1 ]; then
-	echo "!!! ERROR was detected !!! Press ENTER key to terminate !!!"
+echo "Select folder or filename using dialog !"
 	echo
-	echo "${red}ERROR ███████████████████████████ ERROR █████████████████████████████ ERROR ${reset}"
-	read name
-	exit
-fi
+
+	file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"	## File select.
+	## file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)	## Directory select.
+	## file="/$HOME/Pictures/"
+	## file="/$HOME/Downloads/"
+	## --file-filter="*.jpg *.gif *.jpeg"
+	## --file-filter='**[WwEeBbPp] | *[JjPpGg]' 
+
+	count=`ls -1 "$file" 2>/dev/null | wc -l`
+	echo Count : $count
+	echo "You have selected :"
+	echo "$file"
+	echo
+
+### file or folder
+	if test -z "$file"	## for cancel on zenity
+		then
+			echo "You click CANCEL !"
+			echo
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			echo
+			exit
+		fi
+
+	if [ "$count" -eq 0 ]	## for n files in directory
+		then
+			echo "You don't have selected a folder including files !"
+			echo
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			echo
+			exit
+		fi
 	
+echo -------------------------========================-------------------------
+## Input_Directory_Output
+	echo "Input name, directory and output name : (Debug helper)"
+	echo
+
+## Set working path.
+	BASEDIR=$(dirname "$0")
+	echo Basedir : "$BASEDIR"
+	dir=$(pwd)
+
+## file or folder selected
+	echo "Working dir : "$dir""
+	echo Input file : "$file"
+	export VAR="$file"
+	echo
+
+## directory section
+	INPUT="$(dirname "${VAR}")"	
+	echo "Get the last Folder : ${INPUT##*/}"
+	echo Base directory : "$(dirname "${VAR}")"
+	echo Base name: "$(basename "${VAR}")"
+	echo
+
+## Output file name
+	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output name ext : "$name""
+	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
+	echo "Output name bis : "$name1""
+	echo
+
+## Debug data
+	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+	echo
+
+echo -------------------------========================-------------------------
+echo "The core/code program."
+	echo
+
+## Turn 80 deg ; left or right ; no modification to video.
+
+ffmpeg -i "$file" -vf "transpose=1" "$file".{turn_90toright}.mkv	## 1 = 90 deg to right
+
+#ffmpeg -i "$FILE" -vf "transpose=2" "$file".{turn_90toleft}.mkv		## 2 = 90 deg to left
+
 echo -------------------------========================-------------------------
 echo "Software lead out."
 	echo

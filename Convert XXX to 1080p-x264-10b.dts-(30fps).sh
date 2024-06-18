@@ -47,23 +47,33 @@ echo -------------------------===== Start of bash ====-------------------------
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
-	echo Version compiled on : Also serves as a version
-	echo 2023-03-28_Tuesday_07:26:12
-	echo
 ## Software name, what is this, version, informations.
-	echo "Software name: Extract all audio track."
-	echo "File name : Extract ALL folder audio track.sh"
+	echo "Software name: Convert XXX to 720p-x264-10b.aac-2.0-320k.sh"
 	echo
-	echo "What it does ? Extract all audio track form folder of video files."
-	echo "Ffmpeg demand the exact file type to output."
+	echo What it does ?
+	echo "Convert ONE video file to 1080p-x264-10b.aac-2.0-320k.mkv"
 	echo
-	echo "Ffmpeg require to have to good extension, could not guess or give one randomly."
+	echo "Perfect format for 1080p GENERAL application."
+	echo
+	echo "Read me for this file (and known bugs) :"
+	echo
+	echo "Use 7z https://www.7-zip.org/download.html"
+	echo "Use https://imagemagick.org/index.php"
+	echo "Use Gnu Parallel https://www.gnu.org/software/parallel/"
+	echo "Use ffmpeg https://ffmpeg.org/ffmpeg.html"
+	echo
+	echo "Options https://trac.ffmpeg.org/wiki/Encode/H.264"
+	echo "4k demo HDR https://www.demolandia.net"
 	echo
 	echo "Informations : (EULA at the end of file, open in text.)"
-	echo "By LostByteSoft, no copyright or copyleft."
-	echo "https://github.com/LostByteSoft"
+	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
 	echo
 	echo "Don't hack paid software, free software exists and does the job better."
+	echo
+
+echo -------------------------========================-------------------------
+	echo Version compiled on : Also serves as a version
+	echo 2023-04-29_Saturday_06:45:48
 echo -------------------------========================-------------------------
 echo "Color codes / Informations."
 	echo
@@ -74,38 +84,33 @@ echo "Color codes / Informations."
 	echo
 
 echo -------------------------========================-------------------------
+echo "Functions codes and color"
+	echo
+	echo 	"Function ${blue}█████${reset} Debug. Activate via source program debug=1."
 
-echo "Check installed requirement !"
-
-if command -v ffmpeg >/dev/null 2>&1
-	then
-		echo "Ffmpeg installed continue."
-		dpkg -s ffmpeg | grep Version
-	else
-		echo "You don't have ' ffmpeg ' installed, now exit in 10 seconds."
-		echo "Add with : sudo apt-get install ffmpeg"
-		echo -------------------------========================-------------------------
-		sleep 10
-		exit
-fi
-
-echo -------------------------========================-------------------------
-echo Function Debug. Activate via source program debug=1.
-
-debug()
-if [ "$debug" -ge 1 ]; then
+	debug()
+	if [ "$debug" -ge 1 ]; then
 		echo
-		echo "${yellow}██████████████████████████████ DEBUG SLEEP ███████████████████████████████${reset}"
+		echo "${blue}█████████████████████████████████ DEBUG ██████████████████████████████████${reset}"
 		echo
-		echo debug = $debug 	part = $part 	input = $input
-		echo cpu = $cpu 	defv = $defv 	defa = $defa
-		echo defi = $defi 	entry = $entry 	autoquit = $autoquit
+		echo autoquit=$autoquit debug=$debug error=$error noquit=$quit count=$count part=$part random=$random
+		echo
+		echo file = $file
 		echo 
-		read -n 1 -s -r -p "Press any key to EXIT"
-		exit
-		fi
+		read -n 1 -s -r -p "Press any key to continue"
+		echo
+	fi
+	
+	if [ "$debug" -eq "1" ]; then
+		echo
+		echo "${blue}██████████████████████████████ DEBUG ACTIVATED ███████████████████████████${reset}"
+		echo
+		echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random"
+		echo
+	fi
 
-echo Function Error detector. If errorlevel is 1 or greater will show error msg.
+	echo 	"Function ${red}█████${reset} Error detector. Errorlevel show error msg."
+
 	error()
 	if [ "$?" -ge 1 ]; then
 		part=$((part+1))
@@ -114,81 +119,165 @@ echo Function Error detector. If errorlevel is 1 or greater will show error msg.
 		echo
 		echo "!!! ERROR was detected !!! Press ANY key to try to CONTINUE !!! Will probably exit !!!"
 		echo
+		debug=1
+		noquit=1
+		autoquit=0
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
-		fi
+	fi
 
-echo Function Auto Quit. If autoquit=1 will automaticly quit.
+	echo 	"Function ${green}█████${reset} Auto Quit. If autoquit=1 will automaticly quit."
 	if [ "$autoquit" -eq "1" ]; then
 		echo
-		echo "${blue}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
+		echo "${green}████████████████████████████ AUTO QUIT ACTIVATED █████████████████████████${reset}"
 		echo
-		fi
+	fi
+	echo
+
+echo -------------------------========================-------------------------
+	echo Check installed requirements !
+	echo
+if command -v ffmpeg >/dev/null 2>&1
+	then
+		echo "Ffmpeg installed continue."
+		dpkg -s ffmpeg | grep Version
+		echo "${green} ████████████████ OK ████████████████ ${reset}"
+		echo
+	else
+		echo "You don't have ' parallel ' installed, now exit in 10 seconds."
+		echo "Add with : sudo apt-get install ffmpeg"
+		echo
+		echo "${red}████████████████ Dependency error ████████████████${reset}"
+		echo
+		read -n 1 -s -r -p "Press ENTER key to continue anyway (NOT a good idea) !"
+		echo
+	fi
+
+echo -------------------------========================-------------------------
+echo "All lowercase for convert... (NOT activated, remove both # to activate)"
+	echo
+	## This line put all lowercase FROM selected folder to the files names.
+	#echo "cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;"
+	#cd "$file" && find . -name '*.*' -exec sh -c ' a=$(echo "$0" | sed -r "s/([^.]*)\$/\L\1/"); [ "$a" != "$0" ] && mv "$0" "$a" ' {} \;
 
 echo -------------------------========================-------------------------
 echo "Names not supported / Informations."
 	echo
-	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
-	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
-	echo "	!!! NAMES starting with - . , or symbols are NOT SUPPORTED !!!"
-	echo "${red}	██████████████████████████████████████████████████████████████${reset}"
-	echo "${yellow}	██████████████████████████████████████████████████████████████${reset}"
+	echo "${blue}	████████████████████████████████████████████████████████████████${reset}"
+	echo "	!!! NAMES starting with - . _ , or symbols are NOT SUPPORTED !!!"
+	echo "${blue}	████████████████████████████████████████████████████████████████${reset}"
 	echo
 
 echo -------------------------========================-------------------------
-echo "Select filename using dialog !"
+echo "Select folder or filename using dialog !"
+	echo
 
-	#file="$(zenity --file-selection --filename=$HOME/$USER --title="Select a file, all format supported")"
-	file=$(zenity  --file-selection --filename=$HOME/$USER --title="Choose a directory to convert all file" --directory)
-	## --file-filter="*.jpg *.gif"
+	file="$(zenity --file-selection --filename=$HOME/ --title="Select a file, all format supported")"	## File select.
+	## file=$(zenity  --file-selection --filename=$HOME/ --title="Choose a directory to convert all file" --directory)	## Directory select.
+	## file="/$HOME/Pictures/"
+	## file="/$HOME/Downloads/"
+	## --file-filter="*.jpg *.gif *.jpeg"
+	## --file-filter='**[WwEeBbPp] | *[JjPpGg]' 
 
-if test -z "$file"
-	then
-		echo "You don't have selected a file, now exit in 3 seconds."
-		echo -------------------------========================-------------------------
-		sleep 3
-		exit
-	else
-		echo "You have selected :"
-		echo "$file"
-fi
+	count=`ls -1 "$file" 2>/dev/null | wc -l`
+	echo Count : $count
+	echo "You have selected :"
+	echo "$file"
+	echo
+
+### file or folder
+	if test -z "$file"	## for cancel on zenity
+		then
+			echo "You click CANCEL !"
+			echo
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			echo
+			exit
+		fi
+
+	if [ "$count" -eq 0 ]	## for n files in directory
+		then
+			echo "You don't have selected a folder including files !"
+			echo
+			echo -------------------------========================-------------------------
+			echo
+			echo "${yellow}█████████████████████ NO DATA TO PROCESS █████████████████████${reset}"
+			echo
+			read -n 1 -s -r -p "Press any key to EXIT"
+			echo
+			exit
+		fi
+
+	if [ $logs -eq 1 ]; then
+		echo "Selected file : $file" >> /dev/shm/$random2.txt
+		echo "	" >> /dev/shm/$random2.txt
+	fi
+	
 echo -------------------------========================-------------------------
-echo "Input name, directory and output name : (Debug helper)"
+## Input_Directory_Output
+	echo "Input name, directory and output name : (Debug helper)"
+	echo
+
 ## Set working path.
+	BASEDIR=$(dirname "$0")
+	echo Basedir : "$BASEDIR"
 	dir=$(pwd)
+
+## file or folder selected
 	echo "Working dir : "$dir""
 	echo Input file : "$file"
 	export VAR="$file"
 	echo
+
+## directory section
+	INPUT="$(dirname "${VAR}")"	
+	echo "Get the last Folder : ${INPUT##*/}"
 	echo Base directory : "$(dirname "${VAR}")"
 	echo Base name: "$(basename "${VAR}")"
 	echo
+
 ## Output file name
 	name=`echo "$file" | rev | cut -f 2- -d '.' | rev` ## remove extension
 	echo "Output name ext : "$name""
 	name1=`echo "$(basename "${VAR}")" | rev | cut -f 2- -d '.' | rev` ## remove extension
 	echo "Output name bis : "$name1""
-	
-echo -------------------------========================-------------------------
-## The code program.
-part=0
-debug=0
-echo "Ffmpeg require to have the good extension, could not guess or give one randomly."
-ext=$(zenity --entry --text="Enter the correct OUTPUT extension type without the dot (ex: aac , eac3 , dts) ?")
+	echo
 
-for i in "$file"/*.*;
-	#do name=`echo "$i" | cut -d'.' -f1`
-	do name=`echo "$i" | rev | cut -f 2- -d '.' | rev`
-	part=$((part+1))
-	echo "-------------------------===== Section $part =====-------------------------"
-	echo i = $i
-	echo name = "$name"
-	export VAR="$i"
-	echo var = $VAR
-	ffmpeg -i "$i" -vn -acodec copy "$VAR".$ext
-	done
+## Debug data
+	echo "Debug data : autoquit=$autoquit debug=$debug error=$error part=$part noquit=$noquit random=$random logs=$logs"
+	echo
+
+echo -------------------------========================-------------------------
+echo "The core/code program."
+	echo
+
+	res=0
+	audio=0
+	echo "Get resolution and numbers of audio channel(s) of the multimedia file"
+	echo
+	res=`ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "$file"`
+	#res1=${res::-1}	#somes video are detected with an X after the resolution, this remove the X
+	echo Resolution of the source video : $res
+	echo
 	
-error $?
+	audio=`ffprobe -show_entries stream=channels -of compact=p=0:nk=1 -v 0 "$file"`
+	echo Numbers of audio channel in source : $audio
+	echo	
+	
+part=$((part+1))
+echo "-------------------------===== Section $part =====-------------------------"
+echo "ffmpeg conversion"
+	echo
+
+#ffmpeg -i "$file" -vf scale=1920x1080:flags=lanczos,format=yuv420p10le -c:v libx264 -crf 24 -c:a aac -ac 2 -b:a 320k "$name".{1080p-2.0}.{SDR-x264-10b}.{aac-320k}.mkv
+ffmpeg -loglevel error -v error -stats -i "$file" -vf scale=1920x1080:flags=lanczos,format=yuv420p10le -c:v libx264 -qp 22 -r:v 30 -strict -2 -c:a dts "$name".{1080p-x264-10b}.{dts}.mkv
+
+	error $?
+	echo
 	
 echo -------------------------========================-------------------------
 echo "Software lead out."
